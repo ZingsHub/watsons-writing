@@ -431,7 +431,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 .ffence { left: 0; width: 100%; height: 40px; bottom: 44%; }
 .flayer { position: absolute; top: 0; right: 0; bottom: 0; left: 0; }
 .fa, .fgift { position: absolute; left: 0; bottom: 0; padding: 0; margin: 0; border: 0; background: none; cursor: pointer; color: inherit; }
-.fa { will-change: transform; }
+.fa { will-change: transform; touch-action: none; }
 .fa::before { content: ""; position: absolute; top: -20%; right: -15%; bottom: -10%; left: -15%; }
 .fa svg, .fi svg, .fgift svg { display: block; width: 100%; height: auto; overflow: visible; }
 .fa::after { content: ""; position: absolute; left: 14%; right: 14%; bottom: -5%; height: 11%; background: rgba(42, 33, 24, 0.18); border-radius: 50%; z-index: -1; }
@@ -449,6 +449,18 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 @keyframes fpeck { 50% { transform: rotate(20deg); } }
 @keyframes fbounce { 50% { transform: translateY(-10%) rotate(-4deg); } }
 .fi { position: absolute; pointer-events: none; }
+.fi::after { content: ""; position: absolute; left: 10%; right: 10%; bottom: -8%; height: 14%; border-radius: 50%; z-index: -1; }
+.fi.slide { transition: left 0.3s ease, bottom 0.3s ease; }
+.fscene.build .fi { pointer-events: auto; touch-action: none; cursor: grab; transform-origin: 50% 100%; animation: fjig 1.4s ease-in-out infinite; }
+.fa.held, .fscene.build .fi.held { cursor: grabbing; animation: none; }
+.fa.held .fa-act, .fi.held .fi-in { animation: fheld 0.22s ease-in-out infinite alternate; }
+.fa.held::after, .fi.held::after { left: 6%; right: 6%; bottom: -12%; height: 14%; background: rgba(42, 33, 24, 0.3); filter: blur(3px); }
+.fa-act.fland, .fi-in.fland { animation: fland 0.42s ease-out; transform-origin: 50% 100%; }
+.fi-in { transform-origin: 50% 100%; }
+@keyframes fjig { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
+@keyframes fheld { from { transform: translateY(-8%) scale(1.1) rotate(-4deg); } to { transform: translateY(-8%) scale(1.1) rotate(4deg); } }
+@keyframes fland { 0% { transform: translateY(-8%) scale(1.1); } 45% { transform: scale(1.08, 0.9); } 75% { transform: scale(0.97, 1.04); } 100% { transform: scale(1); } }
+#fHammer.on { background: #fff4b8; transform: translateY(3px); box-shadow: 0 1px 0 var(--ink), 0 0 0 5px #ffd640, 0 0 14px 6px rgba(255, 214, 64, 0.8); }
 .fgift { animation: fbounce 1.1s ease-in-out infinite; transform-origin: 50% 100%; z-index: 1500; }
 .fgift .lid { transition: transform 0.5s ease; transform-box: fill-box; transform-origin: center; }
 .fgift.open { animation: none; }
@@ -483,7 +495,9 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 .ft-price { display: flex; align-items: center; gap: 3px; min-height: 30px; font-family: var(--display); font-weight: 700; font-size: 22px; }
 .ft-ok svg { width: 30px; height: 30px; display: block; }
 @media (prefers-reduced-motion: reduce) {
-  .fgift, .farmbtn .fbadge, .fa-act.p-pig, .fa-act.p-horse, .fa-act.p-chicken, .glit path { animation: none; }
+  .fgift, .farmbtn .fbadge, .fa-act.p-pig, .fa-act.p-horse, .fa-act.p-chicken, .glit path, .fscene.build .fi, .fa.held .fa-act, .fi.held .fi-in { animation: none; }
+  .fscene.build .fi { outline: 3px dashed var(--ink); outline-offset: 4px; border-radius: 12px; }
+  .fa.held .fa-act, .fi.held .fi-in { transform: translateY(-8%) scale(1.1); }
 }
 .gate { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background: var(--sky); }
 .gate[hidden] { display: none; }
@@ -1499,10 +1513,14 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     visitAt: { mud: [0, 3], pond: [14, 4], hay: [10, -4], flowers: [8, 4] },   /* where an animal stands at each item */
     itemSize: { mud: 1.1, pond: 1.35, hay: 0.85, flowers: 0.95 },
     playSeconds: 3,
-    visitEvery: [12, 22]                         /* seconds between visits to a favorite item */
+    visitEvery: [12, 22],                        /* seconds between visits to a favorite item */
+    groundTop: 44,                               /* dragged animals and items stay below this line (% up from the bottom) */
+    wander: { every: [4, 9], dx: 6, dy: 3 },     /* small idle strolls around an animal's spot: seconds apart, % wide, % tall */
+    holdMs: 300,                                 /* press this long, or move this far, and a tap becomes a drag */
+    dragPx: 10
   };
   var FKEY = 'ww_farm', FIDS = Object.keys(FARM.animals), FST = null;
-  function fBlank() { var d = {}; FIDS.forEach(function (a) { d[a] = {}; }); return { spent: 0, animals: [], decor: d, items: [] }; }
+  function fBlank() { var d = {}; FIDS.forEach(function (a) { d[a] = {}; }); return { spent: 0, animals: [], decor: d, items: [], pos: {} }; }
   /* read the saved farm, keeping only the pieces that make sense; a broken save is set aside, never trusted */
   function fLoad() {
     var st = fBlank(), raw = null, d = null;
@@ -1517,9 +1535,13 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       Object.keys(FARM.decor[a]).forEach(function (k) { if (o[k] === true || o[k] === false) st.decor[a][k] = o[k]; });
     });
     if (Array.isArray(d.items)) d.items.forEach(function (k) { if (FARM.items.hasOwnProperty(k) && st.items.indexOf(k) < 0) st.items.push(k); });
+    if (d.pos && typeof d.pos === 'object') Object.keys(FARM.spots).forEach(function (k) {   /* where he dragged things to */
+      var p = d.pos[k]; if (k === 'gift' || !Array.isArray(p) || p.length !== 2) return;
+      var x = Number(p[0]), y = Number(p[1]); if (isFinite(x) && isFinite(y)) st.pos[k] = [clamp(x, 0, 100), clamp(y, 0, 100)];
+    });
     return st;
   }
-  function fSave() { try { localStorage.setItem(FKEY, JSON.stringify({ v: 1, spent: FST.spent, animals: FST.animals, decor: FST.decor, items: FST.items })); } catch (e) {} }
+  function fSave() { try { localStorage.setItem(FKEY, JSON.stringify({ v: 1, spent: FST.spent, animals: FST.animals, decor: FST.decor, items: FST.items, pos: FST.pos })); } catch (e) {} }
   function fSpendable() { return Math.max(0, stars - (FST ? FST.spent : 0)); }
   function fPay(n) { if (fSpendable() < n) return false; FST.spent += n; return true; }
   function fStage() { var g = FARM.growthStages, i = 0; while (i + 1 < g.length && stars >= g[i + 1].at) i++; return g[i]; }
@@ -1682,6 +1704,24 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     fClouds.forEach(function (c) { c.w = c.k * clamp(fW / 5, 60, 160); c.el.style.width = c.w + 'px'; c.el.style.top = (c.top * fH / 100) + 'px'; if (c.x > fW) c.x = Math.random() * fW; });
   }
   function fAW(id) { return fBase * fStage().size * FARM.animals[id]; }
+  var FI = {};   /* each item's size and where it is drawn: { w, h, x, y } in px and % */
+  function fSpot(k) { return FST.pos[k] || FARM.spots[k]; }
+  function fItemAt(k) { return FI[k] ? [FI[k].x, FI[k].y] : fSpot(k); }
+  function fSize(k) {
+    if (FARM.animals.hasOwnProperty(k)) { var w = FA[k] && FA[k].w || fAW(k); return [w, w * FVB[k][1] / FVB[k][0] * 1.15]; }   /* a little extra for hats and crowns */
+    return FI[k] ? [FI[k].w, FI[k].h] : [fBase, fBase];
+  }
+  /* keep the whole picture on the grass, even lifted and wiggling in a finger: x is its middle and y its bottom, both in % */
+  function fClamp(k, x, y) {
+    var s = fSize(k), mx = s[0] * 0.58 / fW * 100, top = Math.min(FARM.groundTop, (fH - s[1] * 1.22) / fH * 100);
+    return [clamp(x, Math.min(mx, 50), Math.max(100 - mx, 50)), clamp(y, 0, Math.max(0, top))];
+  }
+  function fPlaceItem(el, k, x, y) {
+    var f = FI[k]; f.x = x; f.y = y;
+    el.style.left = (x * fW / 100 - f.w / 2).toFixed(1) + 'px'; el.style.bottom = (y * fH / 100).toFixed(1) + 'px';
+    /* lower on the screen draws in front; flat items stay under the animals, the haystack stands among them */
+    el.style.zIndex = el.classList.contains('held') ? '3000' : k === 'hay' ? String(1000 - Math.round(y * 10)) : String(150 - Math.round(y));
+  }
   function fBuild() {
     var st = fStage(), L = $('#fLayer'), h = '';
     $('#fScene').setAttribute('data-stage', st.id);
@@ -1690,7 +1730,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (fGifts() > 0) h += '<button class="fgift" type="button" aria-label="gift">' + fGiftSVG() + '</button>';
     L.innerHTML = h; fFxN = 0;
     FST.animals.forEach(function (id) {
-      var a = FA[id] || (FA[id] = { x: FARM.spots[id][0], y: FARM.spots[id][1], tx: 0, ty: 0, face: 1, mode: 'home', t: 0, item: '', spark: 0, walk: 0 });
+      var a = FA[id] || (FA[id] = { x: fSpot(id)[0], y: fSpot(id)[1], tx: 0, ty: 0, face: 1, mode: 'home', t: fRand(FARM.wander.every), item: '', spark: 0, walk: 0 });
       a.el = L.querySelector('[data-a="' + id + '"]'); a.faceSet = 0;
       if (a.mode === 'play') a.el.querySelector('.fa-act').classList.add('p-' + id);
     });
@@ -1699,15 +1739,15 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function fLayout() {
     var L = $('#fLayer'), g = L.querySelector('.fgift');
     Array.prototype.forEach.call(L.querySelectorAll('.fi'), function (el) {
-      var k = el.getAttribute('data-i'), p = FARM.spots[k], w = Math.min(fBase * FARM.itemSize[k], fW * 0.38);
-      el.style.width = w + 'px'; el.style.left = (p[0] * fW / 100 - w / 2) + 'px'; el.style.bottom = p[1] + '%';
-      el.style.zIndex = k === 'hay' ? String(1000 - Math.round(p[1] * 10)) : '100';   /* flat items sit under the animals */
+      var k = el.getAttribute('data-i'), w = Math.min(fBase * FARM.itemSize[k], fW * 0.38), c;
+      el.style.width = w + 'px'; FI[k] = { w: w, h: el.offsetHeight || w, x: 0, y: 0 };
+      c = fClamp(k, fSpot(k)[0], fSpot(k)[1]); fPlaceItem(el, k, c[0], c[1]);
     });
     if (g) { var p = FARM.spots.gift, w = clamp(fBase * 0.8, 60, 120); g.style.width = w + 'px'; g.style.left = (p[0] * fW / 100 - w / 2) + 'px'; g.style.bottom = p[1] + '%'; }
-    FST.animals.forEach(function (id) { var a = FA[id]; a.w = fAW(id); a.el.style.width = a.w + 'px'; fPut(id, 0); });
+    FST.animals.forEach(function (id) { var a = FA[id], c; a.w = fAW(id); a.el.style.width = a.w + 'px'; c = fClamp(id, a.x, a.y); a.x = c[0]; a.y = c[1]; fPut(id, 0); });
   }
   function fPut(id, lift) {
-    var a = FA[id], z = String(1000 - Math.round(a.y * 10));
+    var a = FA[id], z = a.mode === 'held' ? '3000' : String(1000 - Math.round(a.y * 10));
     a.el.style.transform = 'translate3d(' + (a.x * fW / 100 - a.w / 2).toFixed(1) + 'px,' + (-(a.y * fH / 100) - lift).toFixed(1) + 'px,0)';
     if (a.el.style.zIndex !== z) a.el.style.zIndex = z;
     if (a.faceSet !== a.face) { a.faceSet = a.face; a.el.firstChild.style.transform = a.face < 0 ? 'scaleX(-1)' : ''; }
@@ -1730,9 +1770,10 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     }
   }
   function fGo(id, k) {
-    var a = FA[id]; if (!a || !a.el) return;
+    var a = FA[id]; if (!a || !a.el || a.mode === 'held') return;
+    var s = fItemAt(k), c = fClamp(id, s[0] + FARM.visitAt[k][0], s[1] + FARM.visitAt[k][1]);   /* visits the item wherever it now is */
     a.el.querySelector('.fa-act').classList.remove('p-' + id);
-    a.item = k; a.tx = FARM.spots[k][0] + FARM.visitAt[k][0]; a.ty = FARM.spots[k][1] + FARM.visitAt[k][1]; a.mode = 'go';
+    a.item = k; a.tx = c[0]; a.ty = c[1]; a.mode = 'go';
   }
   function fSendFan(k) { var id = FARM.likes[k]; if (FST.animals.indexOf(id) >= 0) fGo(id, k); }
   function fVisit() {
@@ -1742,8 +1783,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   }
   function fArrive(id) {
     var a = FA[id];
-    if (a.mode === 'go') { a.mode = 'play'; a.t = FARM.playSeconds; a.spark = 0; a.face = FARM.spots[a.item][0] < a.x ? -1 : 1; a.el.querySelector('.fa-act').classList.add('p-' + id); }
-    else a.mode = 'home';
+    if (a.mode === 'go') { a.mode = 'play'; a.t = FARM.playSeconds; a.spark = 0; a.face = fItemAt(a.item)[0] < a.x ? -1 : 1; a.el.querySelector('.fa-act').classList.add('p-' + id); }
+    else { a.mode = 'home'; a.t = fRand(FARM.wander.every); }
   }
   function fLoop(now) {
     if (!fOn) return;
@@ -1758,8 +1799,11 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
         else { a.x += dx * step / d * 100 / fW; a.y += dy * step / d * 100 / fH; a.walk += dt; lift = Math.abs(Math.sin(a.walk * 9)) * fBase * 0.05; }
       } else if (a.mode === 'play') {
         a.t -= dt; a.spark -= dt;
-        if (a.spark <= 0) { a.spark = 0.35; fFx(FXOF[a.item], FARM.spots[a.item][0] + Math.random() * 10 - 5, FARM.spots[a.item][1] + 3); }
-        if (a.t <= 0) { a.el.querySelector('.fa-act').classList.remove('p-' + id); a.mode = 'back'; a.tx = FARM.spots[id][0]; a.ty = FARM.spots[id][1]; }
+        if (a.spark <= 0) { a.spark = 0.35; fFx(FXOF[a.item], fItemAt(a.item)[0] + Math.random() * 10 - 5, fItemAt(a.item)[1] + 3); }
+        if (a.t <= 0) { a.el.querySelector('.fa-act').classList.remove('p-' + id); a.mode = 'back'; var h = fClamp(id, fSpot(id)[0], fSpot(id)[1]); a.tx = h[0]; a.ty = h[1]; }
+      } else if (a.mode === 'home') {   /* a short stroll near the spot where he left it */
+        a.t -= dt;
+        if (a.t <= 0) { var w = FARM.wander, c = fClamp(id, fSpot(id)[0] + (Math.random() * 2 - 1) * w.dx, fSpot(id)[1] + (Math.random() * 2 - 1) * w.dy); a.mode = 'back'; a.tx = c[0]; a.ty = c[1]; }
       }
       fPut(id, lift);
     });
@@ -1831,21 +1875,96 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     FST.items.push(k); fSave(); renderStars(); fBump(); sfx.good();
     fCloseSheet();
     var el = $('#fLayer').querySelector('[data-i="' + k + '"] .fi-in'); if (el) el.classList.add('fnew');
-    fFx('spark', FARM.spots[k][0], FARM.spots[k][1] + 4, 6);
+    fFx('spark', fItemAt(k)[0], fItemAt(k)[1] + 4, 6);
     clearTimeout(fTimer); fTimer = setTimeout(function () { if (fOn) fSendFan(k); }, 700);
   }
+  /* --- dragging: animals any time, items only in build mode; a quick tap stays a tap --- */
+  var fBuildOn = false, fDrag = null, fNoClick = 0;
+  function fBuildMode(on) { fBuildOn = on; $('#fScene').classList.toggle('build', on); $('#fHammer').classList.toggle('on', on); }
+  function fPlop() { fSound(function (a, t) { fTone(a, t, 'sine', [[0, 560], [0.1, 230]], 0.13, 0.2, 1600); }); }
+  function fLand(el) { el.classList.remove('fland', 'fnew', 'hop'); void el.offsetWidth; el.classList.add('fland'); }
+  function fRect(k, x, y) { var s = fSize(k), l = x * fW / 100 - s[0] / 2, b = y * fH / 100; return [l, b, l + s[0], b + s[1]]; }
+  function fCover(r, q) {   /* how much of the smaller picture the two share, 0 to 1 */
+    var w = Math.min(r[2], q[2]) - Math.max(r[0], q[0]), h = Math.min(r[3], q[3]) - Math.max(r[1], q[1]);
+    return w <= 0 || h <= 0 ? 0 : w * h / Math.min((r[2] - r[0]) * (r[3] - r[1]), (q[2] - q[0]) * (q[3] - q[1]));
+  }
+  function fFree(k, x, y) { var r = fRect(k, x, y); return FST.items.every(function (o) { return o === k || !FI[o] || fCover(r, fRect(o, FI[o].x, FI[o].y)) <= 0.5; }); }
+  /* items may not sit mostly on top of each other: find the closest spot where it fits */
+  function fNearFree(k, x, y) {
+    var best = null, bd = Infinity, sx, sy, p, d;
+    if (fFree(k, x, y)) return [x, y];
+    for (sx = 0; sx <= 100; sx++) for (sy = 0; sy <= FARM.groundTop; sy++) {
+      p = fClamp(k, sx, sy); d = Math.pow((p[0] - x) * fW, 2) + Math.pow((p[1] - y) * fH, 2);
+      if (d < bd && fFree(k, p[0], p[1])) { bd = d; best = p; }
+    }
+    return best;
+  }
+  function fGrab() {
+    var d = fDrag; d.on = true; clearTimeout(d.hold);
+    if (d.kind === 'a') { var a = FA[d.k]; a.el.querySelector('.fa-act').classList.remove('p-' + d.k, 'fland'); a.el.querySelector('.fa-hop').classList.remove('hop', 'fnew'); a.mode = 'held'; a.item = ''; }
+    else d.el.querySelector('.fi-in').classList.remove('fnew', 'fland');
+    d.el.classList.remove('slide'); d.el.classList.add('held');
+    if (d.kind === 'a') fPut(d.k, 0); else fPlaceItem(d.el, d.k, FI[d.k].x, FI[d.k].y);
+  }
+  function fMoveTo(cx, cy) {
+    var d = fDrag, r = $('#fLayer').getBoundingClientRect(), c = fClamp(d.k, (cx - r.left - d.dx) / fW * 100, (r.bottom - cy - d.dy) / fH * 100);
+    if (d.kind === 'i') { fPlaceItem(d.el, d.k, c[0], c[1]); return; }
+    var a = FA[d.k]; if (Math.abs(c[0] - a.x) > 0.2) a.face = c[0] < a.x ? -1 : 1;
+    a.x = c[0]; a.y = c[1]; fPut(d.k, 0);
+  }
+  function fRound(p) { return [Math.round(p[0] * 10) / 10, Math.round(p[1] * 10) / 10]; }
+  function fEndDrag() {
+    var d = fDrag; if (!d) return;
+    fDrag = null; clearTimeout(d.hold);
+    try { d.el.releasePointerCapture(d.id); } catch (e) {}
+    if (!d.on) return;   /* it was a tap: the click handler hops, plays the sound and shows the paintbrush */
+    fNoClick = performance.now() + 400;
+    d.el.classList.remove('held');
+    if (d.kind === 'a') {
+      var a = FA[d.k]; FST.pos[d.k] = fRound([a.x, a.y]); a.mode = 'home'; a.t = fRand(FARM.wander.every);
+      fPut(d.k, 0); fLand(a.el.querySelector('.fa-act'));
+    } else {
+      var f = FI[d.k], p = fNearFree(d.k, f.x, f.y) || d.from;
+      if (p[0] !== f.x || p[1] !== f.y) { d.el.classList.add('slide'); setTimeout(function () { d.el.classList.remove('slide'); }, 400); }
+      fPlaceItem(d.el, d.k, p[0], p[1]); FST.pos[d.k] = fRound(p); fLand(d.el.querySelector('.fi-in'));
+      FST.animals.forEach(function (id) { var a = FA[id]; if (a && a.item === d.k && (a.mode === 'go' || a.mode === 'play')) fGo(id, d.k); });   /* a visitor follows its item */
+    }
+    fSave(); fPlop();
+  }
+  $('#fLayer').addEventListener('pointerdown', function (e) {
+    if (current !== farm || fDrag || !e.target.closest || e.button > 0) return;
+    var el = e.target.closest('.fa'), kind = 'a', k, p;
+    if (el) k = el.getAttribute('data-a');
+    else if (fBuildOn && (el = e.target.closest('.fi'))) { kind = 'i'; k = el.getAttribute('data-i'); }
+    if (!el || (kind === 'a' ? !FA[k] : !FI[k])) return;
+    var r = this.getBoundingClientRect();
+    p = kind === 'a' ? [FA[k].x, FA[k].y] : [FI[k].x, FI[k].y];
+    fDrag = { id: e.pointerId, el: el, k: k, kind: kind, sx: e.clientX, sy: e.clientY, on: false, from: p,
+      dx: e.clientX - r.left - p[0] * fW / 100, dy: r.bottom - e.clientY - p[1] * fH / 100 };
+    try { el.setPointerCapture(e.pointerId); } catch (x) {}
+    fDrag.hold = setTimeout(function () { if (fDrag && !fDrag.on) fGrab(); }, FARM.holdMs);
+  });
+  $('#fLayer').addEventListener('pointermove', function (e) {
+    var d = fDrag; if (!d || e.pointerId !== d.id) return;
+    if (!d.on) { if (Math.abs(e.clientX - d.sx) + Math.abs(e.clientY - d.sy) < FARM.dragPx) return; fGrab(); }
+    e.preventDefault(); fMoveTo(e.clientX, e.clientY);
+  });
+  $('#fLayer').addEventListener('animationend', function (e) { if (e.target.classList) e.target.classList.remove('fland'); });   /* let the walk and play wiggles run again */
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function (n) {
+    $('#fLayer').addEventListener(n, function (e) { if (fDrag && e.pointerId === fDrag.id) fEndDrag(); });
+  });
   var farm = {
     start: function () {
       fMeasure(); fSel = ''; fBuild(); fOn = true; fVisitT = 4;
       fLast = performance.now(); cancelAnimationFrame(fRaf); fRaf = requestAnimationFrame(fLoop);
       vsay([Pc(fGifts() > 0 ? 'You earned a new animal!' : 'Welcome to your farm!')]);
     },
-    stop: function () { fOn = false; cancelAnimationFrame(fRaf); clearTimeout(fTimer); $('#fSheet').hidden = true; fSheetKind = ''; vstop(); }
+    stop: function () { fEndDrag(); fBuildMode(false); fOn = false; cancelAnimationFrame(fRaf); clearTimeout(fTimer); $('#fSheet').hidden = true; fSheetKind = ''; vstop(); }
   };
   function farmOpen() { write.stop(); current = farm; $('#write').hidden = true; $('#farm').hidden = false; $('#prompt').textContent = 'My Farm'; farm.start(); }
   function farmClose() { farm.stop(); $('#farm').hidden = true; $('#write').hidden = false; current = write; write.start(true); }
   $('#fLayer').addEventListener('click', function (e) {
-    if (current !== farm || !e.target.closest) return;
+    if (current !== farm || !e.target.closest || performance.now() < fNoClick) return;   /* no tap right after a drag */
     var a = e.target.closest('.fa'), g = e.target.closest('.fgift');
     audio();
     if (a) fTapAnimal(a.getAttribute('data-a')); else if (g) fOpenGift(g); else if (fSel) fSelect('');
@@ -1859,7 +1978,10 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (fSheetKind === 'pick') fAdopt(k); else if (fSheetKind === 'decor') fDecor(b, k); else if (fSheetKind === 'build') fBuyItem(b, k);
   });
   $('#fBack').addEventListener('click', function () { if (current !== farm) return; audio(); sfx.pop(); farmClose(); });
-  $('#fHammer').addEventListener('click', function () { if (current !== farm) return; audio(); sfx.pop(); fSheet('build'); });
+  $('#fHammer').addEventListener('click', function () {   /* first tap: build mode and the shop; tap again to stop building */
+    if (current !== farm) return; audio(); sfx.pop();
+    if (fBuildOn) fBuildMode(false); else { fBuildMode(true); fSheet('build'); }
+  });
   $('#fPaint').addEventListener('click', function () { if (current !== farm || !fSel) return; audio(); sfx.pop(); fSheet('decor'); });
   window.addEventListener('resize', function () { if (current === farm) { fMeasure(); fLayout(); } });
   FST = fLoad(); renderStars();
