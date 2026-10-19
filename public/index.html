@@ -294,6 +294,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 #write { gap: 8px; }
 .wmenu, .wpick { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
 .wmenu .btn { font-size: 26px; min-height: 84px; }
+.wnote { margin: 14px 0 0; font-size: 12px; line-height: 1.4; color: #8a7663; text-align: center; overflow-wrap: break-word; }
 .wtabs { display: flex; gap: 8px; }
 .wtabs .btn { flex: 1; font-size: 16px; min-height: 76px; padding: 4px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
 .btn b { font-weight: 700; }
@@ -435,6 +436,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           <button class="btn modebtn" type="button" data-m="learn">&#9999;&#65039; Learn to write</button>
           <button class="btn modebtn" type="button" data-m="quiz">&#10067; Writing Quiz</button>
           <button class="btn modebtn" type="button" data-m="free">&#127912; Free writing</button>
+          <p class="wnote">Free practice aid made by a parent. Not affiliated with or endorsed by Peterson Directed Handwriting.</p>
         </div>
         <div id="wPick" class="wpick" hidden>
           <div id="wTabs" class="wtabs"><button class="btn on" type="button" data-w="up"><b>Capital</b><span class="ex"><i class="r">A</i><i class="g">B</i><i class="b">C</i></span></button><button class="btn" type="button" data-w="lo"><b>Lowercase</b><span class="ex"><i class="r">a</i><i class="g">b</i><i class="b">c</i></span></button><button class="btn" type="button" data-w="num"><b>Numbers</b><span class="ex"><i class="r">1</i><i class="g">2</i><i class="b">3</i></span></button></div>
