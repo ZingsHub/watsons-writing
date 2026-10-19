@@ -411,6 +411,54 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   .tube { transition: none; }
   .animal { transition: none; }
 }
+/* ---------- Write my name ---------- */
+.namebtn { background: #ffd9a8; display: flex; align-items: center; justify-content: center; gap: 12px; flex: none; }
+.namebtn .nbi svg { width: 58px; height: 48px; display: block; }
+.nscreen { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+.nlbl { font-family: var(--display); font-weight: 600; font-size: 18px; text-align: center; background: var(--paper); border: 3px solid var(--ink); border-radius: 14px; padding: 6px 12px; }
+.nrow { display: flex; gap: 8px; }
+.ninput { flex: 1; min-width: 0; font-family: var(--display); font-weight: 700; font-size: 28px; padding: 8px 12px; color: var(--ink); background: #fff; border: 3px solid var(--ink); border-radius: 14px; }
+.ninput:focus { outline: 4px solid #1c6fd1; outline-offset: 2px; }
+.ngo { flex: none; font-size: 26px; min-height: 64px; padding: 4px 18px; }
+.ngo:disabled { opacity: 0.4; box-shadow: none; transform: none; cursor: default; }
+.nprev { flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 96px; padding: 6px 10px; background: #fffdf3; border: 3px solid var(--ink); border-radius: 14px; }
+.nprevw { font-family: var(--display); font-weight: 700; font-size: clamp(32px, 9vw, 58px); line-height: 1.1; text-align: center; overflow-wrap: anywhere; }
+.nprevw:empty::before { content: "Type a name above"; font-size: 22px; color: #9a8a76; }
+.ncount { font-size: 15px; color: #6b5a48; }
+.ncount.full { color: var(--barn); }
+.nh { margin: 4px 0 0; font-family: var(--display); font-size: 20px; color: #fff; text-shadow: 0 2px 0 var(--ink); }
+.nsaved { display: flex; flex-wrap: wrap; gap: 10px; align-content: flex-start; }
+.nnone { margin: 0; color: #fff; font-size: 16px; }
+.nchip { display: flex; background: var(--paper); border: 3px solid var(--ink); border-radius: 16px; box-shadow: 0 4px 0 var(--ink); overflow: hidden; }
+.nchipn { font-family: var(--display); font-weight: 700; font-size: 26px; color: var(--ink); background: none; border: 0; padding: 6px 14px; min-height: 60px; cursor: pointer; }
+.nchipn:active { background: #ffe9a8; }
+.ntrash { position: relative; flex: none; width: 46px; padding: 0; display: grid; place-items: center; overflow: hidden; background: #f3e6d0; border: 0; border-left: 3px solid var(--ink); cursor: pointer; touch-action: none; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; }
+.ntrash svg { position: relative; z-index: 1; width: 20px; height: 22px; display: block; }
+.ntrash i { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: #f08a7e; }
+.ntrash.holding i { height: 100%; transition: height 1s linear; }
+.nlvls { flex: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.nlv { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px; background: #fff; font-size: 16px; }
+.nlv canvas { width: 100%; max-width: 120px; aspect-ratio: 100 / 160; display: block; background: #fffdf3; border: 2px solid var(--ink); border-radius: 10px; }
+.nlv b { font-size: 24px; line-height: 1.1; }
+.nlv .nic { font-size: 22px; line-height: 1; }
+.nlv.last { outline: 4px solid #1c6fd1; outline-offset: 2px; }
+.nlast { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 13px; color: #fff; background: #1c6fd1; border-radius: 999px; padding: 1px 8px; }
+.ncardbox { flex: none; display: flex; justify-content: center; padding: 2px; background: #fffdf3; border: 3px solid var(--ink); border-radius: 12px; overflow: hidden; }
+#nCard, #nBig { display: block; }
+.wplay.nlv3 .wcap { display: none; }
+.ndcard { flex: 1; min-height: 120px; display: grid; place-items: center; padding: 8px; background: #fffdf3; border: 4px solid var(--ink); border-radius: 18px; box-shadow: 0 6px 0 var(--ink); }
+.nearn { text-align: center; font-family: var(--display); font-weight: 700; font-size: 30px; color: #fff; text-shadow: 0 2px 0 var(--ink); }
+.ndbtns { flex: none; display: flex; flex-direction: column; gap: 10px; }
+.ndbtns .btn { font-size: 22px; min-height: 58px; }
+.nfly { position: absolute; z-index: 5; pointer-events: none; transform-origin: 0 0; transition: transform 0.5s cubic-bezier(0.4, 0, 0.3, 1); }
+@media (min-width: 640px) {
+  .ndbtns { flex-direction: row; }
+  .ndbtns .btn { flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nfly { transition: none; }
+  .ntrash.holding i { transition: none; height: 50%; }
+}
 /* ---------- My Farm ---------- */
 .farmbtn { background: #c9e58f; display: flex; align-items: center; justify-content: center; gap: 12px; position: relative; flex: none; }
 .farmbtn .fbi svg { width: 52px; height: 48px; display: block; }
@@ -524,6 +572,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           <button class="btn modebtn" type="button" data-m="learn">&#9999;&#65039; Learn to write</button>
           <button class="btn modebtn" type="button" data-m="quiz">&#10067; Writing Quiz</button>
           <button class="btn modebtn" type="button" data-m="free">&#127912; Free writing</button>
+          <button class="btn modebtn namebtn" type="button" data-m="name"><span class="nbi"><svg viewBox="0 0 58 48" stroke="#2a2118" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"><rect x="3" y="9" width="38" height="31" rx="5" fill="#fff"/><path d="M3 21 V14 A5 5 0 0 1 8 9 H36 A5 5 0 0 1 41 14 V21 Z" fill="#c4402f"/><path d="M9 33 H35" stroke="#7fb2e5" stroke-width="2"/><path d="M10 31 C12 25 15 25 16 29 C17 33 20 33 22 27 M25 31 L27 25 L29 31" fill="none"/><g transform="rotate(35 46 26)"><rect x="42" y="5" width="8" height="27" fill="#ffc533"/><path d="M42 32 L46 42 L50 32 Z" fill="#f2d3a8"/><path d="M44.6 38 L46 42 L47.4 38 Z" fill="#2a2118"/><rect x="42" y="2" width="8" height="5" rx="1.5" fill="#e86fa3"/></g></svg></span>Write my name</button>
           <button class="btn modebtn farmbtn" type="button" data-m="farm"><span id="wFarmIcon" class="fbi"></span>My Farm<span id="wFarmGift" class="fbadge" hidden></span></button>
           <p class="wnote">Free practice aid made by a parent. Not affiliated with or endorsed by Peterson Directed Handwriting.</p>
         </div>
@@ -538,7 +587,29 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           </div>
           <div class="wbar"><button id="wBack2" class="btn quiet" type="button">&#9664; Back</button></div>
         </div>
+        <div id="nEntry" class="nscreen" hidden>
+          <label class="nlbl" for="nInput">Grown-ups: type a name or word</label>
+          <div class="nrow"><input id="nInput" class="ninput" type="text" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="go" aria-describedby="nCount"><button id="nGo" class="btn ngo" type="button" disabled>Go &#9654;</button></div>
+          <div class="nprev"><span id="nPrev" class="nprevw"></span><span id="nCount" class="ncount">0 / 12 letters</span></div>
+          <h3 class="nh">Saved names</h3>
+          <div id="nSaved" class="nsaved"></div>
+          <div class="wbar"><button id="nBack1" class="btn quiet" type="button">&#9664; Back</button></div>
+        </div>
+        <div id="nLevel" class="nscreen" hidden>
+          <div id="nLvls" class="nlvls"></div>
+          <div class="wbar"><button id="nBack2" class="btn quiet" type="button">&#9664; Back</button></div>
+        </div>
+        <div id="nDone" class="nscreen" hidden>
+          <div id="nDoneCard" class="ndcard"><canvas id="nBig"></canvas></div>
+          <div id="nEarn" class="nearn"></div>
+          <div class="ndbtns">
+            <button id="nAgain" class="btn" type="button">Write it again</button>
+            <button id="nSave" class="btn" type="button">&#128190; Save my name card</button>
+            <button id="nOther" class="btn quiet" type="button">Pick another name</button>
+          </div>
+        </div>
         <div id="wPlay" class="wplay" hidden>
+          <div id="nCardBox" class="ncardbox" hidden><canvas id="nCard"></canvas></div>
           <div id="wCap" class="wcap"></div>
           <div id="wWrap" class="wwrap"><canvas id="wcv"></canvas></div>
           <div class="wbar">
@@ -1110,7 +1181,10 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   var wcv = $('#wcv'), wctx = wcv.getContext('2d'), wsc = 3, wdpr = 1;
   function wBest() { var o = {}; try { o = JSON.parse(localStorage.getItem('ty_write') || '{}') || {}; } catch (e) {} return o; }
   function wSaveBest(ch, st) { var o = wBest(); if (!o[ch] || o[ch] < st) { o[ch] = st; try { localStorage.setItem('ty_write', JSON.stringify(o)); } catch (e) {} } }
-  function wShow(id) { ['wMenu', 'wPick', 'wPlay'].forEach(function (x) { $('#' + x).hidden = x !== id; }); $('#wOver').hidden = true; $('#wHintPick').hidden = true; }
+  function wShow(id) {
+    ['wMenu', 'wPick', 'wPlay', 'nEntry', 'nLevel', 'nDone'].forEach(function (x) { $('#' + x).hidden = x !== id; }); $('#wOver').hidden = true; $('#wHintPick').hidden = true;
+    $('#nCardBox').hidden = !nm.on; $('#wPlay').classList.toggle('nlv3', nm.on && nm.level === 3);
+  }
   function wFit() {
     var box = $('#wWrap'), w = box.clientWidth, h = box.clientHeight;
     if (!w || !h) return;
@@ -1139,14 +1213,18 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     [WT, WB].forEach(function (y) { c.beginPath(); c.moveTo(4, y); c.lineTo(96, y); c.stroke(); });
     c.setLineDash([3, 3]); c.beginPath(); c.moveTo(4, WM); c.lineTo(96, WM); c.stroke();
     c.strokeStyle = '#d6e6f7'; c.beginPath(); c.moveTo(4, WD); c.lineTo(96, WD); c.stroke(); c.setLineDash([]);
-    var L = WL[wr.letter], mode = wr.mode;
+    var L = WL[wr.letter], mode = wr.mode, lvl = nm.on ? nm.level : 1;   /* Write my name: 1 trace, 2 dots only, 3 just the lines */
     if (L && (mode === 'guided' || mode === 'quizhint' || mode === 'freehint')) {
       /* faint letter */
-      var show = mode === 'guided' ? L.strokes.length : 0;
+      var show = mode === 'guided' && lvl === 1 ? L.strokes.length : 0;
       for (i = 0; i < show; i++) {
         var s = L.strokes[i]; c.strokeStyle = SCOL[Math.min(i, 3)]; c.fillStyle = SCOL[Math.min(i, 3)];
         c.globalAlpha = i === wr.cur ? 0.5 : 0.18; c.lineWidth = 7;
         if (s.dot) { c.beginPath(); c.arc(s.dot[0], s.dot[1], 4, 0, 7); c.fill(); } else wPoly(c, s.pts);
+      }
+      if (mode === 'guided' && lvl === 2) for (i = wr.cur + 1; i < L.strokes.length; i++) {   /* the later strokes' starting dots */
+        var s2 = L.strokes[i], p2 = s2.dot || s2.pts[0]; c.fillStyle = SCOL[Math.min(i, 3)]; c.globalAlpha = 0.5;
+        c.beginPath(); c.arc(p2[0], p2[1], 3.5, 0, 7); c.fill();
       }
       c.globalAlpha = 1;
       for (var g in wr.ghost) if (wr.ghost[g] && L.strokes[g]) {
@@ -1165,12 +1243,12 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     for (i = 0; i < wr.free.length; i++) { var f = wr.free[i]; if (f.length === 1) { c.beginPath(); c.arc(f[0][0], f[0][1], 3.5, 0, 7); c.fill(); } else wPoly(c, f); }
     if (wr.ink && wr.ink.length > 1) { c.strokeStyle = mode === 'guided' ? SCOL[Math.min(wr.cur, 3)] : '#2a2118'; c.lineWidth = 6; wPoly(c, wr.ink); }
     /* current target marker (guided) */
-    if (mode === 'guided' && L && !wr.demo && wr.cur < L.strokes.length) {
+    if (mode === 'guided' && L && !wr.demo && wr.cur < L.strokes.length && lvl < 3) {
       var cs = L.strokes[wr.cur], sp = cs.dot ? cs.dot : cs.pts[0], pu = 1 + 0.18 * Math.sin(t * 6);
       c.fillStyle = SCOL[Math.min(wr.cur, 3)]; c.strokeStyle = '#fff'; c.lineWidth = 1.5;
       c.beginPath(); c.arc(sp[0], sp[1], 5.5 * pu, 0, 7); c.fill(); c.stroke();
       c.fillStyle = '#fff'; c.font = '700 6.5px Fredoka, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(String(wr.cur + 1), sp[0], sp[1] + 0.3);
-      if (!cs.dot) { wArrow(c, cs.pts, 0.3); wArrow(c, cs.pts, 0.65); }
+      if (!cs.dot && lvl === 1) { wArrow(c, cs.pts, 0.3); wArrow(c, cs.pts, 0.65); }
     }
     /* demo animation */
     if (wr.demo && L) {
@@ -1272,12 +1350,12 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
         wr.cur++;
       }
       wr.miss = 0; sfx.good(); wPts();
-      if (wr.cur >= L.strokes.length) { wr.locked = true; vstop(); setTimeout(wGuidedFinish, 350); return { ok: true, end: end }; }
+      if (wr.cur >= L.strokes.length) { wr.locked = true; vstop(); setTimeout(nm.on ? nLetterDone : wGuidedFinish, 350); return { ok: true, end: end }; }
       wCaption(wSteps(wr.letter, wr.cur)); wr.locked = false;
       vsay(stepItems(wr.letter, wr.cur));
       return { ok: true, end: end };
     }
-    wr.miss++; sfx.bonk(); wr.locked = true;
+    wr.miss++; sfx.bonk(); wr.locked = true; if (wr.miss >= 2) nm.hinted = true;   /* the demo shown after misses counts as a hint */
     toast(WHYTEXT[res.why] || 'Try again!');
     var items = [Pc(WHYTEXT[res.why] === 'Keep going to the end.' ? "Keep going. You're doing great!" : WHYTEXT[res.why] === 'Start at the dot.' || WHYTEXT[res.why] === 'Follow the arrow.' || WHYTEXT[res.why] === 'Stay inside the lines.' ? WHYTEXT[res.why] : pick(W_TRY))];
     if (wr.miss === 2 || wr.miss === 4) items = [Pc("Here's a little hint.")];
@@ -1377,7 +1455,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (wr.qBusy) return;
     if (wr.locked && wr.mode !== 'free') return;
     if (wr.mode === 'guided') {
-      wr.hintUsed[wr.cur] = true; wr.locked = true; wr.ghost = {};
+      wr.hintUsed[wr.cur] = true; nm.hinted = true; wr.locked = true; wr.ghost = {};
       vsay([Pc("Here's a little hint.")], function () { wBoth(stepItems(wr.letter, wr.cur), wr.cur, function () { wr.ghost = {}; wr.locked = false; }); });
     } else if (wr.mode === 'quiz' || wr.mode === 'quizhint') {
       var N = WL[wr.letter].strokes.length; wr.mode = 'quizhint'; wr.locked = true;
@@ -1400,7 +1478,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     wReset(); wShow('wMenu'); $('#prompt').textContent = 'What do you want to do?';
     if (welcome) vsay([Pc('Welcome, writer! Are you ready to write? What would you like to do?')]);
   }
-  function wReset() { vstop(); wr.lesson++; wr.qTok++; wr.qBusy = false; clearTimeout(wAutoT); wr.mode = ''; wr.demo = null; wr.ink = null; wr.locked = false; wr.idleN = 0; wLastAct = Date.now(); $('#wHint').classList.remove('glow'); }
+  function wReset() { nm.on = false; nm.tok++; vstop(); wr.lesson++; wr.qTok++; wr.qBusy = false; clearTimeout(wAutoT); wr.mode = ''; wr.demo = null; wr.ink = null; wr.locked = false; wr.idleN = 0; wLastAct = Date.now(); $('#wHint').classList.remove('glow'); }
   function wPickScreen(kind, tab) {
     wReset(); wr.pickKind = kind; wShow('wPick');
     $('#prompt').textContent = kind === 'learn' ? 'Pick a letter to write' : 'Pick what to practice';
@@ -1411,7 +1489,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   /* back = one step up: play -> the pick page it came from, pick -> menu, menu -> main menu */
   function wGoBack() {
     if (!$('#wPlay').hidden) {
-      if (wr.pickKind === 'learn') wPickScreen('learn', /[0-9]/.test(wr.letter) ? 'num' : wr.letter === wr.letter.toUpperCase() ? 'up' : 'lo');
+      if (wr.pickKind === 'name') nEntry(false);
+      else if (wr.pickKind === 'learn') wPickScreen('learn', /[0-9]/.test(wr.letter) ? 'num' : wr.letter === wr.letter.toUpperCase() ? 'up' : 'lo');
       else if (wr.pickKind === 'quiz') wPickScreen('quiz');
       else wMenu();
     } else if (!$('#wPick').hidden) wMenu();
@@ -1435,6 +1514,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function wIdleCheck() {
     if (current !== write || vSpeaking || wr.ink || wr.demo || wr.locked || wr.qBusy || wr.mode === 'result') return;
     if (!$('#wOver').hidden || !$('#wHintPick').hidden) return;
+    if (!$('#nEntry').hidden || !$('#nLevel').hidden || !$('#nDone').hidden) return;   /* a grown-up is typing, or he is done */
     if (Date.now() - wLastAct < wr.idleMs) return;
     var inPlay = !$('#wPlay').hidden, items = null, m = wr.mode;
     if (wr.idleN >= 2) {
@@ -1459,7 +1539,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   $('#wMenu').addEventListener('click', function (e) {
     var b = e.target.closest ? e.target.closest('button[data-m]') : null; if (!b || current !== write) return;
     audio(); sfx.pop(); var m = b.getAttribute('data-m');
-    if (m === 'learn') wPickScreen('learn'); else if (m === 'quiz') wPickScreen('quiz'); else if (m === 'farm') farmOpen(); else wFreeStart();
+    if (m === 'learn') wPickScreen('learn'); else if (m === 'quiz') wPickScreen('quiz'); else if (m === 'farm') farmOpen(); else if (m === 'name') nEntry(true); else wFreeStart();
   });
   $('#wTabs').addEventListener('click', function (e) { var b = e.target.closest ? e.target.closest('button[data-w]') : null; if (b) wFillGrid(b.getAttribute('data-w')); });
   $('#wGrid').addEventListener('click', function (e) { var b = e.target.closest ? e.target.closest('button[data-c]') : null; if (b && current === write) { audio(); sfx.pop(); wGuidedStart(b.getAttribute('data-c')); } });
@@ -1486,7 +1566,233 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (wr.pickKind === 'quiz' || wr.qList.length && wr.qi >= wr.qList.length) wQuizStart(wr.setOf); else wGuidedStart(wr.letter);
   });
   $('#wOverMenu').addEventListener('click', function () { $('#wOver').hidden = true; wGoBack(); });
-  window.addEventListener('resize', function () { if (current === write) wFit(); });
+  window.addEventListener('resize', function () { if (current !== write) return; if (nm.on && !$('#wPlay').hidden) nCard(); wFit(); if (!$('#nDone').hidden) nBig(); });
+
+  /* ---------- Write my name: a grown-up types a word, he writes it one letter at a time ---------- */
+  /* Uses the Learn to write templates, scoring, demos and hints; each finished letter lands on a name card. Nothing here leaves the device. */
+  var NMAX = 12, NKEY = 'ww_names', NSAVED = 30, NWROTE = 'You wrote your name!';
+  var NCHEER = ['Hooray! You did it!', 'Wow! That is perfect!', 'Yay! Great writing!', 'Awesome job!', 'You are a super writer!', 'Fantastic!', 'You nailed it!', 'High five!', 'Look at you go!'];
+  var NLEVELS = [{ l: 1, ic: '&#9999;&#65039;', t: 'Trace' }, { l: 2, ic: '&#128309;', t: 'Dots' }, { l: 3, ic: '&#11088;', t: 'Blank' }];
+  var nm = { on: false, word: '', level: 1, i: 0, ink: {}, got: 0, hinted: false, tok: 0, lay: null, list: [] };
+  /* letters A to Z and single spaces only, at most 12 letters */
+  function nClean(raw) {
+    var s = String(raw || '').replace(/[^A-Za-z ]+/g, '').replace(/ {2,}/g, ' ').replace(/^ /, ''), o = '', n = 0, i, c;
+    for (i = 0; i < s.length; i++) { c = s.charAt(i); if (c !== ' ') { if (n >= NMAX) break; n++; } o += c; }
+    return o;
+  }
+  /* each word gets a capital first letter and lowercase after: "zACH" -> "Zach" */
+  function nFormat(raw) { return nClean(raw).split(' ').filter(Boolean).map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(); }).join(' '); }
+  function nCount(w) { return w.replace(/ /g, '').length; }
+
+  /* --- saved names: [{ n: name, l: last level }], newest first; kept in memory too, so it works without storage --- */
+  function nLoad() {
+    var out = [], d = null;
+    try { d = JSON.parse(localStorage.getItem(NKEY) || 'null'); } catch (e) {}
+    if (Array.isArray(d)) d.forEach(function (o) {
+      if (!o || typeof o !== 'object' || typeof o.n !== 'string' || out.length >= NSAVED) return;
+      var w = nFormat(o.n), l = Number(o.l);
+      if (w && !out.some(function (x) { return x.n === w; })) out.push({ n: w, l: l === 2 || l === 3 ? l : 1 });
+    });
+    return out;
+  }
+  function nStore() { try { localStorage.setItem(NKEY, JSON.stringify(nm.list)); } catch (e) {} }
+  function nRemember(w, l) { nm.list = [{ n: w, l: l }].concat(nm.list.filter(function (x) { return x.n !== w; })).slice(0, NSAVED); nStore(); }
+  function nLevelOf(w) { for (var i = 0; i < nm.list.length; i++) if (nm.list[i].n === w) return nm.list[i].l; return 0; }
+
+  /* --- entry screen --- */
+  var NTRASH = '<svg viewBox="0 0 20 22" fill="none" stroke="#2a2118" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5 H18 M7 5 V2.5 H13 V5 M4 5 L5 20 H15 L16 5 M8 9 V16 M12 9 V16"/></svg>';
+  function nEntry(clear) {
+    wReset(); wr.pickKind = 'name'; wShow('nEntry'); $('#prompt').textContent = 'Write my name';
+    if (clear) $('#nInput').value = '';
+    nTyped(); nChips();
+  }
+  function nTyped() {
+    var el = $('#nInput'), raw = el.value, c = nClean(raw);
+    if (c !== raw) {   /* strip what is not allowed, keeping the cursor where it was */
+      var at = document.activeElement === el ? nClean(raw.slice(0, el.selectionStart || 0)).length : c.length;
+      el.value = c; try { if (document.activeElement === el) el.setSelectionRange(at, at); } catch (e) {}
+    }
+    var w = nFormat(c), n = nCount(w);
+    $('#nPrev').textContent = w; $('#nCount').textContent = n + ' / ' + NMAX + ' letters'; $('#nCount').classList.toggle('full', n >= NMAX);
+    $('#nGo').disabled = n === 0;
+  }
+  function nChips() {
+    var h = '';
+    nm.list.forEach(function (x, i) { h += '<div class="nchip"><button class="nchipn" type="button" data-i="' + i + '">' + x.n + '</button><button class="ntrash" type="button" data-i="' + i + '" aria-label="Remove ' + x.n + ' (press and hold)">' + NTRASH + '<i></i></button></div>'; });
+    $('#nSaved').innerHTML = h || '<p class="nnone">Names you use are saved here.</p>';
+  }
+  /* removing a saved name takes a 1 second press and hold, so a quick tap from little fingers does nothing */
+  var nHold = null;
+  function nHoldStop(early) { if (!nHold) return; clearTimeout(nHold.t); nHold.b.classList.remove('holding'); nHold = null; if (early) toast('Hold the trash can to remove'); }
+  $('#nSaved').addEventListener('pointerdown', function (e) {
+    var b = e.target.closest ? e.target.closest('.ntrash') : null; if (!b || current !== write) return;
+    e.preventDefault(); nHoldStop(false); audio();
+    var x = nm.list[+b.getAttribute('data-i')]; if (!x) return;
+    b.classList.add('holding'); try { b.setPointerCapture(e.pointerId); } catch (er) {}
+    nHold = { b: b, t: setTimeout(function () {
+      nHold = null; nm.list = nm.list.filter(function (o) { return o.n !== x.n; }); nStore(); nChips(); sfx.pop(); toast('Removed ' + x.n);
+    }, 1000) };
+  });
+  $('#nSaved').addEventListener('pointermove', function (e) {
+    if (!nHold) return; var r = nHold.b.getBoundingClientRect();
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) nHoldStop(false);   /* slid off: cancel */
+  });
+  ['pointerup', 'pointercancel'].forEach(function (n) { $('#nSaved').addEventListener(n, function () { nHoldStop(true); }); });
+  $('#nSaved').addEventListener('contextmenu', function (e) { if (e.target.closest && e.target.closest('.ntrash')) e.preventDefault(); });
+  $('#nSaved').addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.nchipn') : null, x = b && nm.list[+b.getAttribute('data-i')]; if (!x || current !== write) return;
+    audio(); sfx.pop(); $('#nInput').value = x.n; nTyped(); nLevels(x.n);
+  });
+  $('#nInput').addEventListener('input', nTyped);
+  $('#nInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); $('#nGo').click(); } });
+  $('#nGo').addEventListener('click', function () { var w = nFormat($('#nInput').value); if (!w || current !== write) return; audio(); sfx.pop(); $('#nInput').blur(); nLevels(w); });
+  $('#nBack1').addEventListener('click', function () { if (current === write) { audio(); wMenu(); } });
+
+  /* --- level picker: each button shows the first letter the way that level draws it --- */
+  function nLevels(w) {
+    wReset(); nm.word = w; wr.pickKind = 'name'; wShow('nLevel'); $('#prompt').textContent = 'Pick a level for ' + w;
+    var last = nLevelOf(w), h = '';
+    NLEVELS.forEach(function (v) {
+      h += '<button class="btn nlv' + (v.l === last ? ' last' : '') + '" type="button" data-l="' + v.l + '">' + (v.l === last ? '<span class="nlast">Last time</span>' : '') +
+        '<canvas aria-hidden="true"></canvas><span class="nic">' + v.ic + '</span><b>' + v.t + '</b><span>Level ' + v.l + '</span></button>';
+    });
+    $('#nLvls').innerHTML = h;
+    Array.prototype.forEach.call($('#nLvls').querySelectorAll('canvas'), function (cv, i) { nPreview(cv, w.charAt(0), i + 1); });
+  }
+  function nLines(c, x0, x1) {
+    c.strokeStyle = '#7fb2e5'; c.lineWidth = 0.9; c.setLineDash([]);
+    [WT, WB].forEach(function (y) { c.beginPath(); c.moveTo(x0, y); c.lineTo(x1, y); c.stroke(); });
+    c.setLineDash([3, 3]); c.beginPath(); c.moveTo(x0, WM); c.lineTo(x1, WM); c.stroke();
+    c.strokeStyle = '#d6e6f7'; c.beginPath(); c.moveTo(x0, WD); c.lineTo(x1, WD); c.stroke(); c.setLineDash([]);
+  }
+  function nPreview(cv, ch, lvl) {
+    var w = cv.clientWidth || 90, d = Math.min(window.devicePixelRatio || 1, 2), c = cv.getContext('2d'), L = WL[ch], i;
+    cv.width = Math.round(w * d); cv.height = Math.round(w * 1.6 * d);
+    c.setTransform(w / 100 * d, 0, 0, w / 100 * d, 0, 0); c.lineCap = 'round'; c.lineJoin = 'round';
+    nLines(c, 4, 96); if (!L) return;
+    for (i = 0; i < L.strokes.length; i++) {
+      var s = L.strokes[i], st = s.dot || s.pts[0]; c.strokeStyle = c.fillStyle = SCOL[Math.min(i, 3)];
+      if (lvl === 1) { c.globalAlpha = 0.45; c.lineWidth = 7; if (s.dot) { c.beginPath(); c.arc(s.dot[0], s.dot[1], 4, 0, 7); c.fill(); } else { wPoly(c, s.pts); c.globalAlpha = 1; wArrow(c, s.pts, 0.5); } }
+      if (lvl < 3) { c.globalAlpha = 1; c.beginPath(); c.arc(st[0], st[1], 5, 0, 7); c.fill(); }
+    }
+    c.globalAlpha = 1;
+  }
+  $('#nLvls').addEventListener('click', function (e) { var b = e.target.closest ? e.target.closest('.nlv') : null; if (b && current === write) { audio(); sfx.pop(); nBegin(+b.getAttribute('data-l')); } });
+  $('#nBack2').addEventListener('click', function () { if (current === write) { audio(); nEntry(false); } });
+
+  /* --- writing, one letter at a time --- */
+  function nBegin(lvl) {
+    nRemember(nm.word, lvl);
+    wReset(); nm.on = true; nm.level = lvl; nm.ink = {}; nm.got = 0;
+    nm.i = nNext(-1); nLetter();
+  }
+  function nNext(i) { for (i++; i < nm.word.length; i++) if (nm.word.charAt(i) !== ' ') return i; return -1; }
+  function nLetter() {
+    nm.hinted = false; wShow('wPlay'); nCard();
+    wGuidedStart(nm.word.charAt(nm.i));   /* same as Learn to write: guide, voice, scoring, hints */
+  }
+  /* letter widths come from the template, so "m" gets more room than "l" */
+  var NB = {};
+  function nBounds(ch) {
+    if (NB[ch]) return NB[ch];
+    var a = 100, b = 0; WL[ch].strokes.forEach(function (s) { (s.dot ? [s.dot] : s.pts).forEach(function (p) { a = Math.min(a, p[0]); b = Math.max(b, p[0]); }); });
+    if (b - a < 14) { var m = (a + b) / 2; a = m - 7; b = m + 7; }
+    return (NB[ch] = [a, b]);
+  }
+  function nLayout(word) {
+    var x = 6, cells = [], i, c, bd;
+    for (i = 0; i < word.length; i++) {
+      c = word.charAt(i);
+      if (c === ' ') { cells.push(null); x += 30; continue; }   /* a short gap between words; he never writes the space */
+      bd = nBounds(c); cells.push({ ux: x + 6 - bd[0], a: x, b: x + 12 + bd[1] - bd[0] }); x += 12 + bd[1] - bd[0] + 2;
+    }
+    return { cells: cells, w: x + 4 };
+  }
+  function nTpl(c, L, alpha) {
+    c.globalAlpha = alpha; c.strokeStyle = c.fillStyle = '#8f8377'; c.lineWidth = 7;
+    L.strokes.forEach(function (s) { if (s.dot) { c.beginPath(); c.arc(s.dot[0], s.dot[1], 4, 0, 7); c.fill(); } else wPoly(c, s.pts); });
+    c.globalAlpha = 1;
+  }
+  function nInk(c, ink) {
+    c.strokeStyle = c.fillStyle = '#2a2118'; c.lineWidth = 6;
+    ink.forEach(function (s) { if (s.dot) { c.beginPath(); c.arc(s.dot[0], s.dot[1], 4, 0, 7); c.fill(); } else if (s.pts.length > 1) wPoly(c, s.pts); });
+  }
+  /* the name card: lined paper, his ink for finished letters, the current letter highlighted, the rest as faint guides */
+  function nDraw(cv, cssW, maxH, cur, dpr) {
+    var lay = nLayout(nm.word), s = Math.min(cssW / lay.w, maxH / 150), cssH = Math.max(1, Math.round(150 * s)), ox = (cssW - lay.w * s) / 2, d = dpr || Math.min(window.devicePixelRatio || 1, 2), c = cv.getContext('2d');
+    cv.style.width = cssW + 'px'; cv.style.height = cssH + 'px'; cv.width = Math.round(cssW * d); cv.height = Math.round(cssH * d);
+    c.setTransform(d, 0, 0, d, 0, 0); c.fillStyle = '#fffdf3'; c.fillRect(0, 0, cssW, cssH);
+    c.setTransform(s * d, 0, 0, s * d, ox * d, -10 * s * d); c.lineCap = 'round'; c.lineJoin = 'round';
+    nLines(c, -ox / s, (cssW - ox) / s);
+    lay.cells.forEach(function (cell, i) {
+      if (!cell) return;
+      if (i === cur) { c.fillStyle = '#ffe98a'; rr(c, cell.a, 14, cell.b - cell.a, 142, 8); c.fill(); }
+      c.save(); c.translate(cell.ux, 0);
+      if (nm.ink[i]) nInk(c, nm.ink[i]); else nTpl(c, WL[nm.word.charAt(i)], i === cur ? 0.6 : 0.2);
+      c.restore();
+    });
+    return { s: s, ox: ox, cells: lay.cells, cv: cv };
+  }
+  function nCard() {
+    var box = $('#nCardBox'), maxH = clamp($('#write').clientHeight * 0.16, 48, 120);
+    nm.lay = nDraw($('#nCard'), Math.max(40, box.clientWidth - 10), maxH, nm.ink[nm.i] ? -1 : nm.i);
+  }
+  function nBig() { var b = $('#nDoneCard'); nDraw($('#nBig'), Math.max(40, b.clientWidth - 24), Math.max(40, Math.min(b.clientHeight - 24, 320)), -1); }
+  function nChime() { [880, 1175, 1568].forEach(function (f, i) { tone(f, 0.22, i * 0.07, 'sine', 0.12); }); }
+  /* the finished letter lifts off the writing space and flies up into its place on the card */
+  function nFly(i, ink, done) {
+    var lay = nm.lay, cell = lay && lay.cells[i], play = $('#wPlay'), fin = false, fly = document.createElement('canvas');
+    var end = function () { if (fin) return; fin = true; if (fly.parentNode) fly.parentNode.removeChild(fly); done(); };
+    if (!cell) { end(); return; }
+    var pr = play.getBoundingClientRect(), wc = wcv.getBoundingClientRect(), cr = lay.cv.getBoundingClientRect(), d = Math.min(window.devicePixelRatio || 1, 2), k = wc.width / 100;
+    fly.className = 'nfly'; fly.width = Math.round(wc.width * d); fly.height = Math.round(wc.height * d);
+    fly.style.width = wc.width + 'px'; fly.style.height = wc.height + 'px'; fly.style.left = (wc.left - pr.left) + 'px'; fly.style.top = (wc.top - pr.top) + 'px';
+    var c = fly.getContext('2d'); c.setTransform(k * d, 0, 0, k * d, 0, 0); c.lineCap = 'round'; c.lineJoin = 'round'; nInk(c, ink);
+    play.appendChild(fly); void fly.offsetWidth;
+    var tx = cr.left + lay.ox + cell.ux * lay.s - wc.left, ty = cr.top - 10 * lay.s - wc.top;
+    fly.style.transform = 'translate(' + tx.toFixed(1) + 'px,' + ty.toFixed(1) + 'px) scale(' + (lay.s / k).toFixed(4) + ')';
+    fly.addEventListener('transitionend', end); setTimeout(end, 650);
+  }
+  function nLetterDone() {
+    if (!nm.on || wr.mode !== 'guided') return;
+    var i = nm.i, tok = nm.tok, ink = wr.strokes.map(function (s) { return s.dot ? { dot: s.dot } : { pts: s.pts }; });
+    if (!nm.hinted) nm.got++;
+    wr.mode = 'result'; wr.strokes = [];
+    nFly(i, ink, function () {
+      if (tok !== nm.tok) return;
+      nm.ink[i] = ink; nChime(); nCard();
+      setTimeout(function () { if (tok !== nm.tok) return; var nx = nNext(i); if (nx < 0) nFinish(); else { nm.i = nx; nLetter(); } }, 600);
+    });
+  }
+
+  /* --- finished: the whole name in his handwriting --- */
+  function nFinish() {
+    var tok = nm.tok, earned = nm.got + 2, w = nm.word, c1 = pick(NCHEER), c2 = pick(NCHEER.filter(function (x) { return x !== c1; }));
+    wr.mode = 'result'; wShow('nDone'); $('#prompt').textContent = 'You wrote ' + w + '!';
+    for (var k = 0; k < earned; k++) addStar();   /* 1 per letter written without a hint, plus 2 for finishing */
+    $('#nEarn').textContent = '+' + earned + ' ★';
+    nBig(); sfx.win(); domConfetti(); banner(pick(CHEERS));
+    /* her voice only: a cheer, the name spelled with her letter clips, another cheer */
+    var items = [Pc(c1)].concat(w.replace(/ /g, '').split('').map(Lc), [Pc(c2)]);
+    if (VOICE[NWROTE]) items.splice(1, 0, Pc(NWROTE));
+    vsay(items, function () { if (tok === nm.tok && !VOICE[NWROTE]) speak(NWROTE); });   /* not recorded yet: device voice, said after hers */
+  }
+  function nPng(cb) {
+    var lay = nLayout(nm.word), S = 4, cv = document.createElement('canvas');
+    nDraw(cv, Math.round(lay.w * S) + 120, 150 * S, -1, 1);   /* a margin on each side */
+    try { if (cv.toBlob) cv.toBlob(function (b) { cb(b ? URL.createObjectURL(b) : cv.toDataURL('image/png'), !!b); }, 'image/png'); else cb(cv.toDataURL('image/png'), false); } catch (e) { toast('Could not make the picture'); }
+  }
+  $('#nSave').addEventListener('click', function () {
+    if (current !== write || !nm.word) return; audio(); sfx.pop();
+    nPng(function (url, blob) {
+      var a = document.createElement('a'); a.href = url; a.download = nm.word.replace(/ /g, '-') + '-name-card.png'; a.rel = 'noopener';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      if (blob) setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
+    });
+  });
+  $('#nAgain').addEventListener('click', function () { if (current === write) { audio(); sfx.pop(); nBegin(nm.level); } });
+  $('#nOther').addEventListener('click', function () { if (current === write) { audio(); sfx.pop(); nEntry(true); } });
+  nm.list = nLoad();
 
   /* ---------- My Farm: stars earned from writing build a farm ---------- */
   /* Every farm number lives here so it is easy to tune. */
