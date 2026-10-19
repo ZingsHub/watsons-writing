@@ -26,6 +26,18 @@ http.createServer((req, res) => {
     /* the page and the service worker must always be fresh; images can be cached */
     headers['Cache-Control'] = (ext === '.png' || ext === '.mp3') ? 'public, max-age=86400' : 'no-cache';
     if (path.basename(file) === 'sw.js') headers['Service-Worker-Allowed'] = '/';
+    /* Safari's <audio> asks for byte ranges and will not play clips without them */
+    if (ext === '.mp3') {
+      headers['Accept-Ranges'] = 'bytes';
+      const m = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || '');
+      if (m && (m[1] || m[2])) {
+        let start = m[1] ? +m[1] : Math.max(0, data.length - +m[2]), end = m[1] && m[2] ? Math.min(+m[2], data.length - 1) : data.length - 1;
+        if (start > end || start >= data.length) { res.writeHead(416, { 'Content-Range': 'bytes */' + data.length }); return res.end(); }
+        headers['Content-Range'] = 'bytes ' + start + '-' + end + '/' + data.length;
+        headers['Content-Length'] = end - start + 1;
+        res.writeHead(206, headers); return res.end(data.subarray(start, end + 1));
+      }
+    }
     const compressible = ['.html', '.js', '.css', '.json', '.webmanifest', '.svg', '.txt'].includes(ext);
     if (compressible && /\bgzip\b/.test(req.headers['accept-encoding'] || '')) {
       zlib.gzip(data, (e, z) => {
