@@ -1,0 +1,8 @@
+{
+  "name": "watsons-writing",
+  "version": "1.0.0",
+  "description": "Watson's Writing: a letter and number writing PWA",
+  "private": true,
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}
