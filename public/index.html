@@ -1185,10 +1185,19 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     ['wMenu', 'wPick', 'wPlay', 'nEntry', 'nLevel', 'nDone'].forEach(function (x) { $('#' + x).hidden = x !== id; }); $('#wOver').hidden = true; $('#wHintPick').hidden = true;
     $('#nCardBox').hidden = !nm.on; $('#wPlay').classList.toggle('nlv3', nm.on && nm.level === 3);
   }
+  function wFree() { return wr.mode === 'free' || wr.mode === 'freehint'; }
+  /* Free writing fills the white box, so follow the box whenever its size changes (rotation, toolbar, window) */
+  if (window.ResizeObserver) try { new ResizeObserver(function () { if (current === write && wFree()) wFit(); }).observe($('#wWrap')); } catch (e) {}
   function wFit() {
     var box = $('#wWrap'), w = box.clientWidth, h = box.clientHeight;
     if (!w || !h) return;
     wsc = Math.min(w / 100, h / 160); wdpr = Math.min(window.devicePixelRatio || 1, 2);
+    if (wFree()) {   /* Free writing: the canvas fills the whole white box, and the ruled rows repeat down the page */
+      wr.fw = w / wsc; wr.fh = h / wsc; wr.rows = Math.max(1, Math.floor(wr.fh / 160)); wr.oy = (wr.fh - wr.rows * 160) / 2;
+      wr.ftx = (wr.fw - 100) / 2; wr.fty = wr.oy + Math.floor((wr.rows - 1) / 2) * 160;   /* hint demo: centered, on a ruled row */
+      wcv.style.width = w + 'px'; wcv.style.height = h + 'px'; wcv.width = Math.round(w * wdpr); wcv.height = Math.round(h * wdpr);
+      return;
+    }
     wcv.style.width = Math.floor(100 * wsc) + 'px'; wcv.style.height = Math.floor(160 * wsc) + 'px';
     wcv.width = Math.floor(100 * wsc * wdpr); wcv.height = Math.floor(160 * wsc * wdpr);
   }
@@ -1205,14 +1214,22 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   }
   function wDraw() {
     var c = wctx, t = performance.now() / 1000, i;
+    var free = wFree(), tx = free ? wr.ftx : 0, ty = free ? wr.fty : 0;   /* tx, ty: where the 100 x 160 letter space sits */
+    if (free && !wr.fw) return;
     c.setTransform(wsc * wdpr, 0, 0, wsc * wdpr, 0, 0);
-    c.clearRect(0, 0, 100, 160);
-    c.fillStyle = '#fffdf3'; c.fillRect(0, 0, 100, 160);
     c.lineCap = 'round'; c.lineJoin = 'round';
-    c.strokeStyle = '#7fb2e5'; c.lineWidth = 0.9; c.setLineDash([]);
-    [WT, WB].forEach(function (y) { c.beginPath(); c.moveTo(4, y); c.lineTo(96, y); c.stroke(); });
-    c.setLineDash([3, 3]); c.beginPath(); c.moveTo(4, WM); c.lineTo(96, WM); c.stroke();
-    c.strokeStyle = '#d6e6f7'; c.beginPath(); c.moveTo(4, WD); c.lineTo(96, WD); c.stroke(); c.setLineDash([]);
+    if (free) {
+      c.clearRect(0, 0, wr.fw, wr.fh); c.fillStyle = '#fffdf3'; c.fillRect(0, 0, wr.fw, wr.fh);
+      for (i = 0; i < wr.rows; i++) { c.save(); c.translate(0, wr.oy + i * 160); nLines(c, 0, wr.fw); c.restore(); }   /* edge to edge */
+    } else {
+      c.clearRect(0, 0, 100, 160);
+      c.fillStyle = '#fffdf3'; c.fillRect(0, 0, 100, 160);
+      c.strokeStyle = '#7fb2e5'; c.lineWidth = 0.9; c.setLineDash([]);
+      [WT, WB].forEach(function (y) { c.beginPath(); c.moveTo(4, y); c.lineTo(96, y); c.stroke(); });
+      c.setLineDash([3, 3]); c.beginPath(); c.moveTo(4, WM); c.lineTo(96, WM); c.stroke();
+      c.strokeStyle = '#d6e6f7'; c.beginPath(); c.moveTo(4, WD); c.lineTo(96, WD); c.stroke(); c.setLineDash([]);
+    }
+    c.save(); c.translate(tx, ty);
     var L = WL[wr.letter], mode = wr.mode, lvl = nm.on ? nm.level : 1;   /* Write my name: 1 trace, 2 dots only, 3 just the lines */
     if (L && (mode === 'guided' || mode === 'quizhint' || mode === 'freehint')) {
       /* faint letter */
@@ -1238,6 +1255,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       var st = wr.strokes[i]; c.strokeStyle = st.col; c.fillStyle = st.col; c.lineWidth = 7;
       if (st.dot) { c.beginPath(); c.arc(st.dot[0], st.dot[1], 4.5, 0, 7); c.fill(); } else if (st.pts.length > 1) wPoly(c, st.pts);
     }
+    c.restore();
     /* free / quiz ink */
     c.strokeStyle = '#2a2118'; c.fillStyle = '#2a2118'; c.lineWidth = 6;
     for (i = 0; i < wr.free.length; i++) { var f = wr.free[i]; if (f.length === 1) { c.beginPath(); c.arc(f[0][0], f[0][1], 3.5, 0, 7); c.fill(); } else wPoly(c, f); }
@@ -1251,6 +1269,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       if (!cs.dot && lvl === 1) { wArrow(c, cs.pts, 0.3); wArrow(c, cs.pts, 0.65); }
     }
     /* demo animation */
+    c.save(); c.translate(tx, ty);
     if (wr.demo && L) {
       var ds = L.strokes[wr.demo.i], col = SCOL[Math.min(wr.demo.i, 3)], pr = wr.demo.t;
       c.strokeStyle = col; c.fillStyle = col; c.lineWidth = 7.5; c.globalAlpha = 0.9;
@@ -1262,6 +1281,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       }
       c.globalAlpha = 1;
     }
+    c.restore();
   }
   function wLoop(now) {
     wr.raf = requestAnimationFrame(wLoop);
@@ -1292,7 +1312,12 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   }
 
   /* --- pointer input --- */
-  function wPos(e) { var r = wcv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * 100, (e.clientY - r.top) / r.height * 160]; }
+  function wPos(e) {
+    var r = wcv.getBoundingClientRect();
+    /* Free writing: canvas units, and a finger that slides past the edge is held at the edge (pointer capture keeps the stroke going) */
+    if (wFree()) return [clamp((e.clientX - r.left) / wsc, 0, wr.fw), clamp((e.clientY - r.top) / wsc, 0, wr.fh)];
+    return [(e.clientX - r.left) / r.width * 100, (e.clientY - r.top) / r.height * 160];
+  }
   wcv.addEventListener('pointerdown', function (e) {
     e.preventDefault(); audio();
     if (wr.locked || wr.demo || !wr.mode || wr.mode === 'result') return;
@@ -1505,8 +1530,9 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function wFreeStart() {
     wr.pickKind = 'free'; wr.idleN = 0; wLastAct = Date.now();
     wr.mode = 'free'; wr.letter = 'A'; wr.free = []; wr.strokes = []; wr.ghost = {}; wr.demo = null; wr.locked = false;
-    wShow('wPlay'); wFit(); $('#wHint').hidden = false; $('#wClear').hidden = false; $('#wDone').hidden = true;
+    wShow('wPlay'); $('#wHint').hidden = false; $('#wClear').hidden = false; $('#wDone').hidden = true;
     $('#prompt').textContent = 'Write any letter you like'; wCaption('<span class="wq">Free writing</span>'); $('#wPts').textContent = '';
+    wFit();   /* after the buttons and caption are set, so the white box has its final size */
     vsay([Pc('Write any letter you like!')]);
   }
   /* --- idle reminders: after 10 s of quiet, repeat the instructions; after two repeats, point at Hint --- */
