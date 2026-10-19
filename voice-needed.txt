@@ -1,8 +1,4 @@
 NEEDED NOW (already used in the app)
-Welcome to your farm!
-You earned a new animal!
-Pick a friend for your farm!
-A new friend!
 You wrote your name!
 
 IDEAS (not used yet, place later)
