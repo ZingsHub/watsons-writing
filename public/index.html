@@ -411,6 +411,33 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   .tube { transition: none; }
   .animal { transition: none; }
 }
+/* ---------- top Back button and Grown-ups ---------- */
+.topback { flex: none; min-height: 56px; padding: 4px 16px; font-size: 20px; }
+#app.sub { gap: 0; }   /* the taller Back row takes back the gap, so the writing space does not shrink */
+.wfoot { margin-top: auto; display: flex; align-items: flex-end; gap: 8px; }
+.wfoot .wnote { flex: 1; }
+.gbtn { flex: none; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 6px 4px 0; font-family: var(--body); font-size: 11px; font-weight: 600; color: #4f6b3a; background: none; border: 0; cursor: pointer; }
+.gbtn svg { width: 24px; height: 24px; display: block; }
+.gscreen { align-items: center; justify-content: flex-start; text-align: center; }
+.gp { margin: 4px 0 0; padding: 8px 14px; font-size: 17px; background: var(--paper); border: 3px solid var(--ink); border-radius: 14px; }
+.greset { min-height: 64px; font-size: 22px; padding: 6px 22px; background: #ffd6cf; }
+.gq { font-family: var(--display); font-weight: 700; font-size: 44px; color: #fff; text-shadow: 0 3px 0 var(--ink); }
+.gans { min-width: 150px; min-height: 64px; padding: 4px 14px; font-family: var(--display); font-weight: 700; font-size: 44px; line-height: 56px; background: #fff; border: 3px solid var(--ink); border-radius: 14px; }
+.gans.shake { animation: shake 0.35s; }
+.gmsg { margin: 0; min-height: 22px; color: #fff; font-size: 17px; }
+.gpad { flex: none; width: min(100%, 330px); display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.gpad .btn { min-height: 60px; font-size: 28px; font-weight: 700; padding: 0; }
+.gpad .gok { background: #9fd46a; }
+.gwarn { margin: 6px 0 0; max-width: 560px; padding: 14px 16px; font-size: 20px; line-height: 1.4; background: var(--paper); border: 3px solid var(--ink); border-radius: 14px; }
+.gchk { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 4px 14px; font-size: 18px; color: var(--ink); background: #fff; border: 3px solid var(--ink); border-radius: 14px; cursor: pointer; }
+.gchk input { width: 26px; height: 26px; margin: 0; accent-color: #1c6fd1; }
+.gbtns { width: min(100%, 560px); display: flex; gap: 12px; }
+.gbtns .btn { flex: 1; min-height: 64px; font-size: 21px; }
+.gdanger { background: #f3a59a; }
+.gall { margin: 30px 0 0; font-family: var(--display); font-weight: 700; font-size: 40px; color: #fff; text-shadow: 0 3px 0 var(--ink); }
+@media (max-width: 520px) {
+  #app.sub .bar h1 { display: none; }   /* below the menu, a phone shows Back instead of the title */
+}
 /* ---------- Write my name ---------- */
 .namebtn { background: #ffd9a8; display: flex; align-items: center; justify-content: center; gap: 12px; flex: none; }
 .namebtn .nbi svg { width: 58px; height: 48px; display: block; }
@@ -557,6 +584,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 
 <main id="app">
   <header class="bar">
+    <button id="topBack" class="btn quiet topback" type="button" hidden>&#9664; Back</button>
     <h1>Watson's Writing</h1>
     <span class="grow"></span>
     <button id="mute" class="btn quiet" type="button" aria-pressed="false">Sound: on</button>
@@ -574,7 +602,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           <button class="btn modebtn" type="button" data-m="free">&#127912; Free writing</button>
           <button class="btn modebtn namebtn" type="button" data-m="name"><span class="nbi"><svg viewBox="0 0 58 48" stroke="#2a2118" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"><rect x="3" y="9" width="38" height="31" rx="5" fill="#fff"/><path d="M3 21 V14 A5 5 0 0 1 8 9 H36 A5 5 0 0 1 41 14 V21 Z" fill="#c4402f"/><path d="M9 33 H35" stroke="#7fb2e5" stroke-width="2"/><path d="M10 31 C12 25 15 25 16 29 C17 33 20 33 22 27 M25 31 L27 25 L29 31" fill="none"/><g transform="rotate(35 46 26)"><rect x="42" y="5" width="8" height="27" fill="#ffc533"/><path d="M42 32 L46 42 L50 32 Z" fill="#f2d3a8"/><path d="M44.6 38 L46 42 L47.4 38 Z" fill="#2a2118"/><rect x="42" y="2" width="8" height="5" rx="1.5" fill="#e86fa3"/></g></svg></span>Write my name</button>
           <button class="btn modebtn farmbtn" type="button" data-m="farm"><span id="wFarmIcon" class="fbi"></span>My Farm<span id="wFarmGift" class="fbadge" hidden></span></button>
-          <p class="wnote">Free practice aid made by a parent. Not affiliated with or endorsed by Peterson Directed Handwriting.</p>
+          <div class="wfoot"><p class="wnote">Free practice aid made by a parent. Not affiliated with or endorsed by Peterson Directed Handwriting.</p>
+          <button id="gBtn" class="gbtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="6.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg><span>Grown-ups</span></button></div>
         </div>
         <div id="wPick" class="wpick" hidden>
           <div id="wTabs" class="wtabs"><button class="btn on" type="button" data-w="up"><b>Capital</b><span class="ex"><i class="r">A</i><i class="g">B</i><i class="b">C</i></span></button><button class="btn" type="button" data-w="lo"><b>Lowercase</b><span class="ex"><i class="r">a</i><i class="g">b</i><i class="b">c</i></span></button><button class="btn" type="button" data-w="num"><b>Numbers</b><span class="ex"><i class="r">1</i><i class="g">2</i><i class="b">3</i></span></button></div>
@@ -585,7 +614,6 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
             <button class="btn" type="button" data-s="mix"><b>Mixed</b><span class="ex"><i class="r">A</i><i class="g">b</i><i class="b">C</i></span></button>
             <button class="btn" type="button" data-s="num"><b>Numbers</b><span class="ex"><i class="r">1</i><i class="g">2</i><i class="b">3</i></span></button>
           </div>
-          <div class="wbar"><button id="wBack2" class="btn quiet" type="button">&#9664; Back</button></div>
         </div>
         <div id="nEntry" class="nscreen" hidden>
           <label class="nlbl" for="nInput">Grown-ups: type a name or word</label>
@@ -593,11 +621,9 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           <div class="nprev"><span id="nPrev" class="nprevw"></span><span id="nCount" class="ncount">0 / 12 letters</span></div>
           <h3 class="nh">Saved names</h3>
           <div id="nSaved" class="nsaved"></div>
-          <div class="wbar"><button id="nBack1" class="btn quiet" type="button">&#9664; Back</button></div>
         </div>
         <div id="nLevel" class="nscreen" hidden>
           <div id="nLvls" class="nlvls"></div>
-          <div class="wbar"><button id="nBack2" class="btn quiet" type="button">&#9664; Back</button></div>
         </div>
         <div id="nDone" class="nscreen" hidden>
           <div id="nDoneCard" class="ndcard"><canvas id="nBig"></canvas></div>
@@ -608,12 +634,28 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
             <button id="nOther" class="btn quiet" type="button">Pick another name</button>
           </div>
         </div>
+        <div id="gHome" class="nscreen gscreen" hidden>
+          <p class="gp">For parents and teachers.</p>
+          <button id="gReset" class="btn greset" type="button">Reset all progress</button>
+        </div>
+        <div id="gGate" class="nscreen gscreen" hidden>
+          <p class="gp">Grown-ups only. Solve this to continue:</p>
+          <div id="gQ" class="gq"></div>
+          <div id="gAns" class="gans" aria-live="polite"></div>
+          <p id="gMsg" class="gmsg"></p>
+          <div id="gPad" class="gpad"><button class="btn" type="button" data-k="1">1</button><button class="btn" type="button" data-k="2">2</button><button class="btn" type="button" data-k="3">3</button><button class="btn" type="button" data-k="4">4</button><button class="btn" type="button" data-k="5">5</button><button class="btn" type="button" data-k="6">6</button><button class="btn" type="button" data-k="7">7</button><button class="btn" type="button" data-k="8">8</button><button class="btn" type="button" data-k="9">9</button><button class="btn quiet" type="button" data-k="del" aria-label="Delete">&#9003;</button><button class="btn" type="button" data-k="0">0</button><button class="btn gok" type="button" data-k="ok">OK</button></div>
+        </div>
+        <div id="gConfirm" class="nscreen gscreen" hidden>
+          <p class="gwarn">This erases ALL stars, letter scores, and the farm and starts over. This cannot be undone.</p>
+          <label class="gchk"><input id="gNames" type="checkbox"> Also remove saved names</label>
+          <div class="gbtns"><button id="gCancel" class="btn" type="button">Cancel</button><button id="gErase" class="btn gdanger" type="button">Erase everything</button></div>
+        </div>
+        <div id="gDone" class="nscreen gscreen" hidden><p class="gall">&#10003; All reset</p></div>
         <div id="wPlay" class="wplay" hidden>
           <div id="nCardBox" class="ncardbox" hidden><canvas id="nCard"></canvas></div>
           <div id="wCap" class="wcap"></div>
           <div id="wWrap" class="wwrap"><canvas id="wcv"></canvas></div>
           <div class="wbar">
-            <button id="wBack" class="btn quiet" type="button">&#9664; Back</button>
             <button id="wHint" class="btn" type="button">&#128161; Hint</button>
             <button id="wClear" class="btn quiet" type="button">Clear</button>
             <button id="wDone" class="btn" type="button">Done</button>
@@ -637,7 +679,6 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
         <div class="fprog"><span class="fnum"><b class="s">&#9733;</b><span id="fLife">0</span></span><div class="fmeter"><i id="fFill"></i></div><span id="fGoal" class="fnum"><span id="fGoalIcon" class="fgi"></span><b class="s">&#9733;</b><span id="fNext">3</span></span></div>
         <div id="fScene" class="fscene" data-stage="baby"><div id="fLayer" class="flayer"></div></div>
         <div class="fbar2">
-          <button id="fBack" class="btn quiet" type="button">&#9664; Back</button>
           <span class="grow"></span>
           <button id="fPaint" class="btn ficon" type="button" aria-label="Decorate" hidden><svg viewBox="0 0 48 48" stroke="#2a2118" stroke-width="3" stroke-linejoin="round"><g transform="rotate(35 24 24)"><rect x="20" y="22" width="8" height="24" rx="3" fill="#c98a52"/><rect x="18.5" y="15" width="11" height="8" fill="#b9bec6"/><path d="M18.5 15 C18.5 7 24 1 24 1 C24 1 29.5 7 29.5 15 Z" fill="#e8417a"/></g></svg></button>
           <button id="fHammer" class="btn ficon" type="button" aria-label="Build"><svg viewBox="0 0 48 48" stroke="#2a2118" stroke-width="3" stroke-linejoin="round"><g transform="rotate(-40 24 24)"><rect x="21" y="16" width="6" height="30" rx="2" fill="#c98a52"/><rect x="9" y="5" width="30" height="13" rx="3" fill="#8a8f98"/></g></svg></button>
@@ -1182,8 +1223,14 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function wBest() { var o = {}; try { o = JSON.parse(localStorage.getItem('ty_write') || '{}') || {}; } catch (e) {} return o; }
   function wSaveBest(ch, st) { var o = wBest(); if (!o[ch] || o[ch] < st) { o[ch] = st; try { localStorage.setItem('ty_write', JSON.stringify(o)); } catch (e) {} } }
   function wShow(id) {
-    ['wMenu', 'wPick', 'wPlay', 'nEntry', 'nLevel', 'nDone'].forEach(function (x) { $('#' + x).hidden = x !== id; }); $('#wOver').hidden = true; $('#wHintPick').hidden = true;
+    ['wMenu', 'wPick', 'wPlay', 'nEntry', 'nLevel', 'nDone', 'gHome', 'gGate', 'gConfirm', 'gDone'].forEach(function (x) { $('#' + x).hidden = x !== id; }); $('#wOver').hidden = true; $('#wHintPick').hidden = true;
     $('#nCardBox').hidden = !nm.on; $('#wPlay').classList.toggle('nlv3', nm.on && nm.level === 3);
+    syncBack();
+  }
+  /* one Back button, top left, on every screen below the main menu */
+  function syncBack() {
+    var sub = current === farm || (current === write && $('#wMenu').hidden && $('#gDone').hidden);
+    $('#topBack').hidden = !sub; $('#app').classList.toggle('sub', sub);
   }
   function wFree() { return wr.mode === 'free' || wr.mode === 'freehint'; }
   /* Free writing fills the white box, so follow the box whenever its size changes (rotation, toolbar, window) */
@@ -1541,6 +1588,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (current !== write || vSpeaking || wr.ink || wr.demo || wr.locked || wr.qBusy || wr.mode === 'result') return;
     if (!$('#wOver').hidden || !$('#wHintPick').hidden) return;
     if (!$('#nEntry').hidden || !$('#nLevel').hidden || !$('#nDone').hidden) return;   /* a grown-up is typing, or he is done */
+    if (!$('#gHome').hidden || !$('#gGate').hidden || !$('#gConfirm').hidden || !$('#gDone').hidden) return;
     if (Date.now() - wLastAct < wr.idleMs) return;
     var inPlay = !$('#wPlay').hidden, items = null, m = wr.mode;
     if (wr.idleN >= 2) {
@@ -1576,8 +1624,6 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     $('#wHintPick').hidden = true; wr.mode = 'freehint'; wr.free = []; wLesson(b.getAttribute('data-c'), null);
   });
   $('#wHintClose').addEventListener('click', function () { $('#wHintPick').hidden = true; });
-  $('#wBack').addEventListener('click', function () { if (current !== write) return; audio(); wGoBack(); });
-  $('#wBack2').addEventListener('click', function () { if (current === write) { audio(); wGoBack(); } });
   $('#wHint').addEventListener('click', function () { if (current === write) { audio(); wHint(); } });
   $('#wClear').addEventListener('click', function () {
     if (current !== write || wr.qBusy) return; clearTimeout(wAutoT); wr.free = []; wr.ink = null; wr.ghost = {}; wr.demo = null; wr.lesson++; wr.locked = false; vstop();
@@ -1672,7 +1718,6 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   $('#nInput').addEventListener('input', nTyped);
   $('#nInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); $('#nGo').click(); } });
   $('#nGo').addEventListener('click', function () { var w = nFormat($('#nInput').value); if (!w || current !== write) return; audio(); sfx.pop(); $('#nInput').blur(); nLevels(w); });
-  $('#nBack1').addEventListener('click', function () { if (current === write) { audio(); wMenu(); } });
 
   /* --- level picker: each button shows the first letter the way that level draws it --- */
   function nLevels(w) {
@@ -1704,7 +1749,6 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     c.globalAlpha = 1;
   }
   $('#nLvls').addEventListener('click', function (e) { var b = e.target.closest ? e.target.closest('.nlv') : null; if (b && current === write) { audio(); sfx.pop(); nBegin(+b.getAttribute('data-l')); } });
-  $('#nBack2').addEventListener('click', function () { if (current === write) { audio(); nEntry(false); } });
 
   /* --- writing, one letter at a time --- */
   function nBegin(lvl) {
@@ -1819,6 +1863,54 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   $('#nAgain').addEventListener('click', function () { if (current === write) { audio(); sfx.pop(); nBegin(nm.level); } });
   $('#nOther').addEventListener('click', function () { if (current === write) { audio(); sfx.pop(); nEntry(true); } });
   nm.list = nLoad();
+
+  /* --- the top Back button: one step up from wherever he is --- */
+  $('#topBack').addEventListener('click', function () {
+    audio();
+    if (current === farm) { sfx.pop(); farmClose(); return; }
+    if (current !== write) return;
+    if (!$('#nEntry').hidden || !$('#gHome').hidden) wMenu();
+    else if (!$('#nLevel').hidden || !$('#nDone').hidden) nEntry(false);
+    else if (!$('#gGate').hidden || !$('#gConfirm').hidden) gHome();
+    else wGoBack();
+  });
+
+  /* ---------- Grown-ups: reset all progress, behind a math problem (reachable only from the main menu) ---------- */
+  var GKEYS = ['ty_stars', 'ty_name', 'ty_voice', 'ty_write', 'ww_farm', 'ww_farm_bad'];   /* everything the app saves; saved names (ww_names) only when ticked */
+  var gAnswer = -1, gLast = '', gTyped = '';
+  function gHome() { wReset(); wShow('gHome'); $('#prompt').textContent = 'Grown-ups'; }
+  function gRand(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+  /* a new problem every time: two-digit plus one-digit (answer 20 to 60), or 6-9 times 6-9 */
+  function gProblem() {
+    var a, b, q;
+    do {
+      if (Math.random() < 0.5) { b = gRand(1, 9); a = gRand(Math.max(11, 20 - b), 60 - b); q = a + ' + ' + b; gAnswer = a + b; }
+      else { a = gRand(6, 9); b = gRand(6, 9); q = a + ' \u00d7 ' + b; gAnswer = a * b; }
+    } while (q === gLast);
+    gLast = q; gTyped = ''; $('#gQ').textContent = q + ' = ?'; $('#gAns').textContent = '';
+  }
+  function gGate() { wShow('gGate'); $('#prompt').textContent = 'Grown-ups only'; $('#gMsg').textContent = ''; gProblem(); }
+  function gShake() { var e = $('#gAns'); e.classList.remove('shake'); void e.offsetWidth; e.classList.add('shake'); }
+  function gKey(k) {
+    if (k === 'del') gTyped = gTyped.slice(0, -1);
+    else if (k === 'ok') {
+      if (gTyped && +gTyped === gAnswer) { gConfirm(); return; }
+      gShake(); if (gTyped) { $('#gMsg').textContent = 'Not quite. Try this one.'; gProblem(); }   /* wrong: a new problem, never the answer */
+      return;
+    } else if (gTyped.length < 3) gTyped += k;
+    $('#gAns').textContent = gTyped;
+  }
+  function gConfirm() { wShow('gConfirm'); $('#prompt').textContent = 'Reset all progress?'; $('#gNames').checked = false; try { $('#gCancel').focus(); } catch (e) {} }
+  function gErase() {
+    GKEYS.concat($('#gNames').checked ? [NKEY] : []).forEach(function (k) { try { localStorage.removeItem(k); } catch (e) {} });
+    wShow('gDone'); $('#prompt').textContent = 'All reset'; sfx.pop();
+    setTimeout(function () { try { location.reload(); } catch (e) {} }, 1200);   /* start again exactly like a first visit */
+  }
+  $('#gBtn').addEventListener('click', function () { if (current === write && !$('#wMenu').hidden) { audio(); sfx.pop(); gHome(); } });
+  $('#gReset').addEventListener('click', function () { if (current === write) { audio(); sfx.pop(); gGate(); } });
+  $('#gPad').addEventListener('click', function (e) { var b = e.target.closest ? e.target.closest('button[data-k]') : null; if (b && current === write) { audio(); sfx.pop(); gKey(b.getAttribute('data-k')); } });
+  $('#gCancel').addEventListener('click', function () { if (current === write) { audio(); sfx.pop(); gHome(); } });
+  $('#gErase').addEventListener('click', function () { if (current === write && !$('#gConfirm').hidden) { audio(); gErase(); } });
 
   /* ---------- My Farm: stars earned from writing build a farm ---------- */
   /* Every farm number lives here so it is easy to tune. */
@@ -2293,7 +2385,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     },
     stop: function () { fEndDrag(); fBuildMode(false); fOn = false; cancelAnimationFrame(fRaf); clearTimeout(fTimer); $('#fSheet').hidden = true; fSheetKind = ''; vstop(); }
   };
-  function farmOpen() { write.stop(); current = farm; $('#write').hidden = true; $('#farm').hidden = false; $('#prompt').textContent = 'My Farm'; farm.start(); }
+  function farmOpen() { write.stop(); current = farm; $('#write').hidden = true; $('#farm').hidden = false; $('#prompt').textContent = 'My Farm'; syncBack(); farm.start(); }
   function farmClose() { farm.stop(); $('#farm').hidden = true; $('#write').hidden = false; current = write; write.start(true); }
   $('#fLayer').addEventListener('click', function (e) {
     if (current !== farm || !e.target.closest || performance.now() < fNoClick) return;   /* no tap right after a drag */
@@ -2309,7 +2401,6 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     var k = b.getAttribute('data-k');
     if (fSheetKind === 'pick') fAdopt(k); else if (fSheetKind === 'decor') fDecor(b, k); else if (fSheetKind === 'build') fBuyItem(b, k);
   });
-  $('#fBack').addEventListener('click', function () { if (current !== farm) return; audio(); sfx.pop(); farmClose(); });
   $('#fHammer').addEventListener('click', function () {   /* first tap: build mode and the shop; tap again to stop building */
     if (current !== farm) return; audio(); sfx.pop();
     if (fBuildOn) fBuildMode(false); else { fBuildMode(true); fSheet('build'); }
