@@ -3,14 +3,27 @@
 Letter and number writing PWA for a 4-year-old (Print Rhythm Leader method). Deployed on Railway from GitHub `ZingsHub/watsons-writing` (branch `main`); every push to main redeploys. Live: https://watsons-writing-production.up.railway.app
 
 ## Layout
-- `public/index.html`: the entire app (HTML, CSS, JS in one file, about 1.9 MB because her recorded voice clips are embedded as base64 in the `VOICE` object). Never print or paste the whole file; read and edit small sections.
-- `public/sw.js`: service worker for offline use. Bump `VERSION` (ww-v1 -> ww-v2 ...) in the same commit whenever index.html changes, or devices keep the old copy.
+- `public/index.html`: the entire app (HTML, CSS, JS in one file, about 2,700 lines). Read and edit small sections; don't print the whole file.
+- `public/audio/`: her recorded voice clips (`001.mp3` ...) plus `manifest.json`, which maps each exact script line to its clip.
+- `public/sw.js`: service worker for offline use; it also caches every clip in the audio manifest. Bump `VERSION` (ww-v11 -> ww-v12 ...) in the same commit whenever index.html or audio changes, or devices keep the old copy.
 - `public/manifest.webmanifest`, `public/icons/`: install (PWA) files.
 - `server.js`: dependency-free static server for Railway (`npm start`).
+- `voice-needed.txt`: spoken lines that still need a recording from Zach.
+
+## Finding things in index.html
+Sections are marked with `/* ---------- name ---------- */` comments; grep for them rather than relying on line numbers.
+- Styles first (with blocks for Write my name, My Farm, sideways layout), then the screen markup, then one `<script>`.
+- Sound: `speak()` uses her clip if one exists, else the device voice (`speakTTS`). `VOICE` is filled from `/audio/manifest.json` at startup.
+- Letter templates: `WD_(char, strokeNames, strokes)` calls, 62 of them (A-Z, a-z, 0-9), in a 100x160 space (top line y=20, midline 70, baseline 120, descender 150).
+- Grading: `evalStroke` scores each stroke on pointer release; the "whole-letter shape check" judges the finished letter in Writing Quiz and Write my name levels 2-3.
+- Writing game sections: state, pointer input, guided practice, quiz, hints, menus, idle reminders.
+- Write my name: a grown-up types a word; levels 1 trace, 2 dots only, 3 just the lines. Names are saved in localStorage (`ww_names`).
+- Back button and Grown-ups (reset all progress behind a math problem).
+- My Farm: stars earned from writing build a farm. Settings live in the `FARM` object; inline SVG pictures, Web Audio animal sounds, and dragging (animals any time, items only in build mode).
 
 ## How the app works
-- Modes: Learn to write, Writing Quiz, Free writing. Letters/numbers are stroke templates (`WD_(...)`) in a 100x160 space; `evalStroke` scores each stroke. Grading happens only on pointer release.
-- Voice: `VOICE` maps exact script lines to her recorded clips. If a spoken line has no clip it falls back to the device voice, so any NEW spoken line needs a new recording from Zach.
+- Menu modes: Learn to write, Writing Quiz, Free writing, Write my name, plus My Farm. Free writing fills the whole writing box.
+- Voice: any NEW spoken line needs a new recording from Zach; until then it falls back to the device voice. Add new lines to `voice-needed.txt`. When clips arrive, put them in `public/audio/` and add them to `manifest.json`.
 - Idle reminder after 10 s: repeats instructions, then highlights Hint.
 
 ## Workflow
