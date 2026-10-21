@@ -578,9 +578,93 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 .gate[hidden] { display: none; }
 .gate .btn { font-size: 30px; min-height: 120px; padding: 12px 28px; display: flex; flex-direction: column; gap: 6px; align-items: center; }
 .gate .gl { font-size: 54px; }
+/* ---------- picture icons, result popup eye, quiz summary ---------- */
+.ic { display: block; width: 36px; height: 36px; }
+#wClear .ic { display: none; }
+#wClear.ico { min-height: 56px; min-width: 56px; padding: 2px 8px; }
+#wClear.ico .ic { display: block; margin: 0 auto; }
+#wClear.ico .tx { display: none; }
+.wover { overflow-y: auto; justify-content: safe center; }
+.wover b { text-align: center; line-height: 1.15; }
+@media (orientation: portrait) { .wover { padding-top: 72px; } }   /* room for the eye button above the title */
+.wover .btn.weye { position: absolute; top: 8px; right: 8px; min-width: 0; width: 62px; min-height: 56px; height: 56px; padding: 0; display: grid; place-items: center; }
+.wover .btn.weye .ic { width: 42px; height: 42px; }
+.wobtns { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.wogrid { width: 100%; display: grid; grid-template-columns: repeat(5, minmax(0, 64px)); justify-content: center; gap: 10px; }
+.wogrid[hidden] { display: none; }
+.woq { position: relative; padding: 3px; background: var(--paper); border: 3px solid var(--ink); border-radius: 10px; box-shadow: 0 3px 0 var(--ink); cursor: pointer; }
+.woq canvas { display: block; width: 100%; aspect-ratio: 100 / 160; border-radius: 6px; }
+.woq i { position: absolute; font-style: normal; line-height: 1; pointer-events: none; }
+.woq .wok { top: -11px; right: -9px; font-size: 28px; color: #ffc533; text-shadow: 0 0 2px var(--ink), 0 2px 0 var(--ink); }
+.woq .whelp { bottom: -7px; left: -7px; font-size: 18px; }
+.wobig { position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 2; display: grid; place-items: center; background: rgba(42, 33, 24, 0.88); border-radius: 12px; cursor: pointer; }
+.wobig[hidden] { display: none; }
+.wobig canvas { display: block; border: 4px solid var(--ink); border-radius: 12px; background: #fffdf3; }
+.womini { display: none; }
+.wover.mini { top: auto; box-sizing: border-box; padding: 6px 10px; overflow: visible; background: #5a4a3a; }
+.wover.mini > *, .wover.mini > #wOverHide { display: none; }
+.wover.mini > .womini { display: flex; align-items: center; justify-content: center; gap: 14px; }
+.wover.mini .btn.weye { position: static; }
+.wover .womini .st { font-size: 30px; letter-spacing: 4px; }
+/* ---------- sideways: writing box on the left, buttons stacked on the right; menus spread out ---------- */
+@media (orientation: landscape) {
+  .wplay { --side: 210px; display: grid; grid-template-columns: minmax(0, 1fr) var(--side); grid-template-rows: auto auto minmax(0, 1fr); column-gap: 10px; row-gap: 6px; }
+  .wplay > .ncardbox { grid-column: 1 / -1; grid-row: 1; }
+  .wplay > .wwrap { grid-column: 1; grid-row: 2 / 4; }
+  .wplay > .wcap { grid-column: 2; grid-row: 2; flex-direction: column; flex-wrap: nowrap; align-items: stretch; justify-content: flex-start; text-align: center; }
+  .wplay > .wbar { grid-column: 2; grid-row: 3; align-self: end; flex-direction: column; flex-wrap: nowrap; align-items: stretch; }
+  .wbar .btn { flex: none; min-height: 56px; }
+  .wbar .wpts { flex: none; }
+  .wcap .wbig { margin-left: 0; }
+  .wover.mini { left: auto; width: var(--side); min-height: 96px; }
+  .wover.mini > .womini { gap: 8px; }
+  .wover .womini .st { font-size: 22px; letter-spacing: 1px; }
+  .wobtns { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+  .wmenu { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(84px, 1fr)) auto; }
+  .wmenu .btn { font-size: 22px; min-height: 0; }
+  .wmenu .wfoot { grid-column: 1 / -1; align-self: end; }
+  .wpick { display: grid; grid-template-columns: 160px minmax(0, 1fr); align-content: start; }
+  .wpick .wtabs { flex-direction: column; }
+  .wpick .wsets { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; }
+  #gGate { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 330px); grid-template-rows: auto auto auto 1fr; justify-items: center; align-items: start; column-gap: 16px; }
+  #gGate > * { grid-column: 1; }
+  #gGate > .gpad { grid-column: 2; grid-row: 1 / -1; width: 100%; align-self: center; }
+}
+/* a phone on its side: little height, so the title goes and the prompt sits in the top bar */
+@media (orientation: landscape) and (max-height: 560px) {
+  body { padding-block: 6px; }
+  #app { position: relative; gap: 4px; }
+  .bar h1 { display: none; }
+  .prompt { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: calc(100% - 480px); height: 56px; display: flex; align-items: center; justify-content: center; font-size: 20px; line-height: 1.1; overflow: hidden; pointer-events: none; }
+  .panel { padding: 8px; }
+  .wplay { --side: 180px; }
+  .wcap { min-height: 0; gap: 4px; }
+  .wstep { font-size: 15px; padding: 2px 8px; }
+  .wbig { font-size: 30px; }
+  .wover b { font-size: 26px; }
+  .wover .st { font-size: 32px; }
+  .wover span { font-size: 18px; }
+  .wover .btn { min-width: 160px; min-height: 50px; font-size: 19px; }
+  .wogrid { grid-template-columns: repeat(5, minmax(0, 46px)); }
+  .wpick .wtabs .btn { min-height: 64px; }
+  .wnote { margin-top: 2px; }
+  .nlv canvas { max-width: 84px; }
+  .nprev { min-height: 60px; }
+  .gpad .btn { min-height: 52px; }
+  .gq, .gans { font-size: 34px; }
+}
 </style>
 </head>
 <body>
+
+<!-- shared picture icons: <svg class="ic"><use href="#ic-trash"/></svg> -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="ic-eraser" viewBox="0 0 48 48"><g transform="rotate(-35 24 24)" stroke="#2a2118" stroke-width="3" stroke-linejoin="round"><rect x="6" y="15" width="36" height="18" rx="4" fill="#f6a5c0"/><path d="M28 15 V33" fill="none"/><path d="M28 15 H38 A4 4 0 0 1 42 19 V29 A4 4 0 0 1 38 33 H28 Z" fill="#e86fa3"/></g></symbol>
+  <symbol id="ic-trash" viewBox="0 0 48 48"><g stroke="#2a2118" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><path d="M12 15 L14.5 40 A3 3 0 0 0 17.5 43 H30.5 A3 3 0 0 0 33.5 40 L36 15 Z" fill="#b9bec6"/><path d="M8 14 H40" fill="none"/><path d="M19 14 V9 H29 V14" fill="none"/><path d="M20 21 V36 M28 21 V36" fill="none"/></g></symbol>
+  <symbol id="ic-undo" viewBox="0 0 48 48"><g fill="none" stroke="#2a2118" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 19 H30 A10 10 0 0 1 30 39 H20"/><path d="M21 11 L13 19 L21 27"/></g></symbol>
+  <symbol id="ic-eye" viewBox="0 0 48 48"><g stroke="#2a2118" stroke-width="3" stroke-linejoin="round"><path d="M3 24 C11 12 37 12 45 24 C37 36 11 36 3 24 Z" fill="#fff"/><circle cx="24" cy="24" r="8" fill="#2f74d0"/><circle cx="24" cy="24" r="3.5" fill="#2a2118" stroke="none"/></g></symbol>
+  <symbol id="ic-eye-shut" viewBox="0 0 48 48"><g fill="none" stroke="#2a2118" stroke-width="3" stroke-linecap="round"><path d="M4 20 C12 31 36 31 44 20"/><path d="M11 27 L7 33 M19 30 L17 37 M29 30 L31 37 M37 27 L41 33"/></g></symbol>
+</svg>
 
 <main id="app">
   <header class="bar">
@@ -657,15 +741,21 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           <div id="wWrap" class="wwrap"><canvas id="wcv"></canvas></div>
           <div class="wbar">
             <button id="wHint" class="btn" type="button">&#128161; Hint</button>
-            <button id="wClear" class="btn quiet" type="button">Clear</button>
+            <button id="wClear" class="btn quiet" type="button" aria-label="Clear"><span class="tx">Clear</span><svg class="ic" aria-hidden="true"><use href="#ic-trash"/></svg></button>
             <button id="wDone" class="btn" type="button">Done</button>
             <div id="wPts" class="wpts"></div>
           </div>
           <div id="wOver" class="wover" hidden>
+            <button id="wOverHide" class="btn quiet weye" type="button" aria-label="Hide this and look at the letter"><svg class="ic" aria-hidden="true"><use href="#ic-eye"/></svg></button>
             <b id="wOverTitle"></b><div id="wOverStars" class="st"></div><span id="wOverTxt"></span>
-            <button id="wOverNext" class="btn" type="button">Next letter</button>
-            <button id="wOverAgain" class="btn quiet" type="button">Write it again</button>
-            <button id="wOverMenu" class="btn quiet" type="button">Menu</button>
+            <div id="wOverGrid" class="wogrid" hidden></div>
+            <div class="wobtns">
+              <button id="wOverNext" class="btn" type="button">Next letter</button>
+              <button id="wOverAgain" class="btn quiet" type="button">Write it again</button>
+              <button id="wOverMenu" class="btn quiet" type="button">Menu</button>
+            </div>
+            <div id="wOverBig" class="wobig" hidden><canvas id="wBigCv"></canvas></div>
+            <div class="womini"><span id="wMiniStars" class="st"></span><button id="wOverShow" class="btn weye" type="button" aria-label="Show the result again"><svg class="ic" aria-hidden="true"><use href="#ic-eye-shut"/></svg></button></div>
           </div>
           <div id="wHintPick" class="whp" hidden>
             <h3>Which letter?</h3>
@@ -988,7 +1078,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   WD_('6', ['Curve Down', 'Loop'], [wAR(58, 70, 32, 50, -70, -270), wAR(57, 95, 26, 25, 90, -200)]);
   WD_('7', ['Slide', 'Slant'], [wLN(28, 20, 74, 20), wLN(74, 20, 42, 120)]);
   WD_('8', ['Hook Snake', 'Roll Up'], [wJ(wAR(50, 45, 22, 25, -30, -270), wAR(50, 95, 26, 25, -90, 150)), wJ(wAR(50, 95, 26, 25, 150, 270), wAR(50, 45, 22, 25, 90, -30))]);
-  WD_('9', ['Curve Around', 'Tall Down'], [wAR(50, 45, 23, 25, -30, -360), wLN(73, 30, 73, 120)]);
+  WD_('9', ['Curve Around', 'Tall Down'], [wAR(50, 45, 23, 25, -20, -360), wLN(72, 36, 72, 120)]);
   /* capitals */
   WD_('A', ['Slant Left', 'Slant Right', 'Slide'], [wLN(50, 20, 22, 120), wLN(50, 20, 78, 120), wLN(31, 90, 69, 90)]);
   WD_('B', ['Tall Down', 'Slide Around', 'Slide Around'], [wLN(26, 20, 26, 120), wJ(wLN(26, 20, 48, 20), wAR(48, 45, 25, 25, -90, 90), wLN(48, 70, 26, 70)), wJ(wLN(26, 70, 50, 70), wAR(50, 95, 25, 25, -90, 90), wLN(50, 120, 26, 120))]);
@@ -1017,13 +1107,13 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   WD_('Y', ['Slant Right', 'Slant Left', 'Down'], [wLN(24, 20, 50, 70), wLN(76, 20, 50, 70), wLN(50, 70, 50, 120)]);
   WD_('Z', ['Slide', 'Slant', 'Slide'], [wLN(26, 20, 74, 20), wLN(74, 20, 26, 120), wLN(26, 120, 74, 120)]);
   /* lowercase */
-  WD_('a', ['Hook Around', 'Small Down'], [wAR(48, 95, 20, 25, -45, -330), wLN(68, 70, 68, 120)]);
+  WD_('a', ['Hook Around', 'Small Down'], [wAR(48, 95, 20, 25, -20, -340), wLN(68, 70, 68, 120)]);
   WD_('b', ['Tall Down', 'Roll Around'], [wLN(30, 20, 30, 120), wAR(52, 95, 22, 25, -165, 175)]);
   WD_('c', ['Hook Around'], [wAR(50, 95, 22, 25, -40, -320)]);
-  WD_('d', ['Hook Around', 'Tall Down'], [wAR(48, 95, 20, 25, -45, -330), wLN(68, 20, 68, 120)]);
-  WD_('e', ['Hook Around', 'Slide'], [wAR(50, 95, 22, 25, -30, -315), wLN(28, 95, 72, 95)]);
+  WD_('d', ['Hook Around', 'Tall Down'], [wAR(48, 95, 20, 25, -20, -340), wLN(68, 20, 68, 120)]);
+  WD_('e', ['Hook Around', 'Slide'], [wAR(50, 95, 22, 25, 0, -315), wLN(28, 95, 72, 95)]);
   WD_('f', ['Hook Down', 'Cross'], [wJ(wAR(58, 40, 12, 12, 0, -180), wLN(46, 40, 46, 120)), wLN(30, 70, 62, 70)]);
-  WD_('g', ['Hook Around', 'Down Tail'], [wAR(48, 95, 20, 25, -45, -330), wJ(wLN(68, 70, 68, 132), wAR(52, 132, 16, 16, 0, 100))]);
+  WD_('g', ['Hook Around', 'Down Tail'], [wAR(48, 95, 20, 25, -20, -340), wJ(wLN(68, 70, 68, 132), wAR(52, 132, 16, 16, 0, 100))]);
   WD_('h', ['Tall Down', 'Roll Down'], [wLN(30, 20, 30, 120), wJ(wAR(50, 90, 20, 20, -180, 0), wLN(70, 90, 70, 120))]);
   WD_('i', ['Small Down', 'Dot'], [wLN(50, 70, 50, 120), wDOT(50, 52)]);
   WD_('j', ['Down Tail', 'Dot'], [wJ(wLN(52, 70, 52, 134), wAR(36, 134, 16, 16, 0, 100)), wDOT(52, 52)]);
@@ -1033,7 +1123,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   WD_('n', ['Small Down', 'Roll Down'], [wLN(30, 70, 30, 120), wJ(wAR(50, 90, 20, 20, -180, 0), wLN(70, 90, 70, 120))]);
   WD_('o', ['Hook Around Close'], [wAR(50, 95, 22, 25, -90, -450)]);
   WD_('p', ['Down Tail', 'Roll Around'], [wLN(30, 70, 30, 150), wAR(52, 95, 22, 25, -165, 175)]);
-  WD_('q', ['Hook Around', 'Down Hook'], [wAR(48, 95, 20, 25, -45, -330), wJ(wLN(68, 70, 68, 134), wAR(84, 134, 16, 16, 180, 80))]);
+  WD_('q', ['Hook Around', 'Down Hook'], [wAR(48, 95, 20, 25, -20, -340), wJ(wLN(68, 70, 68, 134), wAR(84, 134, 16, 16, 180, 80))]);
   WD_('r', ['Small Down', 'Roll'], [wLN(34, 70, 34, 120), wAR(52, 90, 18, 18, -180, -40)]);
   WD_('s', ['Hook Snake Around'], [wJ(wAR(50, 82, 16, 12, -30, -270), wAR(50, 107, 18, 13, -90, 150))]);
   WD_('t', ['Tall Down', 'Cross'], [wLN(46, 28, 46, 120), wLN(30, 70, 62, 70)]);
@@ -1233,20 +1323,19 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     $('#topBack').hidden = !sub; $('#app').classList.toggle('sub', sub);
   }
   function wFree() { return wr.mode === 'free' || wr.mode === 'freehint'; }
-  /* Free writing fills the white box, so follow the box whenever its size changes (rotation, toolbar, window) */
-  if (window.ResizeObserver) try { new ResizeObserver(function () { if (current === write && wFree()) wFit(); }).observe($('#wWrap')); } catch (e) {}
+  /* the canvas fills the white box, so follow the box whenever its size changes (rotation, toolbar, window, buttons appearing) */
+  if (window.ResizeObserver) try { new ResizeObserver(function () { if (current === write && !$('#wPlay').hidden) wFit(); }).observe($('#wWrap')); } catch (e) {}
   function wFit() {
     var box = $('#wWrap'), w = box.clientWidth, h = box.clientHeight;
     if (!w || !h) return;
     wsc = Math.min(w / 100, h / 160); wdpr = Math.min(window.devicePixelRatio || 1, 2);
-    if (wFree()) {   /* Free writing: the canvas fills the whole white box, and the ruled rows repeat down the page */
-      wr.fw = w / wsc; wr.fh = h / wsc; wr.rows = Math.max(1, Math.floor(wr.fh / 160)); wr.oy = (wr.fh - wr.rows * 160) / 2;
+    wr.fw = w / wsc; wr.fh = h / wsc;
+    wcv.style.width = w + 'px'; wcv.style.height = h + 'px'; wcv.width = Math.round(w * wdpr); wcv.height = Math.round(h * wdpr);
+    if (wFree()) {   /* Free writing: the ruled rows repeat down the page */
+      wr.rows = Math.max(1, Math.floor(wr.fh / 160)); wr.oy = (wr.fh - wr.rows * 160) / 2;
       wr.ftx = (wr.fw - 100) / 2; wr.fty = wr.oy + Math.floor((wr.rows - 1) / 2) * 160;   /* hint demo: centered, on a ruled row */
-      wcv.style.width = w + 'px'; wcv.style.height = h + 'px'; wcv.width = Math.round(w * wdpr); wcv.height = Math.round(h * wdpr);
-      return;
     }
-    wcv.style.width = Math.floor(100 * wsc) + 'px'; wcv.style.height = Math.floor(160 * wsc) + 'px';
-    wcv.width = Math.floor(100 * wsc * wdpr); wcv.height = Math.floor(160 * wsc * wdpr);
+    wr.tx = (wr.fw - 100) / 2; wr.ty = (wr.fh - 160) / 2;   /* Learn, Quiz, name: the 100 x 160 letter space, centered in the box */
   }
   function wPoly(c, pts, upto) {
     var n = upto == null ? pts.length : upto, i;
@@ -1261,21 +1350,13 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   }
   function wDraw() {
     var c = wctx, t = performance.now() / 1000, i;
-    var free = wFree(), tx = free ? wr.ftx : 0, ty = free ? wr.fty : 0;   /* tx, ty: where the 100 x 160 letter space sits */
-    if (free && !wr.fw) return;
+    var free = wFree(), tx = free ? wr.ftx : wr.tx, ty = free ? wr.fty : wr.ty;   /* tx, ty: where the 100 x 160 letter space sits */
+    if (!wr.fw) return;
     c.setTransform(wsc * wdpr, 0, 0, wsc * wdpr, 0, 0);
     c.lineCap = 'round'; c.lineJoin = 'round';
-    if (free) {
-      c.clearRect(0, 0, wr.fw, wr.fh); c.fillStyle = '#fffdf3'; c.fillRect(0, 0, wr.fw, wr.fh);
-      for (i = 0; i < wr.rows; i++) { c.save(); c.translate(0, wr.oy + i * 160); nLines(c, 0, wr.fw); c.restore(); }   /* edge to edge */
-    } else {
-      c.clearRect(0, 0, 100, 160);
-      c.fillStyle = '#fffdf3'; c.fillRect(0, 0, 100, 160);
-      c.strokeStyle = '#7fb2e5'; c.lineWidth = 0.9; c.setLineDash([]);
-      [WT, WB].forEach(function (y) { c.beginPath(); c.moveTo(4, y); c.lineTo(96, y); c.stroke(); });
-      c.setLineDash([3, 3]); c.beginPath(); c.moveTo(4, WM); c.lineTo(96, WM); c.stroke();
-      c.strokeStyle = '#d6e6f7'; c.beginPath(); c.moveTo(4, WD); c.lineTo(96, WD); c.stroke(); c.setLineDash([]);
-    }
+    c.clearRect(0, 0, wr.fw, wr.fh); c.fillStyle = '#fffdf3'; c.fillRect(0, 0, wr.fw, wr.fh);
+    if (free) { for (i = 0; i < wr.rows; i++) { c.save(); c.translate(0, wr.oy + i * 160); nLines(c, 0, wr.fw); c.restore(); } }   /* edge to edge */
+    else { c.save(); c.translate(0, ty); nLines(c, 0, wr.fw); c.restore(); }   /* one row, edge to edge, around the centered letter */
     c.save(); c.translate(tx, ty);
     var L = WL[wr.letter], mode = wr.mode, lvl = nm.on ? nm.level : 1;   /* Write my name: 1 trace, 2 dots only, 3 just the lines */
     if (L && (mode === 'guided' || mode === 'quizhint' || mode === 'freehint')) {
@@ -1303,10 +1384,13 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       if (st.dot) { c.beginPath(); c.arc(st.dot[0], st.dot[1], 4.5, 0, 7); c.fill(); } else if (st.pts.length > 1) wPoly(c, st.pts);
     }
     c.restore();
-    /* free / quiz ink */
+    /* free / quiz ink: canvas units in Free writing, letter units everywhere else */
+    c.save(); if (!free) c.translate(tx, ty);
     c.strokeStyle = '#2a2118'; c.fillStyle = '#2a2118'; c.lineWidth = 6;
     for (i = 0; i < wr.free.length; i++) { var f = wr.free[i]; if (f.length === 1) { c.beginPath(); c.arc(f[0][0], f[0][1], 3.5, 0, 7); c.fill(); } else wPoly(c, f); }
     if (wr.ink && wr.ink.length > 1) { c.strokeStyle = mode === 'guided' ? SCOL[Math.min(wr.cur, 3)] : '#2a2118'; c.lineWidth = 6; wPoly(c, wr.ink); }
+    c.restore();
+    c.save(); c.translate(tx, ty);
     /* current target marker (guided) */
     if (mode === 'guided' && L && !wr.demo && wr.cur < L.strokes.length && lvl < 3) {
       var cs = L.strokes[wr.cur], sp = cs.dot ? cs.dot : cs.pts[0], pu = 1 + 0.18 * Math.sin(t * 6);
@@ -1316,7 +1400,6 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       if (!cs.dot && lvl === 1) { wArrow(c, cs.pts, 0.3); wArrow(c, cs.pts, 0.65); }
     }
     /* demo animation */
-    c.save(); c.translate(tx, ty);
     if (wr.demo && L) {
       var ds = L.strokes[wr.demo.i], col = SCOL[Math.min(wr.demo.i, 3)], pr = wr.demo.t;
       c.strokeStyle = col; c.fillStyle = col; c.lineWidth = 7.5; c.globalAlpha = 0.9;
@@ -1362,8 +1445,9 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function wPos(e) {
     var r = wcv.getBoundingClientRect();
     /* Free writing: canvas units, and a finger that slides past the edge is held at the edge (pointer capture keeps the stroke going) */
-    if (wFree()) return [clamp((e.clientX - r.left) / wsc, 0, wr.fw), clamp((e.clientY - r.top) / wsc, 0, wr.fh)];
-    return [(e.clientX - r.left) / r.width * 100, (e.clientY - r.top) / r.height * 160];
+    var x = clamp((e.clientX - r.left) / wsc, 0, wr.fw), y = clamp((e.clientY - r.top) / wsc, 0, wr.fh);
+    if (wFree()) return [x, y];
+    return [x - wr.tx, y - wr.ty];   /* letter units: the inverse of the centering, so scoring compares against the same template; may be below 0 or past 100 */
   }
   wcv.addEventListener('pointerdown', function (e) {
     e.preventDefault(); audio();
@@ -1450,13 +1534,28 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     wr.mode = 'result';
     var msg = pick(W_CHEER);
     $('#wOverTitle').textContent = msg; $('#wOverStars').textContent = '★★★'.slice(0, stars) + '☆☆☆'.slice(0, 3 - stars); $('#wOverTxt').textContent = wr.pts + ' of ' + max + ' points';
-    $('#wOverNext').hidden = false; $('#wOverMenu').textContent = 'Pick another letter'; $('#wOverAgain').textContent = 'Write it again'; $('#wOver').hidden = false;
+    $('#wOverNext').hidden = false; $('#wOverMenu').textContent = 'Pick another letter'; $('#wOverAgain').textContent = 'Write it again'; $('#wOverGrid').hidden = true; wOverOpen();
     vsay([Pc(msg)]);
+  }
+  /* the result popup starts shown; the eye folds it into a small bar so the finished letter can be seen */
+  function wOverOpen() { var o = $('#wOver'); o.classList.remove('mini'); $('#wOverBig').hidden = true; $('#wMiniStars').textContent = $('#wOverStars').textContent; o.hidden = false; }
+  function wOverMini(on) { $('#wOver').classList.toggle('mini', on); $('#wOverBig').hidden = true; }
+  /* one quiz answer as a small picture of his own ink, fitted so nothing he wrote is cut off */
+  function wThumb(cv, ink) {
+    var w = cv.clientWidth || 56, h = cv.clientHeight || w * 1.6, d = Math.min(window.devicePixelRatio || 1, 2), c = cv.getContext('2d'), x0 = 0, x1 = 100, y0 = 0, y1 = 160;
+    ink.forEach(function (s) { s.forEach(function (p) { x0 = Math.min(x0, p[0] - 5); x1 = Math.max(x1, p[0] + 5); y0 = Math.min(y0, p[1] - 5); y1 = Math.max(y1, p[1] + 5); }); });
+    var k = Math.min(w / (x1 - x0), h / (y1 - y0)), ox = (w - (x1 - x0) * k) / 2 - x0 * k, oy = (h - (y1 - y0) * k) / 2 - y0 * k;
+    cv.width = Math.round(w * d); cv.height = Math.round(h * d);
+    c.setTransform(d, 0, 0, d, 0, 0); c.fillStyle = '#fffdf3'; c.fillRect(0, 0, w, h);
+    c.setTransform(k * d, 0, 0, k * d, ox * d, oy * d); c.lineCap = 'round'; c.lineJoin = 'round';
+    nLines(c, -ox / k, (w - ox) / k);
+    c.strokeStyle = c.fillStyle = '#2a2118'; c.lineWidth = 6;
+    ink.forEach(function (s) { if (s.length === 1) { c.beginPath(); c.arc(s[0][0], s[0][1], 3.5, 0, 7); c.fill(); } else wPoly(c, s); });
   }
 
   /* --- quiz --- */
   function wQuizStart(setOf) {
-    wr.setOf = setOf; wr.qList = []; wr.qi = 0; wr.qScore = 0;
+    wr.setOf = setOf; wr.qList = []; wr.qi = 0; wr.qScore = 0; wr.qRec = [];
     var pool = setOf === 'mix' ? WUP + WLO : wSet(setOf), a = pool.split(''), i;
     for (i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
     wr.qList = a.slice(0, 5); wQuizAsk();
@@ -1464,7 +1563,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function wQuizAsk() {
     var ch = wr.qList[wr.qi]; clearTimeout(wAutoT); wr.qTok++; wr.qBusy = false;
     wr.mode = 'quiz'; wr.letter = ch; wr.cur = 0; wr.strokes = []; wr.free = []; wr.ink = null; wr.ghost = {}; wr.qTry = 0; wr.qShown = false; wr.hintLvl = 0; wr.demo = null; wr.locked = false;
-    wShow('wPlay'); wFit(); $('#wHint').hidden = false; $('#wClear').hidden = false; $('#wDone').hidden = false;
+    wShow('wPlay'); $('#wHint').hidden = false; $('#wClear').hidden = false; $('#wDone').hidden = false; $('#wClear').classList.add('ico'); wFit();
     $('#prompt').textContent = wTitle(ch);
     wCaption('<span class="wq">Question ' + (wr.qi + 1) + ' of 5</span><span class="wbig">' + ch + '</span>'); wPts();
     vsay(lessonIntro(ch).concat([Pc('Your turn!')]));
@@ -1483,6 +1582,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     wr.qBusy = true; wr.locked = true;
     var qt = wr.qTok, L = WL[wr.letter], m = wQuizMatch(wr.free.slice(), L);
     if (m.ok) {
+      wQuizKeep(true);
       var pts = wr.hintLvl ? 5 : 10; wr.qScore += pts; wPts(); sfx.good(); banner(pick(CHEERS)); domConfetti();
       var msg = pick(W_CHEER); toast(msg);
       var nxt = function () { wQuizNext(qt); };
@@ -1498,6 +1598,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           wr.free = []; wr.ink = null; wr.hintLvl = Math.max(1, wr.hintLvl); wr.qBusy = false; wr.locked = false; vsay([Pc('Your turn!')]);
         }); });
       } else if (wr.qTry >= 2) {
+        wQuizKeep(false);
         var mt = pick(W_TRY); toast(mt); vsay([Pc(mt)], function () { setTimeout(function () { wQuizNext(qt); }, 500); }); setTimeout(function () { wQuizNext(qt); }, 4500);
       } else {
         var mm = pick(W_TRY); toast(mm);
@@ -1506,6 +1607,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       }
     }
   }
+  /* each question's final ink, for the summary at the end */
+  function wQuizKeep(ok) { wr.qRec.push({ ch: wr.letter, ink: wr.free.map(function (s) { return s.slice(); }), ok: ok, help: !!(wr.hintLvl || wr.qShown) }); }
   function wQuizNext(qt) {
     if (qt !== wr.qTok) return;
     wr.qTok++; wr.qi++;
@@ -1518,7 +1621,15 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     for (var i = 0; i < stars; i++) (function (k) { setTimeout(addStar, 250 * k); })(i);
     wr.mode = 'result'; sfx.win(); banner(pick(CHEERS)); domConfetti();
     $('#wOverTitle').textContent = 'All done!'; $('#wOverStars').textContent = '★★★'.slice(0, stars) + '☆☆☆'.slice(0, 3 - stars);
-    $('#wOverTxt').textContent = 'You scored ' + wr.qScore + ' points'; $('#wOverNext').hidden = true; $('#wOverMenu').textContent = 'Quiz menu'; $('#wOverAgain').textContent = 'Play again'; $('#wOver').hidden = false;
+    $('#wOverTxt').textContent = 'You scored ' + wr.qScore + ' points'; $('#wOverNext').hidden = true; $('#wOverMenu').textContent = 'Quiz menu'; $('#wOverAgain').textContent = 'Play again';
+    var rec = wr.qRec, last = rec[rec.length - 1], h = '';
+    if (last) { wr.letter = last.ch; wr.free = last.ink.map(function (s) { return s.slice(); }); wr.ghost = {}; }   /* the eye shows this last letter */
+    rec.forEach(function (q, i) {
+      h += '<button class="woq" type="button" data-i="' + i + '" aria-label="' + q.ch + (q.ok ? ', right' : '') + (q.help ? ', with help' : '') + '"><canvas></canvas>' +
+        (q.ok ? '<i class="wok" aria-hidden="true">&#9733;</i>' : '') + (q.help ? '<i class="whelp" aria-hidden="true">&#128161;</i>' : '') + '</button>';
+    });
+    $('#wOverGrid').innerHTML = h; $('#wOverGrid').hidden = !rec.length; wOverOpen();
+    Array.prototype.forEach.call($('#wOverGrid').querySelectorAll('canvas'), function (cv, i) { wThumb(cv, rec[i].ink); });
     vsay([Pc('All done! Great practice today.')]);
   }
 
@@ -1577,7 +1688,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function wFreeStart() {
     wr.pickKind = 'free'; wr.idleN = 0; wLastAct = Date.now();
     wr.mode = 'free'; wr.letter = 'A'; wr.free = []; wr.strokes = []; wr.ghost = {}; wr.demo = null; wr.locked = false;
-    wShow('wPlay'); $('#wHint').hidden = false; $('#wClear').hidden = false; $('#wDone').hidden = true;
+    wShow('wPlay'); $('#wHint').hidden = false; $('#wClear').hidden = false; $('#wDone').hidden = true; $('#wClear').classList.remove('ico');
     $('#prompt').textContent = 'Write any letter you like'; wCaption('<span class="wq">Free writing</span>'); $('#wPts').textContent = '';
     wFit();   /* after the buttons and caption are set, so the white box has its final size */
     vsay([Pc('Write any letter you like!')]);
@@ -1638,7 +1749,22 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (wr.pickKind === 'quiz' || wr.qList.length && wr.qi >= wr.qList.length) wQuizStart(wr.setOf); else wGuidedStart(wr.letter);
   });
   $('#wOverMenu').addEventListener('click', function () { $('#wOver').hidden = true; wGoBack(); });
-  window.addEventListener('resize', function () { if (current !== write) return; if (nm.on && !$('#wPlay').hidden) nCard(); wFit(); if (!$('#nDone').hidden) nBig(); });
+  $('#wOverHide').addEventListener('click', function () { audio(); sfx.pop(); wOverMini(true); });
+  $('#wOverShow').addEventListener('click', function () { audio(); sfx.pop(); wOverMini(false); });
+  /* quiz summary: tap a little letter to see it big, tap again to go back */
+  $('#wOverGrid').addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.woq') : null, q = b && wr.qRec && wr.qRec[+b.getAttribute('data-i')]; if (!q) return;
+    audio(); sfx.pop();
+    var big = $('#wOverBig'), cv = $('#wBigCv'); big.hidden = false;
+    var h = Math.max(80, big.clientHeight - 40), w = Math.min(big.clientWidth - 40, h / 1.6);
+    cv.style.width = w + 'px'; cv.style.height = w * 1.6 + 'px'; cv.setAttribute('aria-label', q.ch); wThumb(cv, q.ink);
+  });
+  $('#wOverBig').addEventListener('click', function () { $('#wOverBig').hidden = true; });
+  window.addEventListener('resize', function () {
+    if (current !== write) return; if (nm.on && !$('#wPlay').hidden) nCard(); wFit(); if (!$('#nDone').hidden) nBig();
+    if (!$('#nLevel').hidden) Array.prototype.forEach.call($('#nLvls').querySelectorAll('canvas'), function (cv, i) { nPreview(cv, nm.word.charAt(0), i + 1); });
+    if (!$('#wOver').hidden && !$('#wOverGrid').hidden) Array.prototype.forEach.call($('#wOverGrid').querySelectorAll('canvas'), function (cv, i) { if (wr.qRec[i]) wThumb(cv, wr.qRec[i].ink); });
+  });
 
   /* ---------- Write my name: a grown-up types a word, he writes it one letter at a time ---------- */
   /* Uses the Learn to write templates, scoring, demos and hints; each finished letter lands on a name card. Nothing here leaves the device. */
@@ -1814,7 +1940,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     var lay = nm.lay, cell = lay && lay.cells[i], play = $('#wPlay'), fin = false, fly = document.createElement('canvas');
     var end = function () { if (fin) return; fin = true; if (fly.parentNode) fly.parentNode.removeChild(fly); done(); };
     if (!cell) { end(); return; }
-    var pr = play.getBoundingClientRect(), wc = wcv.getBoundingClientRect(), cr = lay.cv.getBoundingClientRect(), d = Math.min(window.devicePixelRatio || 1, 2), k = wc.width / 100;
+    var pr = play.getBoundingClientRect(), cb = wcv.getBoundingClientRect(), cr = lay.cv.getBoundingClientRect(), d = Math.min(window.devicePixelRatio || 1, 2), k = wsc;
+    var wc = { left: cb.left + wr.tx * k, top: cb.top + wr.ty * k, width: 100 * k, height: 160 * k };   /* the letter space inside the full-box canvas */
     fly.className = 'nfly'; fly.width = Math.round(wc.width * d); fly.height = Math.round(wc.height * d);
     fly.style.width = wc.width + 'px'; fly.style.height = wc.height + 'px'; fly.style.left = (wc.left - pr.left) + 'px'; fly.style.top = (wc.top - pr.top) + 'px';
     var c = fly.getContext('2d'); c.setTransform(k * d, 0, 0, k * d, 0, 0); c.lineCap = 'round'; c.lineJoin = 'round'; nInk(c, ink);
