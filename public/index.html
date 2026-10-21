@@ -1133,7 +1133,139 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   WD_('x', ['Slant', 'Cross'], [wLN(30, 70, 70, 120), wLN(70, 70, 30, 120)]);
   WD_('y', ['Slant Right', 'Slant Tail'], [wLN(28, 70, 50, 120), wLN(72, 70, 36, 150)]);
   WD_('z', ['Slide', 'Slant', 'Slide'], [wLN(30, 70, 70, 70), wLN(70, 70, 30, 120), wLN(30, 120, 70, 120)]);
-  var WUP = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', WLO = 'abcdefghijklmnopqrstuvwxyz', WNUM = '0123456789';
+  /* --- whole-letter shape check: Writing Quiz and Write my name levels 2 and 3 ---
+     His ink as a whole is compared with a picture of every letter, so size, place, stroke order, direction,
+     start point and lifting do not matter. Learn to write and name level 1 keep the strict stroke-by-stroke check. */
+  var SHAPE = {
+    grid: 48,                  /* the ink and each letter are drawn into a grid this many cells across */
+    pad: 3,                    /* empty cells around each drawing */
+    near: 2,                   /* a cell this close (in cells) to the other drawing fully matches; credit fades to 0 at twice this */
+    stretch: [0.75, 1, 1.33],  /* also try his ink a little narrower and wider: children's proportions vary */
+    minLen: 14,                /* less ink than this (letter units) is a speck, never a letter */
+    dot: 0.15,                 /* a stroke shorter than this share of the letter's size is a dot... */
+    dotGap: 0.08,              /* ...if it stands at least this share of the size away from the rest */
+    dotShare: 0.25,            /* a dot weighs as much as this share of the lines (so the dot on i and j matters) */
+    pass: 0.9,                 /* the target letter must score at least this overall (0 to 1) */
+    cover: 0.93,               /* his ink must cover at least this share of the letter (half a letter fails) */
+    onLetter: 0.88,            /* and at least this share of his ink must lie on the letter (extra junk fails) */
+    margin: 0,                 /* and score at least as well as every other letter (twins aside), so look-alikes do not pass */
+    waitMs: 1200,              /* after he lifts his finger, wait this long for another stroke before judging */
+    acceptMs: 450,             /* a match is accepted after this pause (a new stroke cancels) */
+    twins: ['0Oo', 'Cc', 'Ss', 'Vv', 'Xx', 'Zz', '1l', 'Ww'],   /* same shape at different sizes */
+    mirrorSame: '018AHIMOTUVWXYilmnotuvwx',                     /* letters that look the same in a mirror */
+    mirrorLike: 0.85           /* a mirror image this close to a real letter is left to that letter */
+  };
+  var SH_T = null;
+  function shLen(s) { var l = 0, i; for (i = 1; i < s.length; i++) l += Math.sqrt((s[i][0] - s[i - 1][0]) * (s[i][0] - s[i - 1][0]) + (s[i][1] - s[i - 1][1]) * (s[i][1] - s[i - 1][1])); return l; }
+  /* strokes (lists of [x, y]) -> grid picture, scaled to fit with the shape kept; sx stretches it sideways; dots: which strokes are dots */
+  function shDraw(strokes, sx, dots) {
+    var G = SHAPE.grid, P = SHAPE.pad, x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9, g = new Uint8Array(G * G), i;
+    strokes.forEach(function (s) { s.forEach(function (p) { var x = p[0] * sx; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, p[1]); y1 = Math.max(y1, p[1]); }); });
+    var span = Math.max(x1 - x0, y1 - y0, 1e-3), k = (G - 1 - 2 * P) / span, ox = (G - 1 - (x1 - x0) * k) / 2 - x0 * k, oy = (G - 1 - (y1 - y0) * k) / 2 - y0 * k;
+    function put(x, y, v) { var cx = Math.round(x), cy = Math.round(y); if (cx >= 0 && cy >= 0 && cx < G && cy < G && g[cy * G + cx] < v) g[cy * G + cx] = v; }
+    strokes.forEach(function (s, si) {
+      var j, n;
+      if (dots ? dots[si] : s.length === 1) {   /* a dot: a small disc */
+        var cx = 0, cy = 0; s.forEach(function (p) { cx += p[0]; cy += p[1]; }); cx = cx / s.length * sx * k + ox; cy = cy / s.length * k + oy;
+        for (j = -1; j <= 1; j++) for (n = -1; n <= 1; n++) put(cx + n, cy + j, 2);
+        return;
+      }
+      for (i = 1; i < s.length; i++) {
+        var ax = s[i - 1][0] * sx * k + ox, ay = s[i - 1][1] * k + oy, bx = s[i][0] * sx * k + ox, by = s[i][1] * k + oy;
+        n = Math.max(1, Math.ceil(Math.max(Math.abs(bx - ax), Math.abs(by - ay)) * 2));
+        for (j = 0; j <= n; j++) put(ax + (bx - ax) * j / n, ay + (by - ay) * j / n, 1);
+      }
+    });
+    var cells = [], w = [], nl = 0, nd = 0;
+    for (i = 0; i < G * G; i++) if (g[i]) { cells.push(i); if (g[i] === 2) nd++; else nl++; }
+    for (i = 0; i < cells.length; i++) w.push(g[cells[i]] === 2 ? SHAPE.dotShare * Math.max(nl, 1) / nd : 1);
+    return { cells: cells, w: w, d: shDist(g) };
+  }
+  /* distance (in cells) from every cell to the nearest inked cell */
+  function shDist(g) {
+    var G = SHAPE.grid, d = new Float32Array(G * G), x, y, i, v, R = 1.4142;
+    for (i = 0; i < G * G; i++) d[i] = g[i] ? 0 : 1e4;
+    for (y = 0; y < G; y++) for (x = 0; x < G; x++) {
+      i = y * G + x; v = d[i];
+      if (x > 0) v = Math.min(v, d[i - 1] + 1);
+      if (y > 0) { v = Math.min(v, d[i - G] + 1); if (x > 0) v = Math.min(v, d[i - G - 1] + R); if (x < G - 1) v = Math.min(v, d[i - G + 1] + R); }
+      d[i] = v;
+    }
+    for (y = G - 1; y >= 0; y--) for (x = G - 1; x >= 0; x--) {
+      i = y * G + x; v = d[i];
+      if (x < G - 1) v = Math.min(v, d[i + 1] + 1);
+      if (y < G - 1) { v = Math.min(v, d[i + G] + 1); if (x < G - 1) v = Math.min(v, d[i + G + 1] + R); if (x > 0) v = Math.min(v, d[i + G - 1] + R); }
+      d[i] = v;
+    }
+    return d;
+  }
+  function shNear(dist) { var n = SHAPE.near; return dist <= n ? 1 : dist >= 2 * n ? 0 : (2 * n - dist) / n; }
+  /* how alike two pictures are. c: how much of the letter his ink covers; p: how much of his ink lies on the letter; f: both together */
+  function shScore(a, b) {
+    var cov = 0, cw = 0, pre = 0, pw = 0, i;
+    for (i = 0; i < b.cells.length; i++) { cw += b.w[i]; cov += b.w[i] * shNear(a.d[b.cells[i]]); }
+    for (i = 0; i < a.cells.length; i++) { pw += a.w[i]; pre += a.w[i] * shNear(b.d[a.cells[i]]); }
+    cov /= cw || 1; pre /= pw || 1;
+    return { f: cov + pre ? 2 * cov * pre / (cov + pre) : 0, c: cov, p: pre };
+  }
+  function shTemplates() {
+    if (SH_T) return SH_T;
+    SH_T = {};
+    var ch, mir = {};
+    for (ch in WL) {
+      var S = WL[ch].strokes.map(function (s) { return s.dot ? [s.dot] : s.pts; });
+      SH_T[ch] = shDraw(S, 1);
+      if (SHAPE.mirrorSame.indexOf(ch) < 0) mir[ch] = shDraw(S.map(function (s) { return s.map(function (p) { return [100 - p[0], p[1]]; }); }), 1);
+    }
+    /* the letter written backwards is a rival too, so a mirror image never passes,
+       unless it already looks like a real letter (b and d, p and q, 9 and P), which competes anyway */
+    for (ch in mir) {
+      var like = false;
+      for (var c in WL) if (c !== ch && shScore(mir[ch], SH_T[c]).f >= SHAPE.mirrorLike) { like = true; break; }
+      if (!like) SH_T['~' + ch] = mir[ch];
+    }
+    return SH_T;
+  }
+  /* which strokes are dots: a tap or a tiny mark that stands apart from the rest (a short piece of a line touches it) */
+  function shDots(strokes) {
+    var x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+    strokes.forEach(function (s) { s.forEach(function (p) { x0 = Math.min(x0, p[0]); x1 = Math.max(x1, p[0]); y0 = Math.min(y0, p[1]); y1 = Math.max(y1, p[1]); }); });
+    var span = Math.max(x1 - x0, y1 - y0), lim = SHAPE.dot * span, gap = SHAPE.dotGap * span;
+    return strokes.map(function (s, i) {
+      if (s.length > 1 && shLen(s) >= lim) return false;
+      return strokes.every(function (o, j) { return j === i || o.every(function (q) { return s.every(function (p) { return Math.abs(p[0] - q[0]) + Math.abs(p[1] - q[1]) > gap; }); }); });
+    });
+  }
+  function shScores(strokes) {   /* his ink against every letter; null for a speck */
+    var T = shTemplates(), total = 0, best = {};
+    strokes.forEach(function (s) { total += shLen(s); });
+    if (!strokes.length || total < SHAPE.minLen) return null;
+    var dots = shDots(strokes);
+    SHAPE.stretch.forEach(function (sx) {
+      var a = shDraw(strokes, sx, dots);
+      for (var c in T) { var sc = shScore(a, T[c]); if (!best[c] || sc.f > best[c].f) best[c] = sc; }
+    });
+    best._dot = dots.indexOf(true) >= 0;
+    return best;
+  }
+  /* i and j need their dot and no other letter has one, so i, j, l and 1 stay apart */
+  function shDotOk(ch, dot) { return /^[ij]$/.test(ch) === dot; }
+  /* letters with the same shape that only size tells apart (O o 0, C c, ...): they do not compete with each other on shape */
+  function shTwin(a, b) { return SHAPE.twins.some(function (g) { return g.indexOf(a) >= 0 && g.indexOf(b) >= 0; }); }
+  /* is this ink the target letter? only if it fits well AND no other letter fits better */
+  function shMatch(strokes, target, scores) {
+    var best = scores || shScores(strokes), ch;
+    if (!best) return { ok: false, why: 'short', score: 0, best: '', other: 0 };
+    var top = '', other = 0, s = best[target] || { f: 0, c: 0, p: 0 }, dot = best._dot;
+    for (ch in best) {
+      if (ch === '_dot' || !shDotOk(ch.slice(-1), dot)) continue;
+      if (!top || best[ch].f > best[top].f) top = ch;
+      if (ch !== target && !shTwin(ch, target) && best[ch].f > other) other = best[ch].f;
+    }
+    var fits = shDotOk(target, dot) && s.f >= SHAPE.pass && s.c >= SHAPE.cover && s.p >= SHAPE.onLetter;
+    return { ok: fits && s.f >= other - SHAPE.margin, why: fits ? 'other' : 'off', score: s.f, cover: s.c, onLetter: s.p, best: top, other: other };
+  }
+  var WUP = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', WLO ='abcdefghijklmnopqrstuvwxyz', WNUM = '0123456789';
   function wSet(w) { return w === 'up' ? WUP : w === 'lo' ? WLO : WNUM; }
   function wKind(ch) { return /[0-9]/.test(ch) ? 'number' : ch === ch.toUpperCase() ? 'capital' : 'lowercase'; }
   function wTitle(ch) { return wKind(ch) === 'number' ? 'Write the number ' + ch : 'Write a ' + wKind(ch) + ' ' + ch; }
@@ -1295,14 +1427,6 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     for (k = k0; k < tpls.length; k++) { f = wFindStroke(ink, from, tpls[k], tol); if (!f) break; segs.push(f); from = f.e + 1; }
     return { n: segs.length, segs: segs };
   }
-  function wFlat(list) { var o = [], i, j; for (i = 0; i < list.length; i++) for (j = 0; j < list[i].length; j++) o.push(list[i][j]); return o; }
-  function wQuizMatch(free, L) {
-    var i, ok = free.length === L.strokes.length, why = 'count';
-    if (ok) for (i = 0; i < L.strokes.length; i++) { var r = evalStroke(free[i].length === 1 ? free[i].concat([free[i][0], free[i][0]]) : free[i], L.strokes[i], 1.15); if (!r.ok) { ok = false; why = r.why; break; } }
-    if (ok) return { ok: true };
-    if (free.length && wMatchRun(wFlat(free), 0, L.strokes, 1.15).n === L.strokes.length) return { ok: true };
-    return { ok: false, why: why };
-  }
   function clamp01(v) { return Math.max(0, Math.min(1, v)); }
   var WHYTEXT = { start: 'Start at the dot.', direction: 'Follow the arrow.', off: 'Stay inside the lines.', short: 'Keep going to the end.', long: 'Stay inside the lines.' };
 
@@ -1336,6 +1460,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       wr.ftx = (wr.fw - 100) / 2; wr.fty = wr.oy + Math.floor((wr.rows - 1) / 2) * 160;   /* hint demo: centered, on a ruled row */
     }
     wr.tx = (wr.fw - 100) / 2; wr.ty = (wr.fh - 160) / 2;   /* Learn, Quiz, name: the 100 x 160 letter space, centered in the box */
+    try { wDraw(); } catch (e) {}   /* resizing blanks the canvas: redraw now rather than leave a blank frame */
   }
   function wPoly(c, pts, upto) {
     var n = upto == null ? pts.length : upto, i;
@@ -1359,7 +1484,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     else { c.save(); c.translate(0, ty); nLines(c, 0, wr.fw); c.restore(); }   /* one row, edge to edge, around the centered letter */
     c.save(); c.translate(tx, ty);
     var L = WL[wr.letter], mode = wr.mode, lvl = nm.on ? nm.level : 1;   /* Write my name: 1 trace, 2 dots only, 3 just the lines */
-    if (L && (mode === 'guided' || mode === 'quizhint' || mode === 'freehint')) {
+    if (L && (mode === 'guided' || mode === 'quizhint' || mode === 'freehint' || mode === 'nshape')) {
       /* faint letter */
       var show = mode === 'guided' && lvl === 1 ? L.strokes.length : 0;
       for (i = 0; i < show; i++) {
@@ -1367,7 +1492,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
         c.globalAlpha = i === wr.cur ? 0.5 : 0.18; c.lineWidth = 7;
         if (s.dot) { c.beginPath(); c.arc(s.dot[0], s.dot[1], 4, 0, 7); c.fill(); } else wPoly(c, s.pts);
       }
-      if (mode === 'guided' && lvl === 2) for (i = wr.cur + 1; i < L.strokes.length; i++) {   /* the later strokes' starting dots */
+      if ((mode === 'guided' || mode === 'nshape') && lvl === 2) for (i = mode === 'nshape' ? 0 : wr.cur + 1; i < L.strokes.length; i++) {   /* the (later) strokes' starting dots */
         var s2 = L.strokes[i], p2 = s2.dot || s2.pts[0]; c.fillStyle = SCOL[Math.min(i, 3)]; c.globalAlpha = 0.5;
         c.beginPath(); c.arc(p2[0], p2[1], 3.5, 0, 7); c.fill();
       }
@@ -1468,7 +1593,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       if (wr.locked) return;
       wGuidedStroke(ink, false);
     } else if (wr.mode === 'free' || wr.mode === 'freehint') { wr.free.push(ink.length < 3 ? [ink[0]] : ink); }
-    else if (wr.mode === 'quiz' || wr.mode === 'quizhint') { wr.free.push(ink.length < 3 ? [ink[0]] : ink); wQuizCheckAuto(); }
+    else if (wr.mode === 'quiz' || wr.mode === 'quizhint' || wr.mode === 'nshape') { wr.free.push(ink.length < 3 ? [ink[0]] : ink); wQuizCheckAuto(); }
   }
   wcv.addEventListener('pointerup', wUp); wcv.addEventListener('pointercancel', wUp);
 
@@ -1569,18 +1694,21 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     vsay(lessonIntro(ch).concat([Pc('Your turn!')]));
   }
   var wAutoT = 0;
+  /* after he lifts his finger: wait for more strokes, then look at the whole letter. A new stroke cancels (pointerdown clears wAutoT). */
   function wQuizCheckAuto() {
     clearTimeout(wAutoT);
-    if (wr.qBusy || (wr.mode !== 'quiz' && wr.mode !== 'quizhint') || !wr.free.length) return;
-    var L = WL[wr.letter], m = wQuizMatch(wr.free, L);
-    if (m.ok) wAutoT = setTimeout(wQuizCheck, 450);
-    else if (wr.free.length >= L.strokes.length) wAutoT = setTimeout(wQuizCheck, 900);
+    var shape = wr.mode === 'nshape';
+    if (wr.qBusy || wr.locked || !(shape || wr.mode === 'quiz' || wr.mode === 'quizhint') || !wr.free.length) return;
+    wAutoT = setTimeout(function () {
+      if (wr.ink || !shMatch(wr.free, wr.letter).ok) return;   /* not it yet: his writing stays, he can add to it or start over */
+      wAutoT = setTimeout(shape ? nShapeCheck : wQuizCheck, SHAPE.acceptMs);
+    }, SHAPE.waitMs);
   }
   function wQuizCheck() {
     clearTimeout(wAutoT);
     if ((wr.mode !== 'quiz' && wr.mode !== 'quizhint') || wr.qBusy || wr.ink) return;
     wr.qBusy = true; wr.locked = true;
-    var qt = wr.qTok, L = WL[wr.letter], m = wQuizMatch(wr.free.slice(), L);
+    var qt = wr.qTok, m = shMatch(wr.free.slice(), wr.letter);
     if (m.ok) {
       wQuizKeep(true);
       var pts = wr.hintLvl ? 5 : 10; wr.qScore += pts; wPts(); sfx.good(); banner(pick(CHEERS)); domConfetti();
@@ -1640,11 +1768,13 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (wr.mode === 'guided') {
       wr.hintUsed[wr.cur] = true; nm.hinted = true; wr.locked = true; wr.ghost = {};
       vsay([Pc("Here's a little hint.")], function () { wBoth(stepItems(wr.letter, wr.cur), wr.cur, function () { wr.ghost = {}; wr.locked = false; }); });
-    } else if (wr.mode === 'quiz' || wr.mode === 'quizhint') {
-      var N = WL[wr.letter].strokes.length; wr.mode = 'quizhint'; wr.locked = true;
+    } else if (wr.mode === 'quiz' || wr.mode === 'quizhint' || wr.mode === 'nshape') {
+      /* show the strokes one more each time; in Write my name a hint means no extra star for this letter */
+      var N = WL[wr.letter].strokes.length; clearTimeout(wAutoT); wr.locked = true;
+      if (wr.mode === 'nshape') nm.hinted = true; else wr.mode = 'quizhint';
       var k = Math.min(wr.hintLvl, N - 1); wr.hintLvl = Math.min(N, wr.hintLvl + 1); wr.ghost = {};
       for (var i = 0; i < k; i++) wr.ghost[i] = true;
-      wBoth(stepItems(wr.letter, k), k, function () { wr.locked = false; });
+      wBoth(stepItems(wr.letter, k), k, function () { wr.locked = false; wQuizCheckAuto(); });
     } else if (wr.mode === 'free' || wr.mode === 'freehint') {
       $('#wHintPick').hidden = false; wFillPick('up'); vsay([Pc('Pick a letter to write!')]);
     }
@@ -1709,7 +1839,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     }
     if (!inPlay) items = !$('#wPick').hidden ? [Pc(wr.pickKind === 'learn' ? 'Pick a letter to write!' : 'Pick what to practice!')] : [Pc('Welcome, writer! Are you ready to write? What would you like to do?')];
     else if (m === 'guided') items = stepItems(wr.letter, wr.cur);
-    else if (m === 'quiz' || m === 'quizhint') items = lessonIntro(wr.letter).concat([Pc('Your turn!')]);
+    else if (m === 'quiz' || m === 'quizhint' || m === 'nshape') items = lessonIntro(wr.letter).concat([Pc('Your turn!')]);
     else if (m === 'free' || m === 'freehint') items = [Pc('Write any letter you like!')];
     wr.idleN++; wLastAct = Date.now();
     if (items) vsay(items);
@@ -1740,7 +1870,13 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (current !== write || wr.qBusy) return; clearTimeout(wAutoT); wr.free = []; wr.ink = null; wr.ghost = {}; wr.demo = null; wr.lesson++; wr.locked = false; vstop();
     if (wr.mode === 'freehint') wr.mode = 'free'; if (wr.mode === 'quizhint') wr.mode = 'quiz';
   });
-  $('#wDone').addEventListener('click', function () { if (current === write && (wr.mode === 'quiz' || wr.mode === 'quizhint') && !wr.locked && !wr.qBusy) { audio(); if (!wr.free.length) { toast('Write the letter first.'); vsay([Pc('Write the letter first.')]); return; } wQuizCheck(); } });
+  /* Done judges right away */
+  $('#wDone').addEventListener('click', function () {
+    if (current !== write || !(wr.mode === 'quiz' || wr.mode === 'quizhint' || wr.mode === 'nshape') || wr.locked || wr.qBusy) return;
+    audio(); clearTimeout(wAutoT);
+    if (!wr.free.length) { toast('Write the letter first.'); vsay([Pc('Write the letter first.')]); return; }
+    if (wr.mode === 'nshape') nShapeCheck(); else wQuizCheck();
+  });
   $('#wOverNext').addEventListener('click', function () {
     var s = /[0-9]/.test(wr.letter) ? WNUM : wr.letter === wr.letter.toUpperCase() ? WUP : WLO, i = s.indexOf(wr.letter), nx = s[(i + 1) % s.length]; $('#wOver').hidden = true; wGuidedStart(nx);
   });
@@ -1885,7 +2021,33 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function nNext(i) { for (i++; i < nm.word.length; i++) if (nm.word.charAt(i) !== ' ') return i; return -1; }
   function nLetter() {
     nm.hinted = false; wShow('wPlay'); nCard();
-    wGuidedStart(nm.word.charAt(nm.i));   /* same as Learn to write: guide, voice, scoring, hints */
+    if (nm.level === 1) wGuidedStart(nm.word.charAt(nm.i));   /* trace: same as Learn to write, stroke by stroke */
+    else nShapeStart(nm.word.charAt(nm.i));
+  }
+  /* levels 2 and 3: he writes the whole letter his own way, and its shape is checked when he pauses or presses Done */
+  function nShapeStart(ch) {
+    clearTimeout(wAutoT);
+    wr.mode = 'nshape'; wr.letter = ch; wr.cur = 0; wr.strokes = []; wr.free = []; wr.ink = null; wr.ghost = {}; wr.demo = null; wr.locked = false; wr.qTry = 0; wr.hintLvl = 0; wr.qBusy = false;
+    wShow('wPlay'); $('#wHint').hidden = false; $('#wClear').hidden = false; $('#wDone').hidden = false; $('#wClear').classList.add('ico');
+    $('#prompt').textContent = wTitle(ch); wCaption(''); $('#wPts').textContent = ''; wFit();
+    vsay(lessonIntro(ch).concat([Pc('Your turn!')]));
+  }
+  function nShapeCheck() {
+    clearTimeout(wAutoT);
+    if (wr.mode !== 'nshape' || wr.locked || wr.ink || !wr.free.length) return;
+    var tok = nm.tok;
+    if (shMatch(wr.free, wr.letter).ok) { wr.locked = true; vstop(); sfx.good(); setTimeout(function () { if (tok === nm.tok) nLetterDone(); }, 350); return; }
+    wr.qTry++; sfx.bonk(); wr.locked = true;
+    if (wr.qTry >= 2) {   /* two misses: watch it once, then try again */
+      nm.hinted = true; toast("Let's watch how it goes."); wr.free = [];
+      vsay([Pc("Here's a little hint.")], function () {
+        if (tok !== nm.tok) return;
+        wLesson(wr.letter, function () { if (tok !== nm.tok) return; wr.free = []; wr.ghost = {}; wr.qTry = 0; wr.locked = false; vsay([Pc('Your turn!')]); });
+      });
+    } else {
+      var t = pick(W_TRY); toast(t); vsay([Pc(t)]);
+      setTimeout(function () { if (tok !== nm.tok || wr.mode !== 'nshape') return; wr.free = []; wr.locked = false; }, 800);
+    }
   }
   /* letter widths come from the template, so "m" gets more room than "l" */
   var NB = {};
@@ -1950,9 +2112,18 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     fly.style.transform = 'translate(' + tx.toFixed(1) + 'px,' + ty.toFixed(1) + 'px) scale(' + (lay.s / k).toFixed(4) + ')';
     fly.addEventListener('transitionend', end); setTimeout(end, 650);
   }
+  /* his letter may be any size, anywhere: fit it into the letter's own space so it sits right on the name card */
+  function nFitInk(free, ch) {
+    var bb = function (list) { var b = [1e9, 1e9, -1e9, -1e9]; list.forEach(function (s) { s.forEach(function (p) { b = [Math.min(b[0], p[0]), Math.min(b[1], p[1]), Math.max(b[2], p[0]), Math.max(b[3], p[1])]; }); }); return b; };
+    var a = bb(free), t = bb(WL[ch].strokes.map(function (s) { return s.dot ? [s.dot] : s.pts; }));
+    var k = Math.min((t[2] - t[0] || 1e9) / (a[2] - a[0] || 1e-9), (t[3] - t[1] || 1e9) / (a[3] - a[1] || 1e-9));
+    if (!isFinite(k) || k > 1e6) k = 1;
+    var ox = (t[0] + t[2]) / 2 - (a[0] + a[2]) / 2 * k, oy = (t[1] + t[3]) / 2 - (a[1] + a[3]) / 2 * k;
+    return free.map(function (s) { return s.map(function (p) { return [p[0] * k + ox, p[1] * k + oy]; }); });
+  }
   function nLetterDone() {
-    if (!nm.on || wr.mode !== 'guided') return;
-    var i = nm.i, tok = nm.tok, ink = wr.strokes.map(function (s) { return s.dot ? { dot: s.dot } : { pts: s.pts }; });
+    if (!nm.on || (wr.mode !== 'guided' && wr.mode !== 'nshape')) return;
+    var i = nm.i, tok = nm.tok, ink = wr.mode === 'nshape' ? nFitInk(wr.free, wr.letter).map(function (s) { return s.length === 1 ? { dot: s[0] } : { pts: s }; }) : wr.strokes.map(function (s) { return s.dot ? { dot: s.dot } : { pts: s.pts }; });
     if (!nm.hinted) nm.got++;
     wr.mode = 'result'; wr.strokes = [];
     nFly(i, ink, function () {
