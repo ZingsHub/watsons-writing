@@ -22,7 +22,8 @@ Sections are marked with `/* ---------- name ---------- */` comments; grep for t
 - My Farm: stars earned from writing build a farm. Settings live in the `FARM` object; inline SVG pictures, Web Audio animal sounds, and dragging (animals any time, items only in build mode).
 
 ## How the app works
-- Menu modes: Learn to write, Writing Quiz, Free writing, Write my name, plus My Farm. Free writing fills the whole writing box.
+- Menu modes: Learn to write, Writing Quiz, Free writing, Write my name, plus My Farm.
+- Free writing is a drawing page (`dPlay`, the "Free writing" section; settings in `DRAW`): colors, brush sizes, eraser, undo, clear (asks first), writing-lines toggle, stamps, save as PNG. It never speaks and gives no stars. Stamps of animals play her clips ("Oink!" etc.) only if recorded.
 - Voice: any NEW spoken line needs a new recording from Zach; until then it falls back to the device voice. Add new lines to `voice-needed.txt`. When clips arrive, put them in `public/audio/` and add them to `manifest.json`.
 - Idle reminder after 10 s: repeats instructions, then highlights Hint.
 

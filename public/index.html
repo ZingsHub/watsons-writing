@@ -328,14 +328,12 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 .wbar .btn { font-size: 17px; min-height: 48px; padding: 4px 10px; white-space: nowrap; flex: 1; }
 .wbar .wpts { order: -1; flex: 1 0 100%; text-align: center; font-family: var(--display); font-weight: 700; font-size: 18px; min-height: 22px; }
 .wbar .wpts:empty { display: none; }
-.wover, .whp { position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 6; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: rgba(42, 33, 24, 0.6); border-radius: 12px; }
-.wover[hidden], .whp[hidden] { display: none; }
+.wover { position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 6; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: rgba(42, 33, 24, 0.6); border-radius: 12px; }
+.wover[hidden] { display: none; }
 .wover b { font-family: var(--display); font-size: 36px; color: #fff; }
 .wover .st { font-size: 48px; color: #ffc533; letter-spacing: 6px; }
 .wover span { font-family: var(--display); font-size: 22px; color: #fff; }
 .wover .btn { min-width: 220px; font-size: 22px; min-height: 56px; }
-.whp .wgrid { background: var(--paper); border: 3px solid var(--ink); border-radius: 14px; padding: 8px; max-height: 55%; overflow-y: auto; width: 100%; }
-.whp h3 { margin: 0; font-family: var(--display); color: #fff; font-size: 22px; }
 .panel { position: absolute; top: 0; right: 0; bottom: 0; left: 0; display: flex; flex-direction: column; gap: 10px; padding: 10px; background: var(--grass); border: 3px solid var(--ink); border-radius: 18px; overflow: hidden; }
 .pc { display: inline-grid; place-items: center; line-height: 1; vertical-align: middle; }
 .pc svg { width: 100%; height: 100%; display: block; }
@@ -653,6 +651,62 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   .gpad .btn { min-height: 52px; }
   .gq, .gans { font-size: 34px; }
 }
+/* ---------- Free writing: a blank drawing page; tools are pictures only ---------- */
+#app.drawing { max-width: none; }   /* a wide screen gives the page all its width */
+#app.drawing .prompt { display: none; }
+.dplay { --t: 56px; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; position: relative; }
+.dwrap { flex: 1; min-height: 0; position: relative; background: #fff; border: 3px solid var(--ink); border-radius: 14px; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.dwrap canvas { position: absolute; left: 0; top: 0; display: block; }
+#dcv { touch-action: none; cursor: crosshair; }
+.dflash { position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: #fff; opacity: 0; pointer-events: none; }
+.dflash.on { animation: dflash 0.6s ease-out; }
+@keyframes dflash { 0% { opacity: 0.95; } 100% { opacity: 0; } }
+.dside { flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.dcols { display: flex; flex-wrap: wrap; justify-content: center; }
+.dtools { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.dt { width: var(--t); height: var(--t); min-height: 0; padding: 0; display: grid; place-items: center; background: var(--paper); }
+.dt .ic { width: 40px; height: 40px; }
+.dt.on { background: #fff4b8; transform: translateY(3px); box-shadow: 0 1px 0 var(--ink), 0 0 0 4px #ffd640; }
+.dt.off { opacity: 0.4; }
+.dtools .dtrash { margin-left: 12px; }
+.dsw { width: var(--t); height: var(--t); padding: 0; margin: 0; border: 0; background: none; display: grid; place-items: center; cursor: pointer; }
+.dsw i { display: block; width: 42px; height: 42px; border-radius: 50%; border: 3px solid var(--ink); background: var(--c); box-shadow: 0 3px 0 var(--ink); }
+.dsw.on i { width: 46px; height: 46px; box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--ink); }
+.dsz i { display: block; border-radius: 50%; background: var(--dc, #2f74d0); border: 2px solid var(--ink); }
+.dsz[data-z="0"] i { width: 10px; height: 10px; }
+.dsz[data-z="1"] i { width: 19px; height: 19px; }
+.dsz[data-z="2"] i { width: 32px; height: 32px; }
+.dpic { display: block; width: 42px; height: 42px; }
+.dpic svg, .dtile svg { display: block; width: 100%; height: 100%; }
+.dover { position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 6; display: flex; align-items: center; justify-content: center; padding: 10px; background: rgba(42, 33, 24, 0.6); border-radius: 12px; }
+.dover[hidden] { display: none; }
+.dtray { width: 100%; max-width: 760px; max-height: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 10px; background: var(--paper); border: 3px solid var(--ink); border-radius: 16px; }
+.dtop { display: flex; align-items: center; gap: 8px; }
+.dssz { flex: 1; display: flex; justify-content: center; align-items: center; gap: 10px; }
+.dssz .dt svg { display: block; }
+.dtiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 8px; }
+.dtile { height: 64px; min-height: 0; padding: 5px; background: #fff; }
+.dtile.on { background: #fff4b8; box-shadow: 0 1px 0 var(--ink), 0 0 0 4px #ffd640; }
+.dask { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.dask-ic { display: block; width: 84px; height: 84px; padding: 8px; background: var(--paper); border: 3px solid var(--ink); border-radius: 50%; }
+.dask-b { display: flex; gap: 32px; }
+.dask-b .btn { width: 112px; height: 112px; padding: 0; display: grid; place-items: center; background: var(--paper); border-radius: 50%; }
+.dask-b svg { display: block; width: 88px; height: 88px; }
+@media (orientation: landscape) {
+  .dplay { flex-direction: row; }
+  .dside { flex-direction: row; align-items: center; gap: 8px; }
+  .dcols { display: grid; grid-template-columns: repeat(3, var(--t)); gap: 3px 0; }
+  .dtools { display: grid; grid-template-columns: repeat(2, var(--t)); gap: 3px 6px; }
+  .dtools .dtrash { margin-left: 0; }
+}
+@media (orientation: landscape) and (min-height: 700px) {
+  .dplay { --t: 64px; }
+  .dcols { gap: 8px 4px; }
+  .dtools { gap: 8px; }
+}
+@media (orientation: landscape) and (max-height: 560px) {
+  #app.drawing .panel { padding: 4px 8px; }
+}
 </style>
 </head>
 <body>
@@ -664,6 +718,11 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   <symbol id="ic-undo" viewBox="0 0 48 48"><g fill="none" stroke="#2a2118" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 19 H30 A10 10 0 0 1 30 39 H20"/><path d="M21 11 L13 19 L21 27"/></g></symbol>
   <symbol id="ic-eye" viewBox="0 0 48 48"><g stroke="#2a2118" stroke-width="3" stroke-linejoin="round"><path d="M3 24 C11 12 37 12 45 24 C37 36 11 36 3 24 Z" fill="#fff"/><circle cx="24" cy="24" r="8" fill="#2f74d0"/><circle cx="24" cy="24" r="3.5" fill="#2a2118" stroke="none"/></g></symbol>
   <symbol id="ic-eye-shut" viewBox="0 0 48 48"><g fill="none" stroke="#2a2118" stroke-width="3" stroke-linecap="round"><path d="M4 20 C12 31 36 31 44 20"/><path d="M11 27 L7 33 M19 30 L17 37 M29 30 L31 37 M37 27 L41 33"/></g></symbol>
+  <symbol id="ic-pencil" viewBox="0 0 48 48"><g transform="rotate(40 24 24)" stroke="#2a2118" stroke-width="3" stroke-linejoin="round"><rect x="18" y="3" width="12" height="7" rx="2" fill="#f6a5c0"/><rect x="18" y="10" width="12" height="22" fill="#ffc533"/><path d="M18 32 L24 45 L30 32 Z" fill="#f2d3a0"/><path d="M22 41 L24 45 L26 41 Z" fill="#2a2118"/></g></symbol>
+  <symbol id="ic-lines" viewBox="0 0 48 48"><rect x="6" y="6" width="36" height="36" rx="4" fill="#fff" stroke="#2a2118" stroke-width="3"/><g fill="none" stroke="#5b97d6" stroke-width="2.5"><path d="M10 15 H38 M10 33 H38"/><path d="M10 24 H38" stroke-dasharray="4 3"/></g></symbol>
+  <symbol id="ic-save" viewBox="0 0 48 48"><g fill="none" stroke="#2a2118" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6 V30 M14 21 L24 31 L34 21"/><path d="M8 30 V40 H40 V30"/></g></symbol>
+  <symbol id="ic-yes" viewBox="0 0 48 48"><circle cx="24" cy="24" r="21" fill="#3fb04a" stroke="#2a2118" stroke-width="3"/><path d="M14 25 L21 32 L34 16" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-no" viewBox="0 0 48 48"><circle cx="24" cy="24" r="21" fill="#e8413a" stroke="#2a2118" stroke-width="3"/><path d="M16 16 L32 32 M32 16 L16 32" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round"/></symbol>
 </svg>
 
 <main id="app">
@@ -757,11 +816,35 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
             <div id="wOverBig" class="wobig" hidden><canvas id="wBigCv"></canvas></div>
             <div class="womini"><span id="wMiniStars" class="st"></span><button id="wOverShow" class="btn weye" type="button" aria-label="Show the result again"><svg class="ic" aria-hidden="true"><use href="#ic-eye-shut"/></svg></button></div>
           </div>
-          <div id="wHintPick" class="whp" hidden>
-            <h3>Which letter?</h3>
-            <div id="wHintTabs" class="wtabs"><button class="btn on" type="button" data-w="up"><b>Capital</b><span class="ex"><i class="r">A</i><i class="g">B</i><i class="b">C</i></span></button><button class="btn" type="button" data-w="lo"><b>Lowercase</b><span class="ex"><i class="r">a</i><i class="g">b</i><i class="b">c</i></span></button><button class="btn" type="button" data-w="num"><b>Numbers</b><span class="ex"><i class="r">1</i><i class="g">2</i><i class="b">3</i></span></button></div>
-            <div id="wHintGrid" class="wgrid"></div>
-            <button id="wHintClose" class="btn quiet" type="button">Close</button>
+        </div>
+        <div id="dPlay" class="dplay" hidden>
+          <div id="dWrap" class="dwrap"><canvas id="dBg"></canvas><canvas id="dcv"></canvas><div id="dFlash" class="dflash"></div></div>
+          <div class="dside">
+            <div id="dCols" class="dcols"></div>
+            <div class="dtools">
+              <button id="dPen" class="btn dt" type="button" aria-label="Pencil"><svg class="ic" aria-hidden="true"><use href="#ic-pencil"/></svg></button>
+              <button id="dEraser" class="btn dt" type="button" aria-label="Eraser"><svg class="ic" aria-hidden="true"><use href="#ic-eraser"/></svg></button>
+              <button class="btn dt dsz" type="button" data-z="0" aria-label="Small"><i></i></button>
+              <button class="btn dt dsz" type="button" data-z="1" aria-label="Medium"><i></i></button>
+              <button class="btn dt dsz" type="button" data-z="2" aria-label="Large"><i></i></button>
+              <button id="dStamps" class="btn dt" type="button" aria-label="Stamps"><span id="dStampPic" class="dpic"></span></button>
+              <button id="dLines" class="btn dt" type="button" aria-label="Writing lines" aria-pressed="false"><svg class="ic" aria-hidden="true"><use href="#ic-lines"/></svg></button>
+              <button id="dUndo" class="btn dt" type="button" aria-label="Undo"><svg class="ic" aria-hidden="true"><use href="#ic-undo"/></svg></button>
+              <button id="dSave" class="btn dt" type="button" aria-label="Save picture"><svg class="ic" aria-hidden="true"><use href="#ic-save"/></svg></button>
+              <button id="dClear" class="btn dt dtrash" type="button" aria-label="Clear the page"><svg class="ic" aria-hidden="true"><use href="#ic-trash"/></svg></button>
+            </div>
+          </div>
+          <div id="dTray" class="dover" hidden>
+            <div class="dtray">
+              <div class="dtop"><div id="dSSizes" class="dssz"></div><button id="dTrayX" class="btn quiet dt" type="button" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#ic-no"/></svg></button></div>
+              <div id="dTiles" class="dtiles"></div>
+            </div>
+          </div>
+          <div id="dAsk" class="dover" hidden>
+            <div class="dask">
+              <svg class="dask-ic" aria-hidden="true"><use href="#ic-trash"/></svg>
+              <div class="dask-b"><button id="dYes" class="btn" type="button" aria-label="Yes, clear the page"><svg aria-hidden="true"><use href="#ic-yes"/></svg></button><button id="dNo" class="btn" type="button" aria-label="No, keep it"><svg aria-hidden="true"><use href="#ic-no"/></svg></button></div>
+            </div>
           </div>
         </div>
       </div>
@@ -1433,12 +1516,12 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   /* --- state --- */
   var vSpeaking = false, wLastAct = Date.now();
   var wr = { idleMs: 10000, idleN: 0, tab: 'up', mode: '', letter: 'A', cur: 0, strokes: [], ink: null, ghost: {}, demo: null, locked: false, miss: 0, pts: 0, hintUsed: {}, setOf: 'up', qList: [], qi: 0, qScore: 0, qTry: 0, hintLvl: 0, qBusy: false, qTok: 0, liveAcc: false, idleDone: false, moves: 0, pickKind: '', free: [], lesson: 0, raf: 0, last: 0 };
-  var wcv = $('#wcv'), wctx = wcv.getContext('2d'), wsc = 3, wdpr = 1;
+  var wcv = $('#wcv'), wctx = wcv.getContext('2d'), wsc = 3, wdpr = 1, wPlayEl = $('#wPlay');
   function wBest() { var o = {}; try { o = JSON.parse(localStorage.getItem('ty_write') || '{}') || {}; } catch (e) {} return o; }
   function wSaveBest(ch, st) { var o = wBest(); if (!o[ch] || o[ch] < st) { o[ch] = st; try { localStorage.setItem('ty_write', JSON.stringify(o)); } catch (e) {} } }
   function wShow(id) {
-    ['wMenu', 'wPick', 'wPlay', 'nEntry', 'nLevel', 'nDone', 'gHome', 'gGate', 'gConfirm', 'gDone'].forEach(function (x) { $('#' + x).hidden = x !== id; }); $('#wOver').hidden = true; $('#wHintPick').hidden = true;
-    $('#nCardBox').hidden = !nm.on; $('#wPlay').classList.toggle('nlv3', nm.on && nm.level === 3);
+    ['wMenu', 'wPick', 'wPlay', 'nEntry', 'nLevel', 'nDone', 'gHome', 'gGate', 'gConfirm', 'gDone', 'dPlay'].forEach(function (x) { $('#' + x).hidden = x !== id; }); $('#wOver').hidden = true;
+    $('#nCardBox').hidden = !nm.on; $('#wPlay').classList.toggle('nlv3', nm.on && nm.level === 3); $('#app').classList.toggle('drawing', id === 'dPlay');
     syncBack();
   }
   /* one Back button, top left, on every screen below the main menu */
@@ -1446,7 +1529,6 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     var sub = current === farm || (current === write && $('#wMenu').hidden && $('#gDone').hidden);
     $('#topBack').hidden = !sub; $('#app').classList.toggle('sub', sub);
   }
-  function wFree() { return wr.mode === 'free' || wr.mode === 'freehint'; }
   /* the canvas fills the white box, so follow the box whenever its size changes (rotation, toolbar, window, buttons appearing) */
   if (window.ResizeObserver) try { new ResizeObserver(function () { if (current === write && !$('#wPlay').hidden) wFit(); }).observe($('#wWrap')); } catch (e) {}
   function wFit() {
@@ -1455,10 +1537,6 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     wsc = Math.min(w / 100, h / 160); wdpr = Math.min(window.devicePixelRatio || 1, 2);
     wr.fw = w / wsc; wr.fh = h / wsc;
     wcv.style.width = w + 'px'; wcv.style.height = h + 'px'; wcv.width = Math.round(w * wdpr); wcv.height = Math.round(h * wdpr);
-    if (wFree()) {   /* Free writing: the ruled rows repeat down the page */
-      wr.rows = Math.max(1, Math.floor(wr.fh / 160)); wr.oy = (wr.fh - wr.rows * 160) / 2;
-      wr.ftx = (wr.fw - 100) / 2; wr.fty = wr.oy + Math.floor((wr.rows - 1) / 2) * 160;   /* hint demo: centered, on a ruled row */
-    }
     wr.tx = (wr.fw - 100) / 2; wr.ty = (wr.fh - 160) / 2;   /* Learn, Quiz, name: the 100 x 160 letter space, centered in the box */
     try { wDraw(); } catch (e) {}   /* resizing blanks the canvas: redraw now rather than leave a blank frame */
   }
@@ -1475,16 +1553,15 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   }
   function wDraw() {
     var c = wctx, t = performance.now() / 1000, i;
-    var free = wFree(), tx = free ? wr.ftx : wr.tx, ty = free ? wr.fty : wr.ty;   /* tx, ty: where the 100 x 160 letter space sits */
+    var tx = wr.tx, ty = wr.ty;   /* tx, ty: where the 100 x 160 letter space sits */
     if (!wr.fw) return;
     c.setTransform(wsc * wdpr, 0, 0, wsc * wdpr, 0, 0);
     c.lineCap = 'round'; c.lineJoin = 'round';
     c.clearRect(0, 0, wr.fw, wr.fh); c.fillStyle = '#fffdf3'; c.fillRect(0, 0, wr.fw, wr.fh);
-    if (free) { for (i = 0; i < wr.rows; i++) { c.save(); c.translate(0, wr.oy + i * 160); nLines(c, 0, wr.fw); c.restore(); } }   /* edge to edge */
-    else { c.save(); c.translate(0, ty); nLines(c, 0, wr.fw); c.restore(); }   /* one row, edge to edge, around the centered letter */
+    c.save(); c.translate(0, ty); nLines(c, 0, wr.fw); c.restore();   /* one row, edge to edge, around the centered letter */
     c.save(); c.translate(tx, ty);
     var L = WL[wr.letter], mode = wr.mode, lvl = nm.on ? nm.level : 1;   /* Write my name: 1 trace, 2 dots only, 3 just the lines */
-    if (L && (mode === 'guided' || mode === 'quizhint' || mode === 'freehint' || mode === 'nshape')) {
+    if (L && (mode === 'guided' || mode === 'quizhint' || mode === 'nshape')) {
       /* faint letter */
       var show = mode === 'guided' && lvl === 1 ? L.strokes.length : 0;
       for (i = 0; i < show; i++) {
@@ -1509,8 +1586,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       if (st.dot) { c.beginPath(); c.arc(st.dot[0], st.dot[1], 4.5, 0, 7); c.fill(); } else if (st.pts.length > 1) wPoly(c, st.pts);
     }
     c.restore();
-    /* free / quiz ink: canvas units in Free writing, letter units everywhere else */
-    c.save(); if (!free) c.translate(tx, ty);
+    /* quiz and name ink, in letter units */
+    c.save(); c.translate(tx, ty);
     c.strokeStyle = '#2a2118'; c.fillStyle = '#2a2118'; c.lineWidth = 6;
     for (i = 0; i < wr.free.length; i++) { var f = wr.free[i]; if (f.length === 1) { c.beginPath(); c.arc(f[0][0], f[0][1], 3.5, 0, 7); c.fill(); } else wPoly(c, f); }
     if (wr.ink && wr.ink.length > 1) { c.strokeStyle = mode === 'guided' ? SCOL[Math.min(wr.cur, 3)] : '#2a2118'; c.lineWidth = 6; wPoly(c, wr.ink); }
@@ -1546,7 +1623,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       wr.demo.t += dt / dur;
       if (wr.demo.t >= 1) { var d = wr.demo; wr.ghost[d.i] = true; wr.demo = null; if (d.done) d.done(); }
     }
-    try { wDraw(); } catch (e) { if (window.console) console.error(e); }
+    if (!wPlayEl.hidden) try { wDraw(); } catch (e) { if (window.console) console.error(e); }
   }
   function wDemo(i, done) { wr.demo = { i: i, t: 0, done: done }; }
   /* speech and animation together, then continue */
@@ -1569,9 +1646,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   /* --- pointer input --- */
   function wPos(e) {
     var r = wcv.getBoundingClientRect();
-    /* Free writing: canvas units, and a finger that slides past the edge is held at the edge (pointer capture keeps the stroke going) */
+    /* a finger that slides past the edge is held at the edge (pointer capture keeps the stroke going) */
     var x = clamp((e.clientX - r.left) / wsc, 0, wr.fw), y = clamp((e.clientY - r.top) / wsc, 0, wr.fh);
-    if (wFree()) return [x, y];
     return [x - wr.tx, y - wr.ty];   /* letter units: the inverse of the centering, so scoring compares against the same template; may be below 0 or past 100 */
   }
   wcv.addEventListener('pointerdown', function (e) {
@@ -1592,8 +1668,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (wr.mode === 'guided') {
       if (wr.locked) return;
       wGuidedStroke(ink, false);
-    } else if (wr.mode === 'free' || wr.mode === 'freehint') { wr.free.push(ink.length < 3 ? [ink[0]] : ink); }
-    else if (wr.mode === 'quiz' || wr.mode === 'quizhint' || wr.mode === 'nshape') { wr.free.push(ink.length < 3 ? [ink[0]] : ink); wQuizCheckAuto(); }
+    } else if (wr.mode === 'quiz' || wr.mode === 'quizhint' || wr.mode === 'nshape') { wr.free.push(ink.length < 3 ? [ink[0]] : ink); wQuizCheckAuto(); }
   }
   wcv.addEventListener('pointerup', wUp); wcv.addEventListener('pointercancel', wUp);
 
@@ -1764,7 +1839,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   /* --- hints --- */
   function wHint() {
     if (wr.qBusy) return;
-    if (wr.locked && wr.mode !== 'free') return;
+    if (wr.locked) return;
     if (wr.mode === 'guided') {
       wr.hintUsed[wr.cur] = true; nm.hinted = true; wr.locked = true; wr.ghost = {};
       vsay([Pc("Here's a little hint.")], function () { wBoth(stepItems(wr.letter, wr.cur), wr.cur, function () { wr.ghost = {}; wr.locked = false; }); });
@@ -1775,15 +1850,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       var k = Math.min(wr.hintLvl, N - 1); wr.hintLvl = Math.min(N, wr.hintLvl + 1); wr.ghost = {};
       for (var i = 0; i < k; i++) wr.ghost[i] = true;
       wBoth(stepItems(wr.letter, k), k, function () { wr.locked = false; wQuizCheckAuto(); });
-    } else if (wr.mode === 'free' || wr.mode === 'freehint') {
-      $('#wHintPick').hidden = false; wFillPick('up'); vsay([Pc('Pick a letter to write!')]);
     }
-  }
-  function wFillPick(which) {
-    var host = $('#wHintGrid'), s = wSet(which), h = '';
-    s.split('').forEach(function (c) { h += '<button class="wl" type="button" data-c="' + c + '">' + c + '</button>'; });
-    host.innerHTML = h; host.setAttribute('data-which', which);
-    Array.prototype.forEach.call($('#wHintTabs').querySelectorAll('button'), function (b) { b.classList.toggle('on', b.getAttribute('data-w') === which); });
   }
 
   /* --- menus --- */
@@ -1801,7 +1868,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   }
   /* back = one step up: play -> the pick page it came from, pick -> menu, menu -> main menu */
   function wGoBack() {
-    if (!$('#wPlay').hidden) {
+    if (!$('#dPlay').hidden) wMenu();
+    else if (!$('#wPlay').hidden) {
       if (wr.pickKind === 'name') nEntry(false);
       else if (wr.pickKind === 'learn') wPickScreen('learn', /[0-9]/.test(wr.letter) ? 'num' : wr.letter === wr.letter.toUpperCase() ? 'up' : 'lo');
       else if (wr.pickKind === 'quiz') wPickScreen('quiz');
@@ -1815,19 +1883,11 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     $('#wGrid').innerHTML = h; $('#wGrid').setAttribute('data-which', which);
     wr.tab = which; Array.prototype.forEach.call($('#wTabs').querySelectorAll('button'), function (b) { b.classList.toggle('on', b.getAttribute('data-w') === which); });
   }
-  function wFreeStart() {
-    wr.pickKind = 'free'; wr.idleN = 0; wLastAct = Date.now();
-    wr.mode = 'free'; wr.letter = 'A'; wr.free = []; wr.strokes = []; wr.ghost = {}; wr.demo = null; wr.locked = false;
-    wShow('wPlay'); $('#wHint').hidden = false; $('#wClear').hidden = false; $('#wDone').hidden = true; $('#wClear').classList.remove('ico');
-    $('#prompt').textContent = 'Write any letter you like'; wCaption('<span class="wq">Free writing</span>'); $('#wPts').textContent = '';
-    wFit();   /* after the buttons and caption are set, so the white box has its final size */
-    vsay([Pc('Write any letter you like!')]);
-  }
   /* --- idle reminders: after 10 s of quiet, repeat the instructions; after two repeats, point at Hint --- */
   var wIdleI = 0;
   function wIdleCheck() {
     if (current !== write || vSpeaking || wr.ink || wr.demo || wr.locked || wr.qBusy || wr.mode === 'result') return;
-    if (!$('#wOver').hidden || !$('#wHintPick').hidden) return;
+    if (!$('#wOver').hidden || !$('#dPlay').hidden) return;   /* drawing never talks */
     if (!$('#nEntry').hidden || !$('#nLevel').hidden || !$('#nDone').hidden) return;   /* a grown-up is typing, or he is done */
     if (!$('#gHome').hidden || !$('#gGate').hidden || !$('#gConfirm').hidden || !$('#gDone').hidden) return;
     if (Date.now() - wLastAct < wr.idleMs) return;
@@ -1840,7 +1900,6 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (!inPlay) items = !$('#wPick').hidden ? [Pc(wr.pickKind === 'learn' ? 'Pick a letter to write!' : 'Pick what to practice!')] : [Pc('Welcome, writer! Are you ready to write? What would you like to do?')];
     else if (m === 'guided') items = stepItems(wr.letter, wr.cur);
     else if (m === 'quiz' || m === 'quizhint' || m === 'nshape') items = lessonIntro(wr.letter).concat([Pc('Your turn!')]);
-    else if (m === 'free' || m === 'freehint') items = [Pc('Write any letter you like!')];
     wr.idleN++; wLastAct = Date.now();
     if (items) vsay(items);
   }
@@ -1854,21 +1913,15 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   $('#wMenu').addEventListener('click', function (e) {
     var b = e.target.closest ? e.target.closest('button[data-m]') : null; if (!b || current !== write) return;
     audio(); sfx.pop(); var m = b.getAttribute('data-m');
-    if (m === 'learn') wPickScreen('learn'); else if (m === 'quiz') wPickScreen('quiz'); else if (m === 'farm') farmOpen(); else if (m === 'name') nEntry(true); else wFreeStart();
+    if (m === 'learn') wPickScreen('learn'); else if (m === 'quiz') wPickScreen('quiz'); else if (m === 'farm') farmOpen(); else if (m === 'name') nEntry(true); else dStart();
   });
   $('#wTabs').addEventListener('click', function (e) { var b = e.target.closest ? e.target.closest('button[data-w]') : null; if (b) wFillGrid(b.getAttribute('data-w')); });
   $('#wGrid').addEventListener('click', function (e) { var b = e.target.closest ? e.target.closest('button[data-c]') : null; if (b && current === write) { audio(); sfx.pop(); wGuidedStart(b.getAttribute('data-c')); } });
   $('#wQuizSets').addEventListener('click', function (e) { var b = e.target.closest ? e.target.closest('button[data-s]') : null; if (b && current === write) { audio(); sfx.pop(); wQuizStart(b.getAttribute('data-s')); } });
-  $('#wHintTabs').addEventListener('click', function (e) { var b = e.target.closest ? e.target.closest('button[data-w]') : null; if (b) wFillPick(b.getAttribute('data-w')); });
-  $('#wHintGrid').addEventListener('click', function (e) {
-    var b = e.target.closest ? e.target.closest('button[data-c]') : null; if (!b) return;
-    $('#wHintPick').hidden = true; wr.mode = 'freehint'; wr.free = []; wLesson(b.getAttribute('data-c'), null);
-  });
-  $('#wHintClose').addEventListener('click', function () { $('#wHintPick').hidden = true; });
   $('#wHint').addEventListener('click', function () { if (current === write) { audio(); wHint(); } });
   $('#wClear').addEventListener('click', function () {
     if (current !== write || wr.qBusy) return; clearTimeout(wAutoT); wr.free = []; wr.ink = null; wr.ghost = {}; wr.demo = null; wr.lesson++; wr.locked = false; vstop();
-    if (wr.mode === 'freehint') wr.mode = 'free'; if (wr.mode === 'quizhint') wr.mode = 'quiz';
+    if (wr.mode === 'quizhint') wr.mode = 'quiz';
   });
   /* Done judges right away */
   $('#wDone').addEventListener('click', function () {
@@ -1897,7 +1950,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   });
   $('#wOverBig').addEventListener('click', function () { $('#wOverBig').hidden = true; });
   window.addEventListener('resize', function () {
-    if (current !== write) return; if (nm.on && !$('#wPlay').hidden) nCard(); wFit(); if (!$('#nDone').hidden) nBig();
+    if (current !== write) return; if (!$('#dPlay').hidden) dFit(); if (nm.on && !$('#wPlay').hidden) nCard(); wFit(); if (!$('#nDone').hidden) nBig();
     if (!$('#nLevel').hidden) Array.prototype.forEach.call($('#nLvls').querySelectorAll('canvas'), function (cv, i) { nPreview(cv, nm.word.charAt(0), i + 1); });
     if (!$('#wOver').hidden && !$('#wOverGrid').hidden) Array.prototype.forEach.call($('#wOverGrid').querySelectorAll('canvas'), function (cv, i) { if (wr.qRec[i]) wThumb(cv, wr.qRec[i].ink); });
   });
@@ -2706,6 +2759,312 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   $('#fPaint').addEventListener('click', function () { if (current !== farm || !fSel) return; audio(); sfx.pop(); fSheet('decor'); });
   window.addEventListener('resize', function () { if (current === farm) { fMeasure(); fLayout(); } });
   FST = fLoad(); renderStars();
+
+  /* ---------- Free writing: a blank drawing page with colors, brush sizes, eraser, undo, clear, stamps and save. No voice, no stars, no scoring. ---------- */
+  var DCOL = [['red', '#e8413a'], ['orange', '#ff8a3d'], ['yellow', '#ffd23f'], ['green', '#2e9e44'], ['light green', '#8fd45a'], ['blue', '#2f74d0'],
+    ['light blue', '#7cc6ee'], ['purple', '#8b5cf6'], ['pink', '#f27ab6'], ['brown', '#8a5530'], ['black', '#2a2118'], ['white', '#ffffff']];
+  var DRAW = {                       /* sizes are shares of the page's short side, so they look the same on a phone and a tablet */
+    pen: [0.012, 0.028, 0.056],      /* line width: small, medium, large */
+    eraser: [0.04, 0.075, 0.13],
+    stamp: [0.15, 0.25, 0.4],        /* a stamp's longest side */
+    lineRow: 150                     /* writing lines: about one row per this many pixels of page height */
+  };
+  var DSHAPE = {                     /* shapes take the chosen color; drawn in a 100 x 100 box around the middle */
+    circle: 'M-46 0A46 46 0 1 0 46 0A46 46 0 1 0 -46 0Z',
+    square: 'M-42 -42H42V42H-42Z',
+    triangle: 'M0 -46L50 40H-50Z',
+    star: (function () { var d = '', i, a, r; for (i = 0; i < 10; i++) { a = -Math.PI / 2 + i * Math.PI / 5; r = i % 2 ? 21 : 52; d += (i ? 'L' : 'M') + (Math.cos(a) * r).toFixed(1) + ' ' + (Math.sin(a) * r + 4).toFixed(1); } return d + 'Z'; })(),
+    heart: 'M0 44C-30 24 -50 6 -50 -14C-50 -34 -34 -44 -20 -44C-8 -44 -2 -36 0 -30C2 -36 8 -44 20 -44C34 -44 50 -34 50 -14C50 6 30 24 0 44Z'
+  };
+  var DOBJ = ['sun', 'cloud', 'flower', 'tree', 'house', 'barn', 'tractor', 'pig', 'horse', 'chicken', 'cow', 'sheep', 'duck', 'goat', 'dog', 'cat'];
+  /* her recorded animal sounds (two each, picked at random); a missing clip means no sound, never the device voice */
+  var DSND = { pig: ['Oink!', 'Oink, oink!'], horse: ['Neigh!', 'Neeeigh!'], chicken: ['Cluck!', 'Cluck, cluck!'], cow: ['Moo!', 'Moooo!'],
+    sheep: ['Baa!', 'Baa, baa!'], duck: ['Quack!', 'Quack, quack!'], goat: ['Maa-aa-aa!', 'Eh-eh-eh!'], dog: ['Woof!', 'Woof, woof!'], cat: ['Meow!', 'Meow, meow!'] };
+
+  /* --- stamp pictures, in the same style as My Farm (pig, horse, chicken and barn are the farm's own drawings) --- */
+  /* a soft shape made of overlapping pieces: one outline around the whole thing */
+  function dBlob(parts, fill) {
+    return '<g fill="#2a2118" stroke-width="6">' + parts.map(function (p) { return '<' + p + '/>'; }).join('') + '</g>' +
+      '<g fill="' + fill + '" stroke="none">' + parts.map(function (p) { return '<' + p + '/>'; }).join('') + '</g>';
+  }
+  function dLegs(xs, y, h, c, hoof) { return xs.map(function (x) { return '<rect x="' + x + '" y="' + y + '" width="11" height="' + h + '" rx="4" fill="' + c + '"/>' + (hoof ? '<rect x="' + x + '" y="' + (y + h - 7) + '" width="11" height="8" rx="2" fill="' + hoof + '"/>' : ''); }).join(''); }
+  function dEye(x, y) { return '<circle cx="' + x + '" cy="' + y + '" r="3.4" fill="#2a2118" stroke="none"/><circle cx="' + (x + 1.2) + '" cy="' + (y - 1.2) + '" r="1.1" fill="#fff" stroke="none"/>'; }
+  var DPIC = {
+    sun: function () {
+      var s = '', i, a;
+      for (i = 0; i < 12; i++) { a = i * Math.PI / 6; s += fThick('M' + (50 + Math.cos(a) * 36).toFixed(1) + ' ' + (50 + Math.sin(a) * 36).toFixed(1) + ' L' + (50 + Math.cos(a) * 46).toFixed(1) + ' ' + (50 + Math.sin(a) * 46).toFixed(1), '#ffb020', 5); }
+      return [100, 100, s + '<circle cx="50" cy="50" r="30" fill="#ffc533"/>' + dEye(41, 45) + dEye(59, 45) + '<path d="M39 58 Q50 68 61 58" fill="none"/><circle cx="34" cy="56" r="4.5" fill="#ff8a3d" stroke="none" opacity=".5"/><circle cx="66" cy="56" r="4.5" fill="#ff8a3d" stroke="none" opacity=".5"/>'];
+    },
+    cloud: function () { return [120, 76, dBlob(['circle cx="32" cy="48" r="18"', 'circle cx="56" cy="34" r="22"', 'circle cx="82" cy="40" r="19"', 'circle cx="100" cy="54" r="14"', 'circle cx="18" cy="58" r="12"', 'rect x="18" y="46" width="86" height="24" rx="12"'], '#fff')]; },
+    flower: function () {
+      var s = fThick('M35 54 L35 106', '#3fb04a', 6) + '<ellipse cx="47" cy="84" rx="13" ry="6" transform="rotate(-30 47 84)" fill="#5e9a35"/>', i, a;
+      for (i = 0; i < 6; i++) { a = i * Math.PI / 3; s += '<circle cx="' + (35 + Math.cos(a) * 16).toFixed(1) + '" cy="' + (34 + Math.sin(a) * 16).toFixed(1) + '" r="11" fill="#e8417a"/>'; }
+      return [70, 110, s + '<circle cx="35" cy="34" r="10" fill="#ffc533"/>'];
+    },
+    tree: function () {
+      return [100, 120, '<path d="M42 116 L45 66 L55 66 L58 116 Z" fill="#8a5530"/>' + dBlob(['circle cx="50" cy="38" r="28"', 'circle cx="28" cy="58" r="20"', 'circle cx="72" cy="58" r="20"', 'circle cx="50" cy="66" r="20"'], '#5e9a35') +
+        '<circle cx="36" cy="46" r="4.5" fill="#e8413a" stroke-width="2"/><circle cx="62" cy="36" r="4.5" fill="#e8413a" stroke-width="2"/><circle cx="60" cy="64" r="4.5" fill="#e8413a" stroke-width="2"/>'];
+    },
+    house: function () {
+      return [100, 104, '<rect x="64" y="16" width="12" height="24" fill="#c4402f"/><rect x="16" y="46" width="68" height="54" fill="#fff1c9"/><path d="M6 50 L50 12 L94 50 Z" fill="#e8413a"/>' +
+        '<rect x="42" y="68" width="16" height="32" rx="2" fill="#2f74d0"/><circle cx="54" cy="85" r="1.8" fill="#2a2118" stroke="none"/>' +
+        '<rect x="22" y="58" width="14" height="14" fill="#bfe3f2"/><rect x="64" y="58" width="14" height="14" fill="#bfe3f2"/><path d="M29 58 V72 M22 65 H36 M71 58 V72 M64 65 H78" fill="none" stroke-width="2"/>'];
+    },
+    barn: function () { return BARN; },
+    tractor: function () {
+      return [140, 100, '<rect x="98" y="20" width="7" height="26" fill="#4a4540"/><rect x="56" y="44" width="70" height="28" rx="4" fill="#3fb04a"/><path d="M118 50 V66" fill="none"/>' +
+        '<path d="M22 72 L22 16 H62 L68 44 V72 Z" fill="#3fb04a"/><path d="M29 23 H56 L60 42 H29 Z" fill="#bfe3f2"/>' +
+        '<circle cx="40" cy="74" r="24" fill="#2a2118"/><circle cx="40" cy="74" r="11" fill="#ffc533"/><circle cx="112" cy="82" r="15" fill="#2a2118"/><circle cx="112" cy="82" r="7" fill="#ffc533"/>'];
+    },
+    pig: function () { return fAnimalSVG('pig', null, { head: 1 }); },
+    horse: function () { return fAnimalSVG('horse', null, { head: 1 }); },
+    chicken: function () { return fAnimalSVG('chicken', null, { head: 1 }); },
+    cow: function () {
+      return [150, 124, '<path d="M28 60 C16 64 14 84 18 96" fill="none"/><ellipse cx="18" cy="100" rx="5" ry="7" fill="#2a2118"/>' + dLegs([38, 52, 94, 108], 80, 38, '#fff', '#4a4540') +
+        '<ellipse cx="80" cy="92" rx="12" ry="8" fill="#f7b6c6"/><ellipse cx="72" cy="66" rx="46" ry="26" fill="#fff"/>' +
+        '<ellipse cx="52" cy="58" rx="13" ry="9" transform="rotate(-20 52 58)" fill="#2a2118" stroke="none"/><ellipse cx="86" cy="74" rx="10" ry="7" fill="#2a2118" stroke="none"/><ellipse cx="94" cy="54" rx="7" ry="5" fill="#2a2118" stroke="none"/>' +
+        '<path d="M112 30 L106 14 L120 25 Z" fill="#efe2c6"/><path d="M128 25 L138 12 L136 30 Z" fill="#efe2c6"/><ellipse cx="106" cy="38" rx="10" ry="5" transform="rotate(-20 106 38)" fill="#fff"/>' +
+        '<ellipse cx="124" cy="44" rx="16" ry="20" fill="#fff"/><ellipse cx="128" cy="62" rx="15" ry="10" fill="#f7b6c6"/><circle cx="123" cy="62" r="1.8" fill="#2a2118" stroke="none"/><circle cx="133" cy="62" r="1.8" fill="#2a2118" stroke="none"/>' + dEye(127, 40)];
+    },
+    sheep: function () {
+      return [140, 104, dLegs([40, 54, 86, 100], 66, 32, '#4a4540') + dBlob(['circle cx="40" cy="52" r="18"', 'circle cx="60" cy="40" r="20"', 'circle cx="82" cy="40" r="20"', 'circle cx="100" cy="52" r="17"', 'circle cx="70" cy="62" r="22"', 'circle cx="46" cy="66" r="15"', 'circle cx="94" cy="66" r="15"'], '#fffaf0') +
+        '<ellipse cx="106" cy="44" rx="11" ry="5" transform="rotate(20 106 44)" fill="#4a4540"/><ellipse cx="120" cy="54" rx="13" ry="17" transform="rotate(-20 120 54)" fill="#4a4540"/>' +
+        dBlob(['circle cx="112" cy="38" r="8"', 'circle cx="122" cy="36" r="7"'], '#fffaf0') + '<circle cx="124" cy="50" r="3.6" fill="#fff" stroke="none"/><circle cx="125" cy="50" r="2" fill="#2a2118" stroke="none"/>'];
+    },
+    duck: function () {
+      return [112, 96, '<path d="M42 80 L38 92 H52 Z M62 80 L60 92 H74 Z" fill="#f08a20"/><path d="M18 58 L4 42 L26 50 Z" fill="#ffd23f"/><ellipse cx="54" cy="62" rx="38" ry="22" fill="#ffd23f"/>' +
+        '<path d="M34 58 C42 48 62 50 66 60 C58 70 42 70 34 58 Z" fill="#f5bf1f"/><circle cx="78" cy="32" r="17" fill="#ffd23f"/><path d="M92 32 L108 36 L92 42 Z" fill="#f08a20"/>' + dEye(82, 27)];
+    },
+    goat: function () {
+      var c = '#efe6d2';
+      return [150, 126, '<path d="M30 56 L20 44 L34 50 Z" fill="' + c + '"/>' + dLegs([38, 52, 94, 108], 78, 40, c, '#4a4540') + '<ellipse cx="72" cy="66" rx="44" ry="22" fill="' + c + '"/>' +
+        '<path d="M96 60 L102 30 L122 34 L112 70 Z" fill="' + c + '" stroke="none"/><path d="M102 30 L97.6 53 M122 34 L113 64" fill="none"/>' +
+        fThick('M110 24 C106 10 94 6 88 12', '#8a7b62', 5) + '<ellipse cx="102" cy="32" rx="11" ry="4.5" transform="rotate(25 102 32)" fill="' + c + '"/>' +
+        '<ellipse cx="122" cy="36" rx="21" ry="13" transform="rotate(25 122 36)" fill="' + c + '"/><path d="M128 48 L126 64 L136 50 Z" fill="#cbbd9f"/>' +
+        '<circle cx="138" cy="44" r="1.8" fill="#2a2118" stroke="none"/><circle cx="118" cy="29" r="3.6" fill="#ffc533" stroke-width="1.5"/><rect x="115.5" y="28" width="5" height="2.2" fill="#2a2118" stroke="none"/>'];
+    },
+    dog: function () {
+      var c = '#c98a52';
+      return [140, 104, fThick('M26 52 C16 44 14 32 20 24', c, 8) + dLegs([34, 48, 82, 96], 64, 32, c, '#a86b3d') + '<ellipse cx="64" cy="58" rx="40" ry="20" fill="' + c + '"/>' +
+        '<circle cx="102" cy="36" r="20" fill="' + c + '"/><ellipse cx="120" cy="44" rx="13" ry="9" fill="#e3b88a"/><ellipse cx="131" cy="40" rx="5" ry="4" fill="#2a2118"/>' +
+        '<path d="M116 52 Q119 61 123 52" fill="#e8417a" stroke-width="2"/><path d="M90 20 C80 26 80 48 88 52 C94 46 97 32 95 21 Z" fill="#8a5530"/>' + dEye(107, 30)];
+    },
+    cat: function () {
+      var c = '#ff9a3d';
+      return [136, 100, fThick('M28 60 C8 56 8 30 22 22', c, 9) + dLegs([36, 50, 78, 92], 62, 30, c) + '<ellipse cx="64" cy="58" rx="36" ry="18" fill="' + c + '"/>' +
+        '<path d="M52 42 L55 52 M66 40 L67 50 M80 42 L78 52" fill="none" stroke="#d9731f" stroke-width="4"/>' +
+        '<path d="M88 26 L90 6 L102 20 Z" fill="' + c + '"/><path d="M108 20 L118 6 L120 28 Z" fill="' + c + '"/><circle cx="104" cy="36" r="20" fill="' + c + '"/>' +
+        '<ellipse cx="97" cy="32" rx="3" ry="4" fill="#2a2118" stroke="none"/><ellipse cx="111" cy="32" rx="3" ry="4" fill="#2a2118" stroke="none"/><path d="M101 41 H107 L104 45 Z" fill="#e8417a" stroke-width="2"/>' +
+        '<path d="M104 45 Q101 50 97 47 M104 45 Q107 50 111 47 M92 43 L76 40 M92 47 L76 50 M116 43 L132 40 M116 47 L132 50" fill="none" stroke-width="2"/>'];
+    }
+  };
+  var DSVG = {};
+  /* a stamp as an <svg> string (cached) */
+  function dSVG(k) {
+    if (DSVG[k]) return DSVG[k];
+    var p = DPIC[k]();
+    return (DSVG[k] = typeof p === 'string' ? p : '<svg viewBox="0 0 ' + p[0] + ' ' + p[1] + '" overflow="visible" ' + INK + '>' + p[2] + '</svg>');
+  }
+  function dShapeSVG(k, col) { return '<svg viewBox="-56 -56 112 112"><path d="' + DSHAPE[k] + '" fill="' + col + '" stroke="#2a2118" stroke-width="5" stroke-linejoin="round"/></svg>'; }
+  /* a stamp as an image for the canvas: a little room around the edges so outlines are not cut off */
+  var DIMG = {};
+  function dImg(k) {
+    if (DIMG[k]) return DIMG[k];
+    var svg = dSVG(k), m = /viewBox="([-\d.]+) ([-\d.]+) ([\d.]+) ([\d.]+)"/.exec(svg), pad = 4;
+    var w = +m[3] + pad * 2, h = +m[4] + pad * 2, r = DIMG[k] = { el: new Image(), ok: false, w: w, h: h };
+    svg = svg.replace(m[0], 'xmlns="http://www.w3.org/2000/svg" width="' + w * 4 + '" height="' + h * 4 + '" viewBox="' + (+m[1] - pad) + ' ' + (+m[2] - pad) + ' ' + w + ' ' + h + '"');
+    r.el.onload = function () { r.ok = true; dRedrawSoon(); };
+    r.el.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    return r;
+  }
+
+  /* --- the picture: strokes and stamps, oldest first, plus 'clear' marks (so even Clear can be undone).
+     Points are stored as fractions (0 to 1) of the page "frame" (the page size when the picture was started) and sizes as fractions
+     of its short side, so it redraws at any size. When the page changes shape (turning the device), the frame is fitted inside it, never stretched. --- */
+  var dr = { items: [], frame: null, tool: 'pen', color: '#2f74d0', size: 1, stamp: 'star', ssize: 1, lines: false, ink: null, pid: null, W: 0, H: 0, dpr: 1 };
+  var dcv = $('#dcv'), dctx = dcv.getContext('2d'), dbg = $('#dBg'), dbgx = dbg.getContext('2d'), dSoon = 0;
+  function dGeo() {
+    var f = dr.items.length && dr.frame ? dr.frame : { w: dr.W, h: dr.H }, k = Math.min(dr.W / f.w, dr.H / f.h);
+    return { k: k, fw: f.w, fh: f.h, ox: (dr.W - f.w * k) / 2, oy: (dr.H - f.h * k) / 2, m: Math.min(f.w, f.h) * k };
+  }
+  function dToPage(p, g) { return [g.ox + p[0] * g.fw * g.k, g.oy + p[1] * g.fh * g.k]; }
+  function dFromPage(x, y, g) { return [+((x - g.ox) / (g.fw * g.k)).toFixed(4), +((y - g.oy) / (g.fh * g.k)).toFixed(4)]; }
+  function dLive() { var i = dr.items.length; while (i-- > 0) if (dr.items[i].t === 'clear') break; return dr.items.slice(i + 1); }
+  function dAdd(it) { if (!dr.items.length) dr.frame = { w: dr.W, h: dr.H }; dr.items.push(it); dSync(); }
+
+  /* --- drawing: smooth lines (each corner becomes a curve through the midpoints), round ends --- */
+  function dPen(c, erase, col, w) {
+    c.globalCompositeOperation = erase ? 'destination-out' : 'source-over';   /* the eraser rubs the drawing away; the white page and lines stay */
+    c.strokeStyle = c.fillStyle = erase ? '#000' : col; c.lineWidth = w; c.lineCap = 'round'; c.lineJoin = 'round';
+  }
+  function dStroke(c, P, erase, col, w) {
+    c.save(); dPen(c, erase, col, w); c.beginPath();
+    if (P.length === 1) { c.arc(P[0][0], P[0][1], w / 2, 0, 7); c.fill(); c.restore(); return; }
+    c.moveTo(P[0][0], P[0][1]);
+    for (var i = 1; i < P.length - 1; i++) c.quadraticCurveTo(P[i][0], P[i][1], (P[i][0] + P[i + 1][0]) / 2, (P[i][1] + P[i + 1][1]) / 2);
+    c.lineTo(P[P.length - 1][0], P[P.length - 1][1]); c.stroke(); c.restore();
+  }
+  function dStamp(c, it, g) {
+    var P = dToPage([it.x, it.y], g), S = it.s * g.m;
+    if (DSHAPE[it.k]) {
+      c.save(); c.globalCompositeOperation = 'source-over'; c.translate(P[0], P[1]); c.scale(S / 100, S / 100);
+      var path = new Path2D(DSHAPE[it.k]); c.fillStyle = it.c; c.fill(path);
+      c.lineWidth = 300 / S; c.lineJoin = 'round'; c.strokeStyle = '#2a2118'; c.stroke(path); c.restore(); return;
+    }
+    var im = dImg(it.k); if (!im.ok) return;   /* still loading: drawn when it arrives */
+    var a = im.w / im.h, w = a >= 1 ? S : S * a, h = a >= 1 ? S / a : S;
+    c.drawImage(im.el, P[0] - w / 2, P[1] - h / 2, w, h);
+  }
+  function dItem(c, it, g) {
+    if (it.t === 's') dStroke(c, it.p.map(function (p) { return dToPage(p, g); }), it.e, it.c, Math.max(2, it.w * g.m));
+    else if (it.t === 'm') dStamp(c, it, g);
+  }
+  function dRedraw() {
+    var c = dctx, g = dGeo();
+    c.setTransform(dr.dpr, 0, 0, dr.dpr, 0, 0); c.clearRect(0, 0, dr.W, dr.H);
+    dLive().forEach(function (it) { dItem(c, it, g); });
+    if (dr.ink) dStroke(c, dr.ink.pts, dr.ink.e, dr.ink.c, dr.ink.w);
+  }
+  function dRedrawSoon() { if (!dSoon) dSoon = requestAnimationFrame(function () { dSoon = 0; if (dr.W) dRedraw(); }); }
+  /* the white page behind the drawing, with writing lines across the full width when they are on */
+  function dBgDraw() {
+    var c = dbgx; c.setTransform(dr.dpr, 0, 0, dr.dpr, 0, 0); c.fillStyle = '#fff'; c.fillRect(0, 0, dr.W, dr.H);
+    if (!dr.lines) return;
+    var rows = Math.max(2, Math.round(dr.H / DRAW.lineRow)), R = dr.H / rows, i, y;
+    for (i = 0; i < rows; i++) {
+      y = i * R; c.lineWidth = 2;
+      c.strokeStyle = '#7fb2e5'; c.setLineDash([]); [WT, WB].forEach(function (v) { c.beginPath(); c.moveTo(0, y + R * v / 160); c.lineTo(dr.W, y + R * v / 160); c.stroke(); });
+      c.setLineDash([8, 7]); c.beginPath(); c.moveTo(0, y + R * WM / 160); c.lineTo(dr.W, y + R * WM / 160); c.stroke(); c.setLineDash([]);
+    }
+  }
+  /* the page fills the space the tools leave; follow it live (turning the device, window size) and redraw the picture */
+  function dFit() {
+    var box = $('#dWrap'), w = box.clientWidth, h = box.clientHeight;
+    if (!w || !h || (w === dr.W && h === dr.H)) return;
+    if (dr.ink) dEnd();   /* a line in progress is kept, measured on the old page */
+    dr.W = w; dr.H = h; dr.dpr = Math.min(window.devicePixelRatio || 1, 2);
+    [dcv, dbg].forEach(function (cv) { cv.style.width = w + 'px'; cv.style.height = h + 'px'; cv.width = Math.round(w * dr.dpr); cv.height = Math.round(h * dr.dpr); });
+    dBgDraw(); dRedraw();
+  }
+  if (window.ResizeObserver) try { new ResizeObserver(function () { if (!$('#dPlay').hidden) dFit(); }).observe($('#dWrap')); } catch (e) {}
+
+  /* --- finger on the page: one finger at a time; a tap makes a dot; only the new piece of the line is drawn while he moves --- */
+  function dXY(e) { var r = dcv.getBoundingClientRect(); return [clamp(e.clientX - r.left, 0, dr.W), clamp(e.clientY - r.top, 0, dr.H)]; }
+  dcv.addEventListener('pointerdown', function (e) {
+    e.preventDefault(); if (dr.pid !== null) return;
+    var q = dXY(e);
+    if (dr.tool === 'stamp') { dPlace(q[0], q[1]); return; }
+    dr.pid = e.pointerId; try { dcv.setPointerCapture(e.pointerId); } catch (x) {}
+    var er = dr.tool === 'eraser';
+    dr.ink = { pts: [q], last: q, e: er, c: dr.color, w: Math.max(2, DRAW[er ? 'eraser' : 'pen'][dr.size] * dGeo().m) };
+    dctx.setTransform(dr.dpr, 0, 0, dr.dpr, 0, 0); dStroke(dctx, [q], er, dr.color, dr.ink.w);
+  });
+  dcv.addEventListener('pointermove', function (e) {
+    var k = dr.ink; if (!k || e.pointerId !== dr.pid) return;
+    var list = e.getCoalescedEvents ? e.getCoalescedEvents() : null, c = dctx, i;
+    if (!list || !list.length) list = [e];
+    c.save(); c.setTransform(dr.dpr, 0, 0, dr.dpr, 0, 0); dPen(c, k.e, k.c, k.w);
+    for (i = 0; i < list.length; i++) {
+      var q = dXY(list[i]), P = k.pts, b = P[P.length - 1];
+      if (Math.abs(q[0] - b[0]) + Math.abs(q[1] - b[1]) < 1.5) continue;
+      P.push(q);
+      var ctl = P[P.length - 2], end = [(ctl[0] + q[0]) / 2, (ctl[1] + q[1]) / 2];
+      if (P.length >= 3) { c.beginPath(); c.moveTo(k.last[0], k.last[1]); c.quadraticCurveTo(ctl[0], ctl[1], end[0], end[1]); c.stroke(); k.last = end; }
+    }
+    c.restore();
+  });
+  function dEnd(e) {
+    var k = dr.ink; if (!k || (e && e.pointerId !== dr.pid)) return;
+    dr.ink = null; dr.pid = null;
+    var P = k.pts, g = dGeo(), c = dctx;
+    if (P.length > 1) { c.save(); c.setTransform(dr.dpr, 0, 0, dr.dpr, 0, 0); dPen(c, k.e, k.c, k.w); c.beginPath(); c.moveTo(k.last[0], k.last[1]); c.lineTo(P[P.length - 1][0], P[P.length - 1][1]); c.stroke(); c.restore(); }
+    if (k.e && !dLive().length) return;   /* rubbing out an empty page: nothing to keep */
+    dAdd({ t: 's', c: k.c, e: k.e, w: k.w / g.m, p: P.map(function (p) { return dFromPage(p[0], p[1], g); }) });
+  }
+  dcv.addEventListener('pointerup', dEnd); dcv.addEventListener('pointercancel', dEnd);
+  /* a stamp goes down where he taps; animals make their sound when there is a recording of it */
+  function dPlace(x, y) {
+    var g = dGeo(), q = dFromPage(x, y, g), it = { t: 'm', k: dr.stamp, c: dr.color, s: DRAW.stamp[dr.ssize], x: q[0], y: q[1] };
+    dAdd(it); g = dGeo(); dctx.setTransform(dr.dpr, 0, 0, dr.dpr, 0, 0); dStamp(dctx, it, g);
+    if (DSND[it.k]) dClip(DSND[it.k]); else sfx.pop();
+  }
+  function dClip(keys) {
+    var have = keys.filter(function (k) { return VOICE[k]; }); if (muted || !have.length) return;
+    var k = pick(have), ctx = audio();
+    if (ctx && ctx.state === 'running') vbuf(k, function (b) { if (!b || muted) return; try { var s = ctx.createBufferSource(); s.buffer = b; s.connect(ctx.destination); s.start(0); } catch (e) {} });
+    else try { var el = new Audio(VOICE[k]), pr = el.play(); if (pr && pr.catch) pr.catch(function () {}); } catch (e) {}
+  }
+
+  /* --- tools --- */
+  function dSync() {
+    var on = function (el, v) { el.classList.toggle('on', !!v); };
+    Array.prototype.forEach.call($('#dCols').children, function (b) { on(b, b.getAttribute('data-c') === dr.color); });
+    on($('#dPen'), dr.tool === 'pen'); on($('#dEraser'), dr.tool === 'eraser'); on($('#dStamps'), dr.tool === 'stamp');
+    Array.prototype.forEach.call(document.querySelectorAll('#dPlay .dsz'), function (b) { on(b, dr.tool !== 'stamp' && +b.getAttribute('data-z') === dr.size); });
+    $('#dPlay').style.setProperty('--dc', dr.tool === 'eraser' ? '#fff' : dr.color);
+    $('#dStampPic').innerHTML = DSHAPE[dr.stamp] ? dShapeSVG(dr.stamp, dr.color) : dSVG(dr.stamp);
+    on($('#dLines'), dr.lines); $('#dLines').setAttribute('aria-pressed', String(dr.lines));
+    $('#dUndo').classList.toggle('off', !dr.items.length); $('#dClear').classList.toggle('off', !dLive().length);
+  }
+  function dTray() {
+    var h = '';
+    [0, 1, 2].forEach(function (z) { h += '<button class="btn dt' + (z === dr.ssize ? ' on' : '') + '" type="button" data-z="' + z + '" aria-label="' + ['Small', 'Medium', 'Large'][z] + ' stamps"><svg viewBox="-56 -56 112 112" width="' + [22, 34, 48][z] + '" height="' + [22, 34, 48][z] + '"><path d="' + DSHAPE.star + '" fill="#ffc533" stroke="#2a2118" stroke-width="' + [12, 8, 6][z] + '" stroke-linejoin="round"/></svg></button>'; });
+    $('#dSSizes').innerHTML = h; h = '';
+    Object.keys(DSHAPE).concat(DOBJ).forEach(function (k) { h += '<button class="btn dtile' + (k === dr.stamp && dr.tool === 'stamp' ? ' on' : '') + '" type="button" data-k="' + k + '" aria-label="' + k + '">' + (DSHAPE[k] ? dShapeSVG(k, dr.color) : dSVG(k)) + '</button>'; });
+    $('#dTiles').innerHTML = h;
+  }
+  function dSave() {
+    var out = document.createElement('canvas'), c, url, a, w = null;
+    out.width = dcv.width; out.height = dcv.height; c = out.getContext('2d');
+    c.fillStyle = '#fff'; c.fillRect(0, 0, out.width, out.height); c.drawImage(dcv, 0, 0);
+    url = out.toDataURL('image/png');
+    /* iPhone / iPad: downloads land in Files (or are blocked in the home-screen app), so show the picture in a new tab to press-and-hold and save to Photos */
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+      try { w = window.open('', '_blank'); } catch (e) {}
+      if (w) {
+        w.document.write('<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><title>Watson\'s drawing</title><body style="margin:0;padding:12px;background:#bfe3f2;font:18px sans-serif;text-align:center">' +
+          '<p>Press and hold the picture, then tap Save to Photos.</p><img src="' + url + '" alt="Watson\'s drawing" style="max-width:100%;border:3px solid #2a2118;border-radius:12px;background:#fff"></body>');
+        w.document.close(); return true;
+      }
+    }
+    a = document.createElement('a'); a.href = url; a.download = 'watson-drawing-' + new Date().toISOString().slice(0, 10) + '.png';
+    document.body.appendChild(a); a.click(); a.remove(); return true;
+  }
+  (function dInit() {
+    $('#dCols').innerHTML = DCOL.map(function (c) { return '<button class="dsw" type="button" data-c="' + c[1] + '" aria-label="' + c[0] + '" style="--c:' + c[1] + '"><i></i></button>'; }).join('');
+    $('#dCols').addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('[data-c]') : null; if (!b) return;
+      sfx.pop(); dr.color = b.getAttribute('data-c'); if (dr.tool === 'eraser') dr.tool = 'pen'; dSync();
+    });
+    $('#dPen').addEventListener('click', function () { sfx.pop(); dr.tool = 'pen'; dSync(); });
+    $('#dEraser').addEventListener('click', function () { sfx.pop(); dr.tool = 'eraser'; dSync(); });
+    Array.prototype.forEach.call(document.querySelectorAll('#dPlay .dsz'), function (b) {
+      b.addEventListener('click', function () { sfx.pop(); dr.size = +b.getAttribute('data-z'); if (dr.tool === 'stamp') dr.tool = 'pen'; dSync(); });
+    });
+    $('#dStamps').addEventListener('click', function () { sfx.pop(); dTray(); $('#dTray').hidden = false; });
+    $('#dTrayX').addEventListener('click', function () { sfx.pop(); $('#dTray').hidden = true; });
+    $('#dTray').addEventListener('click', function (e) { if (e.target === $('#dTray')) $('#dTray').hidden = true; });   /* tap outside the tray closes it */
+    $('#dSSizes').addEventListener('click', function (e) { var b = e.target.closest ? e.target.closest('[data-z]') : null; if (!b) return; sfx.pop(); dr.ssize = +b.getAttribute('data-z'); dTray(); });
+    $('#dTiles').addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('[data-k]') : null; if (!b) return;
+      sfx.pop(); dr.stamp = b.getAttribute('data-k'); dr.tool = 'stamp'; $('#dTray').hidden = true; dSync();
+    });
+    $('#dLines').addEventListener('click', function () { sfx.pop(); dr.lines = !dr.lines; dBgDraw(); dSync(); });
+    $('#dUndo').addEventListener('click', function () { if (dr.ink || !dr.items.length) return; sfx.pop(); dr.items.pop(); dRedraw(); dSync(); });
+    $('#dSave').addEventListener('click', function () {
+      if (!dLive().length) return;
+      if (dSave()) { sfx.good(); var f = $('#dFlash'); f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); }
+    });
+    $('#dClear').addEventListener('click', function () { if (!dLive().length) return; sfx.pop(); $('#dAsk').hidden = false; });
+    $('#dYes').addEventListener('click', function () { $('#dAsk').hidden = true; if (!dLive().length) return; sfx.pop(); dAdd({ t: 'clear' }); dRedraw(); dSync(); });
+    $('#dNo').addEventListener('click', function () { sfx.pop(); $('#dAsk').hidden = true; });
+  })();
+  /* open the drawing page: quiet, and the picture he left is still there */
+  function dStart() {
+    wReset(); wr.pickKind = 'draw'; wShow('dPlay'); $('#prompt').textContent = '';
+    $('#dTray').hidden = true; $('#dAsk').hidden = true;
+    DOBJ.forEach(dImg); dSync(); dFit();
+  }
 
   /* ---------- screens ---------- */
   var current = write;
