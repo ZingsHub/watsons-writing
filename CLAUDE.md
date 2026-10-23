@@ -25,6 +25,8 @@ Sections are marked with `/* ---------- name ---------- */` comments; grep for t
 - Menu modes: Learn to write, Writing Quiz, Free writing, Write my name, plus My Farm.
 - Free writing is a drawing page (`dPlay`, the "Free writing" section; settings in `DRAW`): colors, brush sizes, eraser, undo, clear (asks first), writing-lines toggle, stamps, save as PNG. It never speaks and gives no stars. Stamps of animals play her clips ("Oink!" etc.) only if recorded.
 - Voice: any NEW spoken line needs a new recording from Zach; until then it falls back to the device voice. Add new lines to `voice-needed.txt`. When clips arrive, put them in `public/audio/` and add them to `manifest.json`.
+- Stars are paid only for improving (all numbers in `STARS`, paid through `rPay`; record in localStorage `ww_reward`, letter bests in `ty_write`): best per letter and quiz set, names once per name and level (first 5 names), a daily star, mastery bonuses. `ty_stars` is lifetime; the farm spends from it.
+- My Farm voice lines are in `FSAY`: shop answers may cut in, other farm lines are dropped if a line is playing, and a missing clip stays silent.
 - Idle reminder after 10 s: repeats instructions, then highlights Hint.
 
 ## Workflow

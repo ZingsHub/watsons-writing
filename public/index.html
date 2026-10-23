@@ -890,10 +890,53 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 
   /* stars = lifetime stars (only goes up); the header shows what is left to spend on the farm */
   function renderStars() { $('#starN').textContent = String(fSpendable()); fBadge(); }
-  function addStar() {
-    stars++; save(); renderStars();
-    var el = $('#stars'); el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');
+  /* ---------- stars are earned by doing better, not by repeating. Every number lives here. ---------- */
+  var STARS = {
+    letter: 3,                          /* Learn to write: his best (1 to 3) per letter; a lesson pays only what beats it */
+    quiz: 3,                            /* Writing Quiz: his best (1 to 3) per set, same rule */
+    quizSets: ['up', 'lo', 'mix', 'num'],
+    namePerLetter: 1, nameDone: 2,      /* Write my name: 1 per letter written without a hint, plus 2 for finishing ... */
+    nameLevels: 3, nameNames: 5,        /* ... paid once per name and level, and only for the first 5 names on this device */
+    daily: 1,                           /* the day's first finished lesson, quiz or name (device date) */
+    bonus: { up: 10, lo: 10, num: 5 }   /* all capitals / all lowercase / all numbers at 3 stars: once each */
+  };
+  /* what has been paid: { quiz: { set: best }, names: { name: [levels] }, day: 'y-m-d', bonus: { set: true } }. Letter bests stay in ty_write. */
+  var RKEY = 'ww_reward', RW = null;
+  function rSave() { try { localStorage.setItem(RKEY, JSON.stringify(RW)); } catch (e) {} }
+  function rLevels(a) { return Array.isArray(a) ? a.filter(function (l, i) { return (l === 1 || l === 2 || l === 3) && a.indexOf(l) === i; }) : []; }
+  function rGet() {
+    if (RW) return RW;
+    var d = null; try { d = JSON.parse(localStorage.getItem(RKEY) || 'null'); } catch (e) {}
+    RW = { quiz: {}, names: {}, day: '', bonus: {} };
+    if (d && typeof d === 'object' && !Array.isArray(d)) {
+      STARS.quizSets.forEach(function (q) { var n = d.quiz ? Number(d.quiz[q]) : 0; if (n >= 1 && n <= STARS.quiz) RW.quiz[q] = Math.floor(n); });
+      if (d.names && typeof d.names === 'object') Object.keys(d.names).forEach(function (k) { var l = rLevels(d.names[k]); if (l.length) RW.names[k] = l; });
+      if (typeof d.day === 'string') RW.day = d.day;
+      Object.keys(STARS.bonus).forEach(function (q) { if (d.bonus && d.bonus[q] === true) RW.bonus[q] = true; });
+    } else {
+      /* the first time: names he already wrote count as paid at the level saved with them, so nothing is paid twice */
+      var old = null; try { old = JSON.parse(localStorage.getItem('ww_names') || '[]'); } catch (e) {}
+      if (Array.isArray(old)) old.forEach(function (o) { if (o && typeof o.n === 'string' && rLevels([o.l]).length) { var k = o.n.toLowerCase(); RW.names[k] = rLevels((RW.names[k] || []).concat([o.l])); } });
+      rSave();
+    }
+    return RW;
   }
+  function rToday() { var t = new Date(); return t.getFullYear() + '-' + (t.getMonth() + 1) + '-' + t.getDate(); }
+  /* pay for a finished lesson, quiz or name: the improvement, the day's first-lesson star, any new mastery bonus. Saved before anything shows. */
+  function rPay(gain) {
+    var R = rGet(), best = wBest(), out = { gain: gain, daily: 0, bonus: 0, why: [] };
+    if (R.day !== rToday()) { R.day = rToday(); out.daily = STARS.daily; out.why.push('Star of the day! +' + STARS.daily); }
+    [['up', WUP, 'All capitals'], ['lo', WLO, 'All lowercase'], ['num', WNUM, 'All numbers']].forEach(function (q) {
+      if (R.bonus[q[0]] || !q[1].split('').every(function (c) { return best[c] >= STARS.letter; })) return;
+      R.bonus[q[0]] = true; out.bonus += STARS.bonus[q[0]]; out.why.push(q[2] + ' at 3 stars! +' + STARS.bonus[q[0]]);
+    });
+    rSave();
+    out.total = out.gain + out.daily + out.bonus;
+    if (out.total) { stars += out.total; save(); renderStars(); var el = $('#stars'); el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+    if (out.why.length) setTimeout(function () { toast(out.why.join('  ') + ' \u2605'); }, 900);
+    return out;
+  }
+  function rEarned(n) { return n ? '  +' + n + ' \u2605' : ''; }
   renderStars();
 
   /* ---------- sound ---------- */
@@ -1728,12 +1771,12 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   }
   function wGuidedFinish() {
     var L = WL[wr.letter], max = 10 * L.strokes.length, frac = wr.pts / max, stars = frac >= 0.8 ? 3 : frac >= 0.5 ? 2 : 1;
-    wSaveBest(wr.letter, stars);
-    for (var i = 0; i < stars; i++) (function (k) { setTimeout(addStar, 250 * k); })(i);
+    var prev = wBest()[wr.letter] || 0; wSaveBest(wr.letter, stars);
+    var pay = rPay(Math.max(0, stars - prev));   /* only what beats his best for this letter */
     sfx.win(); banner(pick(CHEERS)); domConfetti();
     wr.mode = 'result';
     var msg = pick(W_CHEER);
-    $('#wOverTitle').textContent = msg; $('#wOverStars').textContent = '★★★'.slice(0, stars) + '☆☆☆'.slice(0, 3 - stars); $('#wOverTxt').textContent = wr.pts + ' of ' + max + ' points';
+    $('#wOverTitle').textContent = msg; $('#wOverStars').textContent = '★★★'.slice(0, stars) + '☆☆☆'.slice(0, 3 - stars); $('#wOverTxt').textContent = wr.pts + ' of ' + max + ' points' + rEarned(pay.total);
     $('#wOverNext').hidden = false; $('#wOverMenu').textContent = 'Pick another letter'; $('#wOverAgain').textContent = 'Write it again'; $('#wOverGrid').hidden = true; wOverOpen();
     vsay([Pc(msg)]);
   }
@@ -1821,10 +1864,11 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function wQuizFinish() {
     clearTimeout(wAutoT); wr.qBusy = false;
     var correct = Math.round(wr.qScore / 10), stars = wr.qScore >= 40 ? 3 : wr.qScore >= 25 ? 2 : 1;
-    for (var i = 0; i < stars; i++) (function (k) { setTimeout(addStar, 250 * k); })(i);
+    var R = rGet(), prev = R.quiz[wr.setOf] || 0; if (stars > prev) R.quiz[wr.setOf] = stars;
+    var pay = rPay(Math.max(0, stars - prev));   /* only what beats his best for this set */
     wr.mode = 'result'; sfx.win(); banner(pick(CHEERS)); domConfetti();
     $('#wOverTitle').textContent = 'All done!'; $('#wOverStars').textContent = '★★★'.slice(0, stars) + '☆☆☆'.slice(0, 3 - stars);
-    $('#wOverTxt').textContent = 'You scored ' + wr.qScore + ' points'; $('#wOverNext').hidden = true; $('#wOverMenu').textContent = 'Quiz menu'; $('#wOverAgain').textContent = 'Play again';
+    $('#wOverTxt').textContent = 'You scored ' + wr.qScore + ' points' + rEarned(pay.total); $('#wOverNext').hidden = true; $('#wOverMenu').textContent = 'Quiz menu'; $('#wOverAgain').textContent = 'Play again';
     var rec = wr.qRec, last = rec[rec.length - 1], h = '';
     if (last) { wr.letter = last.ch; wr.free = last.ink.map(function (s) { return s.slice(); }); wr.ghost = {}; }   /* the eye shows this last letter */
     rec.forEach(function (q, i) {
@@ -2188,10 +2232,15 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 
   /* --- finished: the whole name in his handwriting --- */
   function nFinish() {
-    var tok = nm.tok, earned = nm.got + 2, w = nm.word, c1 = pick(NCHEER), c2 = pick(NCHEER.filter(function (x) { return x !== c1; }));
+    var tok = nm.tok, w = nm.word, c1 = pick(NCHEER), c2 = pick(NCHEER.filter(function (x) { return x !== c1; }));
     wr.mode = 'result'; wShow('nDone'); $('#prompt').textContent = 'You wrote ' + w + '!';
-    for (var k = 0; k < earned; k++) addStar();   /* 1 per letter written without a hint, plus 2 for finishing */
-    $('#nEarn').textContent = '+' + earned + ' ★';
+    /* paid once per name and level, for the first few names on this device */
+    var R = rGet(), key = w.toLowerCase(), had = R.names[key], gain = 0;
+    if ((had || Object.keys(R.names).length < STARS.nameNames) && !(had && had.indexOf(nm.level) >= 0)) {
+      gain = nm.got * STARS.namePerLetter + STARS.nameDone; R.names[key] = rLevels((had || []).concat([nm.level]));
+    }
+    var pay = rPay(gain);
+    $('#nEarn').textContent = pay.total ? '+' + pay.total + ' \u2605' : ''; $('#nEarn').hidden = !pay.total;
     nBig(); sfx.win(); domConfetti(); banner(pick(CHEERS));
     /* her voice only: a cheer, the name spelled with her letter clips, another cheer */
     var items = [Pc(c1)].concat(w.replace(/ /g, '').split('').map(Lc), [Pc(c2)]);
@@ -2227,7 +2276,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   });
 
   /* ---------- Grown-ups: reset all progress, behind a math problem (reachable only from the main menu) ---------- */
-  var GKEYS = ['ty_stars', 'ty_name', 'ty_voice', 'ty_write', 'ww_farm', 'ww_farm_bad'];   /* everything the app saves; saved names (ww_names) only when ticked */
+  var GKEYS = ['ty_stars', 'ty_name', 'ty_voice', 'ty_write', 'ww_farm', 'ww_farm_bad', 'ww_reward', 'ww_farm_said'];   /* everything the app saves; saved names (ww_names) only when ticked */
   var gAnswer = -1, gLast = '', gTyped = '';
   function gHome() { wReset(); wShow('gHome'); $('#prompt').textContent = 'Grown-ups'; }
   function gRand(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
@@ -2556,9 +2605,10 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     FST.animals.forEach(function (id) { if (FA[id] && FA[id].mode === 'home') FST.items.forEach(function (k) { if (FARM.likes[k] === id) c.push([id, k]); }); });
     if (c.length) { var p = c[Math.floor(Math.random() * c.length)]; fGo(p[0], p[1]); }
   }
+  function fPlayLine(k) { var l = FSAY.play[k], now = performance.now(); if (l && !(now - (fPlayT[l] || -1e9) < FSAY.playGapMs) && fAmbient([l])) fPlayT[l] = now; }
   function fArrive(id) {
     var a = FA[id];
-    if (a.mode === 'go') { a.mode = 'play'; a.t = FARM.playSeconds; a.spark = 0; a.face = fItemAt(a.item)[0] < a.x ? -1 : 1; a.el.querySelector('.fa-act').classList.add('p-' + id); }
+    if (a.mode === 'go') { fPlayLine(a.item); a.mode = 'play'; a.t = FARM.playSeconds; a.spark = 0; a.face = fItemAt(a.item)[0] < a.x ? -1 : 1; a.el.querySelector('.fa-act').classList.add('p-' + id); }
     else { a.mode = 'home'; a.t = fRand(FARM.wander.every); }
   }
   function fLoop(now) {
@@ -2584,6 +2634,62 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     });
     fVisitT -= dt; if (fVisitT <= 0) { fVisitT = fRand(FARM.visitEvery); fVisit(); }
     fRaf = requestAnimationFrame(fLoop);
+  }
+
+  /* --- her voice on the farm: recorded lines only (a missing clip stays silent, never the device voice).
+     Lines that answer his tap may cut in; the other lines never cut into one that is playing, they are dropped. --- */
+  var FSAY = {
+    no: ['Almost! Keep writing to earn more stars!', "You need a few more stars. Let's write some letters!", 'Not yet! Write a letter and earn more stars.', 'Ooh, that one needs more stars!'],
+    noQuietMs: 3000,                    /* tapping again within 3 s: just the wiggle */
+    got: 'You got it!', thanks: { pig: 'Oink! Thank you!', horse: 'Neigh! Thank you!', chicken: 'Cluck! Thank you!' },
+    gift: 'You have a gift! Tap to open it!', grow: ['Wow! Your friends are growing!', 'Look how big they got!'], biggest: 'Your farm is so big!',
+    almost: 'Almost at your next gift!', almostAt: 0.8,
+    decorate: "Let's decorate!", build: "Let's build something!", earn: "Let's write to earn stars!", bye: 'Come back and write more to grow your farm!',
+    names: { glitter: 'Glitter', bow: 'Bow', crown: 'Crown', rainbow: 'Rainbow mane', braid: 'Braid', flower: 'Flower', hat: 'Hat', tail: 'Rainbow tail',
+      mud: 'Mud pit', pond: 'pond', hay: 'Haystack', flowers: 'Flower patch', pig: 'pig', horse: 'horse', chicken: 'chicken' },
+    play: { hay: 'Time to feed the animals!', mud: 'The pig is playing in the mud!', pond: 'The horse is drinking at the pond!', flowers: 'The chicken is pecking in the flowers!' },
+    playGapMs: 60000                    /* each play line at most once a minute */
+  };
+  var fNoLast = '', fNoT = -1e9, fPlayT = {}, fEarnSaid = false, FSKEY = 'ww_farm_said', FSD = null;
+  function fRec(keys) { return keys.filter(function (k) { return k && VOICE[k]; }); }
+  function fRespond(keys) { keys = fRec(keys); if (keys.length && !muted) vsay(keys.map(Pc)); }
+  function fAmbient(keys) { keys = fRec(keys); if (!keys.length || muted || vSpeaking) return false; vsay(keys.map(Pc)); return true; }
+  /* a "not yet" line: random, never the same twice in a row, none within 3 s of the last */
+  function fNoLine() {
+    var now = performance.now(); if (now - fNoT < FSAY.noQuietMs) return '';
+    fNoT = now; fNoLast = pick(FSAY.no.filter(function (k) { return k !== fNoLast; })); return fNoLast;
+  }
+  function fCanBuy() {
+    var n = fSpendable(), ok = false;
+    FST.animals.forEach(function (id) { Object.keys(FARM.decor[id]).forEach(function (k) { if (FST.decor[id][k] === undefined && FARM.decor[id][k] <= n) ok = true; }); });
+    Object.keys(FARM.items).forEach(function (k) { if (FST.items.indexOf(k) < 0 && FARM.items[k] <= n) ok = true; });
+    return ok;
+  }
+  /* "Let's write to earn stars!": no stars to spend, nothing to buy, no gift waiting; once per visit */
+  function fEarnLine() { if (fEarnSaid || fSpendable() > 0 || fCanBuy() || fGifts() > 0) return []; fEarnSaid = true; return [FSAY.earn]; }
+  /* what has been announced: the gift slots, the growth stage, the next-gift milestone */
+  function fSaid() {
+    if (FSD) return FSD;
+    var d = null; try { d = JSON.parse(localStorage.getItem(FSKEY) || 'null'); } catch (e) {}
+    if (d && typeof d === 'object' && isFinite(d.gift) && isFinite(d.grow) && isFinite(d.almost)) FSD = { gift: +d.gift, grow: +d.grow, almost: +d.almost };
+    else FSD = { gift: FST.animals.length, grow: fStageI(), almost: 0 };   /* the first time: only what happens from now on */
+    return FSD;
+  }
+  function fSaidSave() { try { localStorage.setItem(FSKEY, JSON.stringify(FSD)); } catch (e) {} }
+  function fStageI() { return FARM.growthStages.indexOf(fStage()); }
+  /* opening the farm: hello, then whatever is new since last time, all in one go */
+  function fHello() {
+    var d = fSaid(), lines = [fGifts() > 0 ? 'You earned a new animal!' : 'Welcome to your farm!'], gi = fStageI(), last = FARM.growthStages.length - 1;
+    if (gi > d.grow) lines = lines.concat(FSAY.grow[0], gi === last ? FSAY.biggest : FSAY.grow[1]);
+    d.grow = gi;
+    var slots = Math.min(FARM.slotMilestones.filter(function (m) { return stars >= m; }).length, FIDS.length);
+    if (fGifts() > 0 && slots > d.gift) lines.push(FSAY.gift);
+    d.gift = Math.max(d.gift, slots);
+    var ms = FARM.slotMilestones, prev = 0, next = 0, i;
+    for (i = 0; i < ms.length; i++) { if (stars < ms[i]) { next = ms[i]; break; } prev = ms[i]; }
+    if (next && (stars - prev) / (next - prev) >= FSAY.almostAt && d.almost !== next) { lines.push(FSAY.almost); d.almost = next; }
+    fSaidSave(); fEarnSaid = false;
+    fRespond(lines.concat(fEarnLine()));
   }
 
   /* --- taps, gifts, decorating and building --- */
@@ -2625,29 +2731,30 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     $('#fTiles').innerHTML = h; $('#fSheet').hidden = false;
   }
   function fCloseSheet() { $('#fSheet').hidden = true; fSheetKind = ''; fBuild(); }
-  function fNo(b) { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); fBump(); }   /* not enough stars: a wiggle, nothing negative */
+  /* not enough stars: a wiggle and an encouraging line; nothing negative, nothing bought, no numbers change */
+  function fNo(b, k) { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); fBump(); var l = fNoLine(); if (l) fRespond([FSAY.names[k], l]); else fAmbient([FSAY.names[k]]); }
   function fYay(k) { var b = $('#fTiles').querySelector('[data-k="' + k + '"]'); if (b) b.classList.add('yay'); }
   function fAdopt(id) {
     if (FST.animals.indexOf(id) >= 0 || fGifts() <= 0) return;
     FST.animals.push(id); fSave(); fBadge();
     $('#fSheet').hidden = true; fSheetKind = ''; fBuild();
     var a = FA[id]; a.el.querySelector('.fa-hop').classList.add('fnew');
-    fFx('heart', a.x, a.y + 8, 4); FSND[id](); vsay([Pc('A new friend!')]);
+    fFx('heart', a.x, a.y + 8, 4); FSND[id](); fRespond([FSAY.names[id], 'A new friend!']);
   }
   function fDecor(b, k) {
     var id = fSel, o = FST.decor[id][k];
     if (o === undefined) {
-      if (!fPay(FARM.decor[id][k])) { fNo(b); return; }
-      FST.decor[id][k] = true; sfx.good(); fBump();
-    } else { FST.decor[id][k] = !o; sfx.pop(); }
+      if (!fPay(FARM.decor[id][k])) { fNo(b, k); return; }
+      FST.decor[id][k] = true; sfx.good(); fBump(); fRespond([FSAY.names[k], FSAY.thanks[id] || FSAY.got].concat(fEarnLine()));
+    } else { FST.decor[id][k] = !o; sfx.pop(); fAmbient([FSAY.names[k]]); }
     fSave(); renderStars();
     if (FA[id] && FA[id].el) FA[id].el.querySelector('.fa-hop').innerHTML = fAnimalSVG(id, FST.decor[id]);
     fSheet('decor'); fYay(k);
   }
   function fBuyItem(b, k) {
-    if (FST.items.indexOf(k) >= 0) { fCloseSheet(); fSendFan(k); return; }
-    if (!fPay(FARM.items[k])) { fNo(b); return; }
-    FST.items.push(k); fSave(); renderStars(); fBump(); sfx.good();
+    if (FST.items.indexOf(k) >= 0) { fAmbient([FSAY.names[k]]); fCloseSheet(); fSendFan(k); return; }
+    if (!fPay(FARM.items[k])) { fNo(b, k); return; }
+    FST.items.push(k); fSave(); renderStars(); fBump(); sfx.good(); fRespond([FSAY.names[k], FSAY.got].concat(fEarnLine()));
     fCloseSheet();
     var el = $('#fLayer').querySelector('[data-i="' + k + '"] .fi-in'); if (el) el.classList.add('fnew');
     fFx('spark', fItemAt(k)[0], fItemAt(k)[1] + 4, 6);
@@ -2732,12 +2839,16 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     start: function () {
       fMeasure(); fSel = ''; fBuild(); fOn = true; fVisitT = 4;
       fLast = performance.now(); cancelAnimationFrame(fRaf); fRaf = requestAnimationFrame(fLoop);
-      vsay([Pc(fGifts() > 0 ? 'You earned a new animal!' : 'Welcome to your farm!')]);
+      fHello();
     },
     stop: function () { fEndDrag(); fBuildMode(false); fOn = false; cancelAnimationFrame(fRaf); clearTimeout(fTimer); $('#fSheet').hidden = true; fSheetKind = ''; vstop(); }
   };
   function farmOpen() { write.stop(); current = farm; $('#write').hidden = true; $('#farm').hidden = false; $('#prompt').textContent = 'My Farm'; syncBack(); farm.start(); }
-  function farmClose() { farm.stop(); $('#farm').hidden = true; $('#write').hidden = false; current = write; write.start(true); }
+  function farmClose() {
+    var bye = fSpendable() === 0;   /* nothing left to spend: a nudge to go and write */
+    farm.stop(); $('#farm').hidden = true; $('#write').hidden = false; current = write; write.start(true);
+    if (bye) fAmbient([FSAY.bye]);
+  }
   $('#fLayer').addEventListener('click', function (e) {
     if (current !== farm || !e.target.closest || performance.now() < fNoClick) return;   /* no tap right after a drag */
     var a = e.target.closest('.fa'), g = e.target.closest('.fgift');
@@ -2754,9 +2865,9 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   });
   $('#fHammer').addEventListener('click', function () {   /* first tap: build mode and the shop; tap again to stop building */
     if (current !== farm) return; audio(); sfx.pop();
-    if (fBuildOn) fBuildMode(false); else { fBuildMode(true); fSheet('build'); }
+    if (fBuildOn) fBuildMode(false); else { fBuildMode(true); fSheet('build'); fAmbient([FSAY.build]); }
   });
-  $('#fPaint').addEventListener('click', function () { if (current !== farm || !fSel) return; audio(); sfx.pop(); fSheet('decor'); });
+  $('#fPaint').addEventListener('click', function () { if (current !== farm || !fSel) return; audio(); sfx.pop(); fSheet('decor'); fAmbient([FSAY.decorate]); });
   window.addEventListener('resize', function () { if (current === farm) { fMeasure(); fLayout(); } });
   FST = fLoad(); renderStars();
 
