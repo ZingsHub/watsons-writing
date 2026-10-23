@@ -2881,11 +2881,14 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (a.hdEl && a.head !== a.headK) { a.headK = a.head; a.hdEl.style.transform = a.head ? 'rotate(' + a.head.toFixed(1) + 'deg)' : ''; }
   }
   /* her recorded animal sound (never over a voice line), or the made-up one when there is no recording */
-  function fAnimalSound(id) {
-    if (muted) return;
-    var k = DSND[id];
-    var rec = k ? k.filter(function (x) { return VOICE[x]; }) : [];
-    if (rec.length && !vSpeaking) vsay([Pc(pick(rec))]); else FSND[id]();   /* her clip goes through the voice, so no line ever plays over it */
+  /* an animal's sound: one of her two clips (never the same one twice in a row), or the made-up sound when it is not recorded.
+     A clip is dropped, not squeezed in, while she is saying a line or another animal clip is playing. done() runs after it. */
+  var FLAST = {};
+  function fAnimalSound(id, done) {
+    var k = DSND[id], rec = k ? k.filter(function (x) { return VOICE[x]; }) : [];
+    if (!muted && rec.length && !vSpeaking && !dClipBusy()) { FLAST[id] = dClip(rec, FLAST[id], done); return; }
+    if (!rec.length) FSND[id]();   /* respects mute itself */
+    if (done) done();
   }
   function fMuddy(id, on) { var a = FA[id]; a.mud = on ? FARM.mudSeconds : 0; if (a.el) a.el.classList.toggle('muddy', on); }
   /* k: the item it is in (its front rim shows over the animal), or '' */
@@ -3217,8 +3220,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   /* an option's spoken name: the color names belong to each animal (the chicken's "rainbow" is its tail) */
   function fName(id, k) { var p = id && FPAL[id] && FPAL[id][k]; return p && p.name || FSAY.names[k]; }
   function fRec(keys) { return keys.filter(function (k) { return k && VOICE[k]; }); }
-  function fRespond(keys) { keys = fRec(keys); if (keys.length && !muted) vsay(keys.map(Pc)); }
-  function fAmbient(keys) { keys = fRec(keys); if (!keys.length || muted || vSpeaking) return false; vsay(keys.map(Pc)); return true; }
+  function fRespond(keys) { keys = fRec(keys); if (!keys.length || muted) return; if (dClipBusy()) setTimeout(function () { vsay(keys.map(Pc)); }, dClipEnd - performance.now()); else vsay(keys.map(Pc)); }
+  function fAmbient(keys) { keys = fRec(keys); if (!keys.length || muted || vSpeaking || dClipBusy()) return false; vsay(keys.map(Pc)); return true; }
   /* a "not yet" line: random, never the same twice in a row, none within 3 s of the last */
   function fNoLine() {
     var now = performance.now(); if (now - fNoT < FSAY.noQuietMs) return '';
@@ -3310,7 +3313,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     FST.animals.push(id); fSave(); fBadge();
     $('#fSheet').hidden = true; fSheetKind = ''; fBuild();
     var a = FA[id]; a.el.querySelector('.fa-hop').classList.add('fnew');
-    fFx('heart', a.x, a.y + 8, 4); FSND[id](); fRespond([FSAY.names[id], 'A new friend!']);   /* her words come next, so the made-up sound here */
+    fFx('heart', a.x, a.y + 8, 4); fAnimalSound(id, function () { fRespond([FSAY.names[id], 'A new friend!']); });   /* its sound first, then her words */
   }
   /* a customization: buy it (it is worn at once), or switch it on and off for free; one worn per slot */
   function fDecor(b, k) {
@@ -3678,11 +3681,23 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     dAdd(it); g = dGeo(); dctx.setTransform(dr.dpr, 0, 0, dr.dpr, 0, 0); dStamp(dctx, it, g);
     if (DSND[it.k]) dClip(DSND[it.k]); else sfx.pop();
   }
-  function dClip(keys) {
-    var have = keys.filter(function (k) { return VOICE[k]; }); if (muted || !have.length) return;
-    var k = pick(have), ctx = audio();
-    if (ctx && ctx.state === 'running') vbuf(k, function (b) { if (!b || muted) return; try { var s = ctx.createBufferSource(); s.buffer = b; s.connect(ctx.destination); s.start(0); } catch (e) {} });
-    else try { var el = new Audio(VOICE[k]), pr = el.play(); if (pr && pr.catch) pr.catch(function () {}); } catch (e) {}
+  /* one of her recorded clips from keys, picked at random (not `avoid` when there is another); done() once it has finished,
+     or straight away when nothing plays. Returns the clip it picked. dClipBusy() is true while a clip is playing. */
+  var dClipEnd = 0, dClipTok = 0;
+  function dClipBusy() { return performance.now() < dClipEnd; }
+  function dClip(keys, avoid, done) {
+    var have = keys.filter(function (k) { return VOICE[k]; }), tok = ++dClipTok, over = false;
+    var end = function () { if (over) return; over = true; if (tok === dClipTok) dClipEnd = 0; if (done) done(); };
+    if (muted || !have.length) { end(); return ''; }
+    var k = pick(have.length > 1 ? have.filter(function (x) { return x !== avoid; }) : have), ctx = audio();
+    dClipEnd = performance.now() + 4000;   /* busy until it is known how long the clip is */
+    setTimeout(end, 4000);                 /* never stuck */
+    if (ctx && ctx.state === 'running') vbuf(k, function (b) {
+      if (!b || muted || over) { end(); return; }
+      try { var src = ctx.createBufferSource(); src.buffer = b; src.connect(ctx.destination); src.onended = end; if (tok === dClipTok) dClipEnd = performance.now() + b.duration * 1000 + 60; src.start(0); } catch (e) { end(); }
+    });
+    else try { var el = new Audio(VOICE[k]); el.onended = el.onerror = end; var pr = el.play(); if (pr && pr.catch) pr.catch(end); } catch (e) { end(); }
+    return k;
   }
 
   /* --- tools --- */
