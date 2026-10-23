@@ -540,8 +540,20 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 /* moving parts of the animals and items: transforms and opacity only */
 .fmud { transition: opacity 1.4s ease; }
 .fa.muddy .fmud { opacity: 1; }
-.fhd { transform-box: view-box; transform-origin: 110px 32px; }
-.fwing { transform-box: view-box; transform-origin: 58px 58px; }
+.fhd, .fwing, .ftail, .fwool { transform-box: view-box; }   /* each animal sets its own pivot inline */
+.fa.swish .ftail { animation: fswish 0.45s ease-in-out infinite alternate; }
+@keyframes fswish { from { transform: rotate(-14deg); } to { transform: rotate(14deg); } }
+.fa.boing .fwool { animation: fwob 0.18s ease-in-out infinite alternate; }
+@keyframes fwob { to { transform: scale(1.06, 0.94); } }
+.fdk { position: absolute; left: 0; bottom: 0; pointer-events: none; will-change: transform; }
+.fdk svg { display: block; width: 100%; height: auto; overflow: visible; }
+.ftiles.rows { display: flex; flex-direction: column; gap: 10px; }
+.fslot { display: flex; align-items: center; gap: 8px; }
+.fslot-ic { flex: none; width: 34px; }
+.fslot-t { flex: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 8px; }
+.fslot-ic svg { display: block; width: 32px; height: 32px; overflow: visible; }
+.ftiles.rows .ft { padding: 6px 4px; }
+.ftiles.rows .ft-pic { width: 58px; height: 50px; }
 .fa.flap .fwing { animation: fflap 0.13s ease-in-out infinite alternate; }
 @keyframes fflap { to { transform: rotate(-38deg); } }
 .ffl { transform-box: view-box; transition: transform 1.3s cubic-bezier(0.3, 1.6, 0.5, 1); }
@@ -573,7 +585,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 .ft.shake { animation: shake 0.35s; }
 .ft.yay { animation: pop 0.35s ease; }
 .ft-pic { width: 72px; height: 64px; display: grid; place-items: center; }
-.ft-pic svg { max-width: 100%; max-height: 100%; overflow: visible; }
+.ft-pic svg { width: 100%; height: 100%; overflow: visible; }   /* tall pictures (the bell) shrink to fit */
 .ft.big .ft-pic { width: 112px; height: 100px; }
 .ft-price { display: flex; align-items: center; gap: 3px; min-height: 30px; font-family: var(--display); font-weight: 700; font-size: 22px; }
 .ft-ok svg { width: 30px; height: 30px; display: block; }
@@ -2325,30 +2337,52 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   /* ---------- My Farm: stars earned from writing build a farm ---------- */
   /* Every farm number lives here so it is easy to tune. */
   var FARM = {
-    slotMilestones: [3, 10, 20, 35, 55, 80],   /* lifetime stars that each unlock one animal slot (a gift box) */
+    /* lifetime stars that each unlock one animal (a gift box): 7 animals. One-time stars come to about 250 (all letters, quizzes, bonuses, his name)
+       plus a daily star, so the last animals arrive after most letters are mastered */
+    slotMilestones: [3, 15, 35, 60, 90, 125, 165],
     growthStages: [                              /* all animals grow together by lifetime stars. size: how big; head, eye > 1 and legs < 1: baby proportions */
       { id: 'baby', at: 0, size: 0.5, head: 1.35, eye: 1.3, legs: 0.68 },
       { id: 'kid', at: 15, size: 0.8, head: 1.15, eye: 1.12, legs: 0.84 },
       { id: 'grown', at: 40, size: 1.15, head: 1, eye: 1, legs: 1 },
       { id: 'big', at: 100, size: 1.6, head: 1, eye: 1, legs: 1 }
     ],
-    animals: { pig: 1, horse: 1.3, chicken: 0.7 },   /* size of each animal next to the others */
-    decor: {                                     /* star price of each customization */
-      pig: { glitter: 5, bow: 3, crown: 5 },
-      horse: { rainbow: 5, braid: 4, flower: 3 },
-      chicken: { hat: 4, bow: 3, tail: 4 }
+    animals: { pig: 1, horse: 1.3, chicken: 0.7, cow: 1.3, sheep: 1, duck: 0.7, goat: 1.1 },   /* size of each animal next to the others; also the order in the gift picker */
+    /* customizations: one worn per slot; star prices rise within a slot. Bought once, owned forever, switched on and off for free.
+       Every animal gets the shared slots; a few animals swap in their own options (the horse's hairstyles, color names). */
+    looks: {
+      head: { bow: 2, hat: 4, tophat: 7, crown: 10 },
+      face: { glasses: 3, sunglasses: 6, bowtie: 9 },
+      body: { scarf: 3, tutu: 6, cape: 9 },
+      color: { c1: 2, c2: 4, spots: 7, stripes: 10 },
+      fx: { flower: 2, glitter: 5, sparkles: 8 }
     },
-    items: { mud: 6, pond: 8, hay: 5, flowers: 7 },    /* star price of each world item */
-    likes: { mud: 'pig', pond: 'horse', hay: 'horse', flowers: 'chicken' },
+    lookMore: {                                  /* extra slots and options for particular animals */
+      horse: { hair: { braid: 3, ponytail: 5, curls: 7, mohawk: 9, rainbow: 12 }, body: { blanket: 5 } },
+      cow: { body: { blanket: 5 } },
+      chicken: { color: { rainbow: 6 } }
+    },
+    /* world items: star price, which animals they belong to (shown in the shop once one of them lives on the farm), and size */
+    items: { mud: 6, puddle: 4, slide: 9, hay: 5, jump: 6, apples: 4, flowers: 7, nest: 4, coop: 9, trough: 6, bell: 4, bigtrough: 9,
+      clover: 6, yarn: 4, shelter: 9, pond: 8, boat: 5, duckhouse: 9, rock: 7, tire: 4, seesaw: 8 },
+    itemOf: { mud: 'pig', puddle: 'pig', slide: 'pig', hay: 'horse', jump: 'horse', apples: 'horse', flowers: 'chicken', nest: 'chicken', coop: 'chicken',
+      trough: 'cow', bell: 'cow', bigtrough: 'cow', clover: 'sheep', yarn: 'sheep', shelter: 'sheep', pond: 'duck horse pig', boat: 'duck', duckhouse: 'duck',
+      rock: 'goat', tire: 'goat', seesaw: 'goat' },
+    standing: 'hay jump apples coop trough bell bigtrough yarn shelter duckhouse rock tire seesaw slide',   /* drawn among the animals; the rest lie flat under them */
+    likes: { mud: 'pig', pond: 'horse', hay: 'horse', flowers: 'chicken', trough: 'cow', clover: 'sheep', rock: 'goat' },   /* each animal's favorite thing */
     spots: {                                     /* [x % from the left, y % up from the bottom of the farm] */
-      pig: [50, 16], horse: [64, 34], chicken: [85, 30], gift: [50, 28],
-      mud: [80, 5], pond: [21, 16], hay: [44, 41], flowers: [22, 1]
+      /* animals' homes in four rows up the farm, at most two big ones side by side in a row */
+      horse: [30, 40], goat: [78, 40], chicken: [14, 28], cow: [62, 28], pig: [44, 15], sheep: [84, 15], duck: [28, 4], gift: [50, 28],
+      mud: [80, 5], pond: [21, 16], hay: [44, 41], flowers: [22, 1], trough: [12, 36], clover: [62, 2], rock: [88, 40],
+      puddle: [66, 10], slide: [8, 6], jump: [56, 30], apples: [36, 40], nest: [94, 14], coop: [76, 40], bell: [26, 40], bigtrough: [16, 26],
+      yarn: [48, 4], shelter: [60, 42], boat: [34, 10], duckhouse: [4, 30], tire: [70, 30], seesaw: [92, 24]
     },
-    itemSize: { mud: 1.65, pond: 2, hay: 1.3, flowers: 1.45 },
+    itemSize: { mud: 1.65, pond: 2, hay: 1.3, flowers: 1.45, trough: 1.35, clover: 1.5, rock: 1.6, puddle: 1.2, slide: 1.7, jump: 1.4, apples: 0.85,
+      nest: 0.85, coop: 1.45, bell: 0.75, bigtrough: 1.8, yarn: 0.65, shelter: 1.7, boat: 1.05, duckhouse: 1.25, tire: 0.9, seesaw: 1.7 },
     actFirst: [6, 14], actEvery: [25, 45],       /* seconds until an animal's first visit to its favorite thing after opening the farm, then between visits */
     mudSeconds: 60,                              /* the pig stays muddy this long (a pond washes it sooner) */
     flowersBack: 45, flowerBites: 3,             /* eaten flowers all grow back over this many seconds, one by one; flowers eaten per visit */
     hayBack: 30, hayBites: 3,                    /* the haystack refills this long after the last bite; bites per visit */
+    crowdShrink: 0.05,                           /* a fuller farm: every animal past the third makes them all this much smaller (7 animals: 80%) */
     depth: 10, room: 0.3,                        /* animals closer than this (% up the farm) count as side by side; they may share at most this much of the smaller one */
     fxMax: 4,                                    /* at most this many little hearts, splashes, petals and bubbles at once */
     groundTop: 44,                               /* dragged animals and items stay below this line (% up from the bottom) */
@@ -2357,7 +2391,19 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     dragPx: 10
   };
   var FKEY = 'ww_farm', FIDS = Object.keys(FARM.animals), FST = null;
-  function fBlank() { var d = {}; FIDS.forEach(function (a) { d[a] = {}; }); return { spent: 0, animals: [], decor: d, items: [], pos: {} }; }
+  /* each animal's slots and options: { slot: { option: price } } */
+  var FLOOKS = {};
+  FIDS.forEach(function (id) {
+    var o = {}, more = FARM.lookMore[id] || {};
+    if (more.hair) o.hair = more.hair;
+    Object.keys(FARM.looks).forEach(function (sl) { o[sl] = {}; [FARM.looks[sl], more[sl] || {}].forEach(function (m) { Object.keys(m).forEach(function (k) { o[sl][k] = m[k]; }); }); });
+    FLOOKS[id] = o;
+  });
+  function fSlotOf(id, k) { var L = FLOOKS[id], sl; for (sl in L) if (L[sl].hasOwnProperty(k)) return sl; return ''; }
+  function fPrice(id, k) { var sl = fSlotOf(id, k); return sl ? FLOOKS[id][sl][k] : 0; }
+  function fBlank() { var L = {}; FIDS.forEach(function (a) { L[a] = { own: [], wear: {} }; }); return { spent: 0, animals: [], looks: L, items: [], pos: {} }; }
+  /* the old save (v1) kept { decor: { animal: { option: true (on) / false (off) } } }; those are owned now, with the dearest one per slot worn */
+  var FOLD = { chicken: { bow: 'bowtie', tail: 'rainbow' } };
   /* read the saved farm, keeping only the pieces that make sense; a broken save is set aside, never trusted */
   function fLoad() {
     var st = fBlank(), raw = null, d = null;
@@ -2367,9 +2413,19 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (!d || typeof d !== 'object' || Array.isArray(d)) { try { localStorage.setItem(FKEY + '_bad', raw); } catch (e) {} return st; }
     var n = Number(d.spent); if (isFinite(n) && n > 0) st.spent = Math.floor(n);
     if (Array.isArray(d.animals)) d.animals.forEach(function (a) { if (FARM.animals.hasOwnProperty(a) && st.animals.indexOf(a) < 0) st.animals.push(a); });
-    if (d.decor && typeof d.decor === 'object') FIDS.forEach(function (a) {
-      var o = d.decor[a]; if (!o || typeof o !== 'object') return;
-      Object.keys(FARM.decor[a]).forEach(function (k) { if (o[k] === true || o[k] === false) st.decor[a][k] = o[k]; });
+    var own = function (a, k) { var L = st.looks[a]; if (fSlotOf(a, k) && L.own.indexOf(k) < 0) L.own.push(k); };
+    var wear = function (a, k) { var L = st.looks[a], sl = fSlotOf(a, k); if (sl && L.own.indexOf(k) >= 0 && (!L.wear[sl] || fPrice(a, k) > fPrice(a, L.wear[sl]))) L.wear[sl] = k; };
+    FIDS.forEach(function (a) {
+      var o = d.looks && typeof d.looks === 'object' ? d.looks[a] : null;
+      if (o && typeof o === 'object') {
+        if (Array.isArray(o.own)) o.own.forEach(function (k) { if (typeof k === 'string') own(a, k); });
+        if (o.wear && typeof o.wear === 'object') Object.keys(o.wear).forEach(function (sl) { var k = o.wear[sl]; if (typeof k === 'string' && fSlotOf(a, k) === sl && st.looks[a].own.indexOf(k) >= 0) st.looks[a].wear[sl] = k; });
+      }
+      var od = d.decor && typeof d.decor === 'object' ? d.decor[a] : null;   /* an older save */
+      if (od && typeof od === 'object') Object.keys(od).forEach(function (k) {
+        var nk = (FOLD[a] && FOLD[a][k]) || k; if (od[k] !== true && od[k] !== false) return;
+        own(a, nk); if (od[k] === true) wear(a, nk);
+      });
     });
     if (Array.isArray(d.items)) d.items.forEach(function (k) { if (FARM.items.hasOwnProperty(k) && st.items.indexOf(k) < 0) st.items.push(k); });
     if (d.pos && typeof d.pos === 'object') Object.keys(FARM.spots).forEach(function (k) {   /* where he dragged things to */
@@ -2378,7 +2434,9 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     });
     return st;
   }
-  function fSave() { try { localStorage.setItem(FKEY, JSON.stringify({ v: 1, spent: FST.spent, animals: FST.animals, decor: FST.decor, items: FST.items, pos: FST.pos })); } catch (e) {} }
+  function fSave() { try { localStorage.setItem(FKEY, JSON.stringify({ v: 2, spent: FST.spent, animals: FST.animals, looks: FST.looks, items: FST.items, pos: FST.pos })); } catch (e) {} }
+  /* what an animal is wearing: { slot: option } */
+  function fLook(id) { return FST && FST.looks[id] ? FST.looks[id].wear : {}; }
   function fSpendable() { return Math.max(0, stars - (FST ? FST.spent : 0)); }
   function fPay(n) { if (fSpendable() < n) return false; FST.spent += n; return true; }
   function fStage() { var g = FARM.growthStages, i = 0; while (i + 1 < g.length && stars >= g[i + 1].at) i++; return g[i]; }
@@ -2403,86 +2461,259 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function dSpark(x, y, s) { return '<g ' + svgT(x, y, s) + '><path d="M0 -7 L2 -2 L7 0 L2 2 L0 7 L-2 2 L-7 0 L-2 -2 Z" fill="#fff6a8" stroke="#d9a400" stroke-width="1.5"/></g>'; }
   function fThick(d, c, w) { return '<path d="' + d + '" fill="none" stroke="#2a2118" stroke-width="' + (w + 6) + '"/><path d="' + d + '" fill="none" stroke="' + c + '" stroke-width="' + w + '"/>'; }
   function fHeadT(px, py, h, inner) { return h === 1 ? inner : '<g transform="translate(' + px + ' ' + py + ') scale(' + h + ') translate(' + (-px) + ' ' + (-py) + ')">' + inner + '</g>'; }
-  var FVB = { pig: [130, 100], horse: [150, 130], chicken: [100, 100] };
+  var FVB = { pig: [130, 100], horse: [150, 130], chicken: [100, 100], cow: [150, 124], sheep: [140, 104], duck: [112, 96], goat: [150, 126] };
   var RAINBOW = ['#e8413a', '#ffc533', '#3fb04a', '#2f74d0'];
-  /* an animal facing right. st: its growth stage (head and eye size, leg length); dec: its decorations.
-     Shorter legs keep the feet on the ground and lower the body. The pig carries mud layers that show only while it is muddy;
-     the horse's head (.fhd) and the chicken's wing (.fwing) can move. */
-  function fAnimalSVG(id, dec, st) {
-    st = st || fStage();
-    var on = function (k) { return !!(dec && dec[k] === true); }, h = st.head || 1, ey = st.eye || 1, lg = st.legs || 1, s = '', hd;
-    var eye = function (x, y, r) { return '<circle cx="' + x + '" cy="' + y + '" r="' + (r * ey).toFixed(2) + '" fill="#2a2118" stroke="none"/><circle cx="' + (x + r * 0.35 * ey).toFixed(2) + '" cy="' + (y - r * 0.35 * ey).toFixed(2) + '" r="' + (r * 0.32 * ey).toFixed(2) + '" fill="#fff" stroke="none"/>'; };
-    /* legs from y0, len long: squashed to lg; everything else moves down to meet them */
-    var drop = function (len, inner) { return lg === 1 ? inner : '<g transform="translate(0 ' + ((1 - lg) * len).toFixed(2) + ')">' + inner + '</g>'; };
-    var legs = function (y0, len, inner) { return lg === 1 ? inner : '<g transform="translate(0 ' + (y0 + (1 - lg) * len).toFixed(2) + ') scale(1 ' + lg + ') translate(0 ' + (-y0) + ')">' + inner + '</g>'; };
-    var mud = function (inner) { return '<g class="fmud" opacity="0" stroke="none">' + inner + '</g>'; };
-    if (id === 'pig') {
+  /* colors: base, and the two color choices (c1, c2) with the names her voice would use */
+  var FPAL = {
+    pig: { base: { main: '#f7b6c6', dark: '#f29bb2', nose: '#f08aa3', hoof: '#a8556c' },
+      c1: { name: 'Gold', main: '#f6d77a', dark: '#e9bf52', nose: '#e8a94a', hoof: '#9a6a2a' }, c2: { name: 'Mint', main: '#bfe8c9', dark: '#98d3a8', nose: '#7fc293', hoof: '#4f8a5f' } },
+    horse: { base: { main: '#c98a52', dark: '#b5743f', mane: '#6b4226', muzzle: '#a86b3d', hoof: '#4a3528' },
+      c1: { name: 'White', main: '#f3ece0', dark: '#ddd2bf', mane: '#b89b72', muzzle: '#d8c7ad', hoof: '#6a5a4a' }, c2: { name: 'Black', main: '#6a5548', dark: '#56443a', mane: '#2a2118', muzzle: '#4a3b32', hoof: '#2a2118' } },
+    chicken: { base: { main: '#fffaf0', wing: '#efe2c6', tail: ['#fffaf0', '#fffaf0', '#fffaf0'] },
+      c1: { name: 'Brown', main: '#e0b07a', wing: '#c98f55', tail: ['#c98f55', '#e0b07a', '#a86b3d'] }, c2: { name: 'Gray', main: '#dcd8d1', wing: '#bdb8b0', tail: ['#9a958d', '#bdb8b0', '#dcd8d1'] },
+      rainbow: { name: 'Rainbow tail', tail: ['#e8417a', '#ffc533', '#2f74d0'] } },
+    cow: { base: { main: '#ffffff', spot: '#2a2118', nose: '#f7b6c6', hoof: '#4a4540' },
+      c1: { name: 'Brown', main: '#c98a52', spot: '#7a4e32', nose: '#e3a58a', hoof: '#4a3528' }, c2: { name: 'Gold', main: '#f3d58a', spot: '#c9a14a', nose: '#f7b6c6', hoof: '#6a5a3a' } },
+    sheep: { base: { wool: '#fffaf0', face: '#4a4540' }, c1: { name: 'Pink', wool: '#f9cfe0' }, c2: { name: 'Blue', wool: '#cfe0f7' } },
+    duck: { base: { main: '#ffd23f', wing: '#f5bf1f', bill: '#f08a20' }, c1: { name: 'White', main: '#fffaf0', wing: '#efe2c6' }, c2: { name: 'Green', main: '#9fd48f', wing: '#7fbf72' } },
+    goat: { base: { main: '#efe6d2', dark: '#cbbd9f', horn: '#8a7b62', hoof: '#4a4540' },
+      c1: { name: 'Brown', main: '#c2905f', dark: '#a87a4c', horn: '#6b5a42', hoof: '#3a3028' }, c2: { name: 'Gray', main: '#b8b2aa', dark: '#9a948c', horn: '#6b6560', hoof: '#3a3530' } }
+  };
+  function fPal(id, c) { var P = FPAL[id], o = {}, k; for (k in P.base) o[k] = P.base[k]; if (c && P[c]) for (k in P[c]) if (k !== 'name') o[k] = P[c][k]; return o; }
+  /* where things attach on each animal (picture units): hp head pivot for baby heads, pivot where the head bends down,
+     top of the head, eye, ear, neck [x, y, size]; back [middle x, top y, width]; body ellipse [cx, cy, rx, ry]; legs [top y, length] */
+  var FANC = {
+    pig: { hp: [96, 54], pivot: [96, 54], top: [100, 27, 1], eye: [104, 43, 1], ear: [88, 26, 0.8], neck: [88, 72, 1], back: [62, 31, 88], body: [62, 58, 44, 27], legs: [66, 29] },
+    horse: { hp: [112, 38], pivot: [110, 32], top: [117, 19, 1], eye: [119, 30, 1], ear: [106, 15, 0.8], neck: [108, 64, 1.1], back: [72, 48, 88], body: [72, 72, 44, 24], legs: [80, 43] },
+    chicken: { hp: [64, 46], pivot: [64, 46], top: [70, 17, 0.8], eye: [74, 32, 0.85], ear: [62, 25, 0.7], neck: [66, 52, 0.8], back: [48, 40, 52], body: [50, 60, 28, 21], legs: [76, 19] },
+    cow: { hp: [120, 44], pivot: [108, 42], top: [122, 24, 1], eye: [127, 40, 1], ear: [104, 35, 0.8], neck: [108, 70, 1.1], back: [72, 40, 90], body: [72, 66, 46, 26], legs: [80, 38] },
+    sheep: { hp: [116, 48], pivot: [108, 46], top: [117, 30, 0.9], eye: [124, 50, 0.9], ear: [104, 41, 0.8], neck: [108, 66, 0.9], back: [70, 22, 88], body: [70, 52, 44, 24], legs: [66, 32] },
+    duck: { hp: [78, 34], pivot: [70, 46], top: [78, 15, 0.75], eye: [82, 27, 0.8], ear: [70, 19, 0.6], neck: [72, 50, 0.8], back: [52, 40, 70], body: [54, 62, 38, 22], legs: [80, 12] },
+    goat: { hp: [118, 38], pivot: [104, 36], top: [118, 23, 1], eye: [118, 29, 1], ear: [100, 29, 0.8], neck: [106, 64, 1], back: [72, 44, 88], body: [72, 66, 44, 22], legs: [78, 40] }
+  };
+  function fG(x, y, s, inner) { return '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')">' + inner + '</g>'; }
+  function fMud(inner) { return '<g class="fmud" opacity="0" stroke="none">' + inner + '</g>'; }
+  function fLegRects(xs, y, h, c, hoof) { return xs.map(function (x) { return '<rect x="' + x + '" y="' + y + '" width="11" height="' + h + '" rx="4" fill="' + c + '"/>' + (hoof ? '<rect x="' + x + '" y="' + (y + h - 7) + '" width="11" height="8" rx="2" fill="' + hoof + '"/>' : ''); }).join(''); }
+  /* each animal's own picture, in parts: back (behind the legs), legs, body, head */
+  var FDRAW = {
+    pig: function (P, look, eye) {
       var lp = '', lm = '';
-      [32, 46, 78, 92].forEach(function (x) { lp += '<rect x="' + x + '" y="66" width="11" height="28" rx="4" fill="#f29bb2"/><rect x="' + x + '" y="88" width="11" height="7" rx="2" fill="#a8556c"/>'; lm += '<rect x="' + x + '" y="77" width="11" height="18" rx="3" fill="#7a4e32" opacity=".6"/>'; });
-      hd = '<path d="M84 34 L82 14 L98 28 Z" fill="#f29bb2"/><path d="M104 28 L114 12 L116 36 Z" fill="#f29bb2"/>' +
-        '<circle cx="100" cy="50" r="23" fill="#f7b6c6"/><ellipse cx="119" cy="56" rx="9" ry="8" fill="#f08aa3"/>' +
-        '<circle cx="116" cy="55" r="1.8" fill="#2a2118" stroke="none"/><circle cx="122" cy="55" r="1.8" fill="#2a2118" stroke="none"/>' +
-        eye(104, 43, 3.4) + '<circle cx="95" cy="58" r="4.5" fill="#f27a9a" stroke="none" opacity=".55"/><path d="M103 64q5 4 10 0" fill="none"/>';
-      if (on('bow')) hd += dBow(86, 24, 1, '#e8417a');
-      if (on('crown')) hd += dCrown(100, 24, 1.1);
-      hd += mud('<circle cx="100" cy="52" r="21" fill="#7a4e32" opacity=".3"/><circle cx="91" cy="61" r="3.6" fill="#6b4226"/><circle cx="108" cy="35" r="2.6" fill="#6b4226"/>' +
-        (on('crown') ? '<circle cx="95" cy="22" r="2.6" fill="#6b4226"/>' : '') + (on('bow') ? '<circle cx="82" cy="27" r="2.4" fill="#6b4226"/>' : ''));
-      s += drop(29, '<path d="M22 52c-10-2-12-12-4-13 6-1 6 7 0 7" fill="none"/>') + legs(66, 29, lp + mud(lm));
-      s += drop(29, '<ellipse cx="62" cy="58" rx="44" ry="27" fill="#f7b6c6"/>' +
-        mud('<ellipse cx="62" cy="61" rx="42" ry="22" fill="#7a4e32" opacity=".35"/><ellipse cx="42" cy="70" rx="9" ry="5" fill="#6b4226"/><ellipse cx="74" cy="73" rx="7" ry="4" fill="#6b4226"/><circle cx="55" cy="47" r="4" fill="#6b4226"/><ellipse cx="82" cy="58" rx="5" ry="3.5" fill="#6b4226"/><circle cx="30" cy="58" r="3" fill="#6b4226"/>') +
-        fHeadT(96, 54, h, hd) +
-        (on('glitter') ? '<g class="glit">' + dSpark(40, 48, 1) + dSpark(64, 40, 0.8) + dSpark(80, 64, 1.1) + dSpark(50, 70, 0.7) + dSpark(28, 62, 0.8) + '</g>' : ''));
-    } else if (id === 'horse') {
-      var back = fThick('M30 62 C14 66 12 88 18 104', '#6b4226', 9), lh = '', body;
-      if (on('braid')) {
-        [[26, 67], [20, 75], [17, 84], [17, 93], [19, 101]].forEach(function (p) { back += '<ellipse cx="' + p[0] + '" cy="' + p[1] + '" rx="6" ry="4.5" fill="#8a5530" stroke-width="2"/>'; });
-        back += '<circle cx="19" cy="106" r="4" fill="#e8417a" stroke-width="2"/>';
+      [32, 46, 78, 92].forEach(function (x) { lp += '<rect x="' + x + '" y="66" width="11" height="28" rx="4" fill="' + P.dark + '"/><rect x="' + x + '" y="88" width="11" height="7" rx="2" fill="' + P.hoof + '"/>'; lm += '<rect x="' + x + '" y="77" width="11" height="18" rx="3" fill="#7a4e32" opacity=".6"/>'; });
+      return {
+        back: '<path d="M22 52c-10-2-12-12-4-13 6-1 6 7 0 7" fill="none"/>', legs: lp + fMud(lm),
+        body: '<ellipse cx="62" cy="58" rx="44" ry="27" fill="' + P.main + '"/>',
+        mud: fMud('<ellipse cx="62" cy="61" rx="42" ry="22" fill="#7a4e32" opacity=".35"/><ellipse cx="42" cy="70" rx="9" ry="5" fill="#6b4226"/><ellipse cx="74" cy="73" rx="7" ry="4" fill="#6b4226"/><circle cx="55" cy="47" r="4" fill="#6b4226"/><ellipse cx="82" cy="58" rx="5" ry="3.5" fill="#6b4226"/><circle cx="30" cy="58" r="3" fill="#6b4226"/>'),
+        head: '<path d="M84 34 L82 14 L98 28 Z" fill="' + P.dark + '"/><path d="M104 28 L114 12 L116 36 Z" fill="' + P.dark + '"/>' +
+          '<circle cx="100" cy="50" r="23" fill="' + P.main + '"/><ellipse cx="119" cy="56" rx="9" ry="8" fill="' + P.nose + '"/>' +
+          '<circle cx="116" cy="55" r="1.8" fill="#2a2118" stroke="none"/><circle cx="122" cy="55" r="1.8" fill="#2a2118" stroke="none"/>' +
+          eye(104, 43, 3.4) + '<circle cx="95" cy="58" r="4.5" fill="#f27a9a" stroke="none" opacity=".55"/><path d="M103 64q5 4 10 0" fill="none"/>',
+        mudHead: fMud('<circle cx="100" cy="52" r="21" fill="#7a4e32" opacity=".3"/><circle cx="91" cy="61" r="3.6" fill="#6b4226"/><circle cx="108" cy="35" r="2.6" fill="#6b4226"/>' + (look.head ? '<circle cx="96" cy="22" r="2.6" fill="#6b4226"/>' : ''))
+      };
+    },
+    horse: function (P, look, eye) {
+      var hair = look.hair, back = '', lh = '', body, mane = 'M106 24 C102 36 100 46 98 58';
+      [38, 52, 94, 108].forEach(function (x) { lh += '<rect x="' + x + '" y="80" width="11" height="40" rx="4" fill="' + P.dark + '"/><rect x="' + x + '" y="114" width="11" height="9" rx="2" fill="' + P.hoof + '"/>'; });
+      if (hair === 'ponytail') back = fThick('M30 60 C8 56 2 82 14 104', P.mane, 13) + dBow(30, 60, 0.9, '#e8417a');
+      else {
+        back = fThick('M30 62 C14 66 12 88 18 104', P.mane, 9);
+        if (hair === 'braid') {
+          [[26, 67], [20, 75], [17, 84], [17, 93], [19, 101]].forEach(function (p) { back += '<ellipse cx="' + p[0] + '" cy="' + p[1] + '" rx="6" ry="4.5" fill="#8a5530" stroke-width="2"/>'; });
+          back += '<circle cx="19" cy="106" r="4" fill="#e8417a" stroke-width="2"/>';
+        }
       }
-      [38, 52, 94, 108].forEach(function (x) { lh += '<rect x="' + x + '" y="80" width="11" height="40" rx="4" fill="#b5743f"/><rect x="' + x + '" y="114" width="11" height="9" rx="2" fill="#4a3528"/>'; });
-      body = '<ellipse cx="72" cy="72" rx="44" ry="24" fill="#c98a52"/>' +
-        '<path d="M96 60 L102 30 L124 34 L112 72 Z" fill="#c98a52" stroke="none"/><path d="M102 30 L97.6 53 M124 34 L114 64" fill="none"/>';
-      var mane = 'M106 24 C102 36 100 46 98 58';
-      if (on('rainbow')) {
+      body = '<ellipse cx="72" cy="72" rx="44" ry="24" fill="' + P.main + '"/>' +
+        '<path d="M96 60 L102 30 L124 34 L112 72 Z" fill="' + P.main + '" stroke="none"/><path d="M102 30 L97.6 53 M124 34 L114 64" fill="none"/>';
+      if (hair === 'rainbow') {
         body += '<path d="' + mane + '" fill="none" stroke="#2a2118" stroke-width="22"/>';
         RAINBOW.forEach(function (c, i) { body += '<path d="' + mane + '" transform="translate(' + (i * 4.5 - 6.75) + ' 0)" fill="none" stroke="' + c + '" stroke-width="5"/>'; });
-      } else body += fThick(mane, '#6b4226', 9);
-      hd = '<path d="M108 22 L111 5 L120 19 Z" fill="#c98a52"/>' +
-        '<path d="M104 28 C110 16 126 16 132 28 L142 46 C146 56 138 62 129 59 L110 48 C102 43 100 35 104 28 Z" fill="#c98a52"/>' +
-        '<ellipse cx="136" cy="52" rx="9" ry="7.5" fill="#a86b3d"/><circle cx="139" cy="50" r="1.8" fill="#2a2118" stroke="none"/>' +
-        eye(119, 30, 3.4) + fThick('M106 20 C102 24 102 30 104 34', '#6b4226', 6);
-      if (on('flower')) hd += dFlower(104, 16, 1.1, '#e8417a');
-      s += drop(43, back) + legs(80, 43, lh) + drop(43, body + '<g class="fhd">' + fHeadT(112, 38, h, hd) + '</g>');
-    } else {
-      var cs = on('tail') ? ['#e8417a', '#ffc533', '#2f74d0'] : ['#fffaf0', '#fffaf0', '#fffaf0'];
-      hd = '<circle cx="63" cy="23" r="5" fill="#d93b32"/><circle cx="70" cy="20" r="5.5" fill="#d93b32"/><circle cx="77" cy="23" r="5" fill="#d93b32"/>' +
-        '<circle cx="70" cy="37" r="15" fill="#fffaf0"/><path d="M83 33 L94 38 L83 43 Z" fill="#f0a020"/><ellipse cx="81" cy="49" rx="3.5" ry="5" fill="#d93b32"/>' + eye(74, 32, 3);
-      if (on('hat')) hd += '<path d="M60 26 L70 2 L80 26 Z" fill="#2f74d0"/><circle cx="66" cy="18" r="1.8" fill="#ffc533" stroke="none"/><circle cx="73" cy="12" r="1.8" fill="#ffc533" stroke="none"/><circle cx="70" cy="2" r="4" fill="#ffc533"/>';
-      if (on('bow')) hd += dBow(62, 50, 0.9, '#8b5cf6');
-      s += drop(19, '<ellipse cx="20" cy="54" rx="6.5" ry="15" transform="rotate(-60 20 54)" fill="' + cs[0] + '"/>' +
-        '<ellipse cx="20" cy="44" rx="6.5" ry="15" transform="rotate(-35 20 44)" fill="' + cs[1] + '"/>' +
-        '<ellipse cx="26" cy="36" rx="6.5" ry="15" transform="rotate(-12 26 36)" fill="' + cs[2] + '"/>');
-      s += legs(76, 19, '<path d="M44 76 L42 93 M36 94 H48 M56 76 L58 93 M52 94 H64" fill="none" stroke="#e09a1a" stroke-width="4"/>');
-      s += drop(19, '<ellipse cx="50" cy="60" rx="28" ry="21" fill="#fffaf0"/><path class="fwing" d="M34 58 C40 50 56 52 60 60 C54 70 40 70 34 58 Z" fill="#efe2c6"/>' + fHeadT(64, 46, h, hd));
+      } else if (hair === 'curls') [[106, 25], [103, 33], [101, 41], [99, 49], [98, 57]].forEach(function (p) { body += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="5.6" fill="' + P.mane + '" stroke-width="2.5"/>'; });
+      else if (hair === 'mohawk') body += '<path d="M108 22 L96 22 L104 30 L92 31 L102 38 L90 40 L100 46 L89 49 L99 54 L91 58 L104 56 Z" fill="#e8417a"/>';
+      else body += fThick(mane, P.mane, 9);
+      return {
+        back: back, legs: lh, body: body,
+        head: '<path d="M108 22 L111 5 L120 19 Z" fill="' + P.main + '"/>' +
+          '<path d="M104 28 C110 16 126 16 132 28 L142 46 C146 56 138 62 129 59 L110 48 C102 43 100 35 104 28 Z" fill="' + P.main + '"/>' +
+          '<ellipse cx="136" cy="52" rx="9" ry="7.5" fill="' + P.muzzle + '"/><circle cx="139" cy="50" r="1.8" fill="#2a2118" stroke="none"/>' +
+          eye(119, 30, 3.4) + (hair === 'mohawk' ? '' : fThick('M106 20 C102 24 102 30 104 34', P.mane, 6))
+      };
+    },
+    chicken: function (P, look, eye) {
+      var cs = P.tail;
+      return {
+        back: '<ellipse cx="20" cy="54" rx="6.5" ry="15" transform="rotate(-60 20 54)" fill="' + cs[0] + '"/><ellipse cx="20" cy="44" rx="6.5" ry="15" transform="rotate(-35 20 44)" fill="' + cs[1] + '"/><ellipse cx="26" cy="36" rx="6.5" ry="15" transform="rotate(-12 26 36)" fill="' + cs[2] + '"/>',
+        legs: '<path d="M44 76 L42 93 M36 94 H48 M56 76 L58 93 M52 94 H64" fill="none" stroke="#e09a1a" stroke-width="4"/>',
+        body: '<ellipse cx="50" cy="60" rx="28" ry="21" fill="' + P.main + '"/><path class="fwing" style="transform-origin:58px 58px" d="M34 58 C40 50 56 52 60 60 C54 70 40 70 34 58 Z" fill="' + P.wing + '"/>',
+        head: '<circle cx="63" cy="23" r="5" fill="#d93b32"/><circle cx="70" cy="20" r="5.5" fill="#d93b32"/><circle cx="77" cy="23" r="5" fill="#d93b32"/>' +
+          '<circle cx="70" cy="37" r="15" fill="' + P.main + '"/><path d="M83 33 L94 38 L83 43 Z" fill="#f0a020"/><ellipse cx="81" cy="49" rx="3.5" ry="5" fill="#d93b32"/>' + eye(74, 32, 3)
+      };
+    },
+    cow: function (P, look, eye) {
+      return {
+        back: '<g class="ftail" style="transform-origin:28px 62px"><path d="M28 60 C16 64 14 84 18 96" fill="none"/><ellipse cx="18" cy="100" rx="5" ry="7" fill="' + P.spot + '"/></g>',
+        legs: fLegRects([38, 52, 94, 108], 80, 38, P.main, P.hoof),
+        body: '<ellipse cx="80" cy="92" rx="12" ry="8" fill="' + P.nose + '"/><ellipse cx="72" cy="66" rx="46" ry="26" fill="' + P.main + '"/>' +
+          '<ellipse cx="52" cy="58" rx="13" ry="9" transform="rotate(-20 52 58)" fill="' + P.spot + '" stroke="none"/><ellipse cx="86" cy="74" rx="10" ry="7" fill="' + P.spot + '" stroke="none"/><ellipse cx="94" cy="54" rx="7" ry="5" fill="' + P.spot + '" stroke="none"/>',
+        head: '<path d="M112 30 L106 14 L120 25 Z" fill="#efe2c6"/><path d="M128 25 L138 12 L136 30 Z" fill="#efe2c6"/><ellipse cx="106" cy="38" rx="10" ry="5" transform="rotate(-20 106 38)" fill="' + P.main + '"/>' +
+          '<ellipse cx="124" cy="44" rx="16" ry="20" fill="' + P.main + '"/><ellipse cx="128" cy="62" rx="15" ry="10" fill="' + P.nose + '"/><circle cx="123" cy="62" r="1.8" fill="#2a2118" stroke="none"/><circle cx="133" cy="62" r="1.8" fill="#2a2118" stroke="none"/>' + eye(127, 40, 3.4)
+      };
+    },
+    sheep: function (P, look, eye, ey) {
+      return {
+        legs: fLegRects([40, 54, 86, 100], 66, 32, P.face),
+        wrap: '<g class="fwool" style="transform-origin:70px 52px">',
+        body: dBlob(['circle cx="40" cy="52" r="18"', 'circle cx="60" cy="40" r="20"', 'circle cx="82" cy="40" r="20"', 'circle cx="100" cy="52" r="17"', 'circle cx="70" cy="62" r="22"', 'circle cx="46" cy="66" r="15"', 'circle cx="94" cy="66" r="15"'], P.wool),
+        head: '<ellipse cx="106" cy="44" rx="11" ry="5" transform="rotate(20 106 44)" fill="' + P.face + '"/><ellipse cx="120" cy="54" rx="13" ry="17" transform="rotate(-20 120 54)" fill="' + P.face + '"/>' +
+          dBlob(['circle cx="112" cy="38" r="8"', 'circle cx="122" cy="36" r="7"'], P.wool) +
+          '<circle cx="124" cy="50" r="' + (3.6 * ey).toFixed(2) + '" fill="#fff" stroke="none"/><circle cx="125" cy="50" r="' + (2 * ey).toFixed(2) + '" fill="#2a2118" stroke="none"/>'
+      };
+    },
+    duck: function (P, look, eye) {
+      return {
+        back: '<path d="M18 58 L4 42 L26 50 Z" fill="' + P.main + '"/>',
+        legs: '<path d="M42 80 L38 92 H52 Z M62 80 L60 92 H74 Z" fill="' + P.bill + '"/>',
+        body: '<ellipse cx="54" cy="62" rx="38" ry="22" fill="' + P.main + '"/><path class="fwing" style="transform-origin:58px 60px" d="M34 58 C42 48 62 50 66 60 C58 70 42 70 34 58 Z" fill="' + P.wing + '"/>',
+        head: '<circle cx="78" cy="32" r="17" fill="' + P.main + '"/><path d="M92 32 L108 36 L92 42 Z" fill="' + P.bill + '"/>' + eye(82, 27, 3.4)
+      };
+    },
+    goat: function (P, look, eye, ey) {
+      return {
+        back: '<path d="M30 56 L20 44 L34 50 Z" fill="' + P.main + '"/>',
+        legs: fLegRects([38, 52, 94, 108], 78, 40, P.main, P.hoof),
+        body: '<ellipse cx="72" cy="66" rx="44" ry="22" fill="' + P.main + '"/><path d="M96 60 L102 30 L122 34 L112 70 Z" fill="' + P.main + '" stroke="none"/><path d="M102 30 L97.6 53 M122 34 L113 64" fill="none"/>',
+        head: fThick('M110 24 C106 10 94 6 88 12', P.horn, 5) + '<ellipse cx="102" cy="32" rx="11" ry="4.5" transform="rotate(25 102 32)" fill="' + P.main + '"/>' +
+          '<ellipse cx="122" cy="36" rx="21" ry="13" transform="rotate(25 122 36)" fill="' + P.main + '"/><path d="M128 48 L126 64 L136 50 Z" fill="' + P.dark + '"/>' +
+          '<circle cx="138" cy="44" r="1.8" fill="#2a2118" stroke="none"/><circle cx="118" cy="29" r="' + (3.6 * ey).toFixed(2) + '" fill="#ffc533" stroke-width="1.5"/><rect x="' + (118 - 2.5 * ey).toFixed(2) + '" y="' + (29 - 1.1 * ey).toFixed(2) + '" width="' + (5 * ey).toFixed(2) + '" height="' + (2.2 * ey).toFixed(2) + '" fill="#2a2118" stroke="none"/>'
+      };
     }
+  };
+  /* --- the customizations, drawn around an attachment point --- */
+  var FACC = {
+    bow: function (x, y, s) { return dBow(x - 6 * s, y + 3 * s, s, '#e8417a'); },
+    hat: function (x, y, s) { return fG(x, y, s, '<path d="M-10 2 L0 -24 L10 2 Z" fill="#2f74d0"/><circle cx="-3" cy="-7" r="1.8" fill="#ffc533" stroke="none"/><circle cx="3" cy="-14" r="1.8" fill="#ffc533" stroke="none"/><circle cy="-24" r="4" fill="#ffc533"/>'); },
+    tophat: function (x, y, s) { return fG(x, y, s, '<rect x="-9" y="-22" width="18" height="21" rx="2" fill="#3a3330"/><rect x="-9" y="-9" width="18" height="4" fill="#e8417a" stroke="none"/><rect x="-15" y="-2" width="30" height="5" rx="2.5" fill="#3a3330"/>'); },
+    crown: function (x, y, s) { return fG(x, y, s, dCrown(0, -6, 1.1)); },
+    glasses: function (x, y, s) { return fG(x, y, s, '<circle r="7" fill="#dff3ff" fill-opacity=".45" stroke-width="2.5"/><path d="M-7 -1 L-18 -4" fill="none" stroke-width="2.5"/>'); },
+    sunglasses: function (x, y, s) { return fG(x, y, s, '<rect x="-8" y="-6" width="16" height="11" rx="5" fill="#2a2118"/><path d="M-3 -3 L2 -3" stroke="#fff" stroke-width="1.6" opacity=".7"/><path d="M-8 -2 L-18 -4" fill="none" stroke-width="2.5"/>'); },
+    bowtie: function (x, y, s) { return fG(x, y, s, '<path d="M0 0 L-10 -7 L-10 7 Z M0 0 L10 -7 L10 7 Z" fill="#2f74d0"/><circle r="3.2" fill="#2f74d0"/>'); },
+    scarf: function (x, y, s) { return fG(x, y, s, '<path d="M-14 -7 C-5 -3 6 -3 14 -7 L14 2 C6 6 -5 6 -14 2 Z" fill="#e8413a"/><path d="M-5 3 L-9 18 L0 17 L2 4 Z" fill="#e8413a"/><path d="M-9 -4 V0 M-3 -2 V2 M4 -2 V2 M10 -4 V0" stroke="#fff" stroke-width="1.6"/>'); },
+    flower: function (x, y, s) { return dFlower(x, y, s, '#e8417a'); },
+    sparkles: function (x, y, s) { return '<g class="glit">' + dSpark(x - 18 * s, y - 4 * s, 1.3 * s) + dSpark(x + 12 * s, y - 14 * s, 1.1 * s) + dSpark(x + 22 * s, y + 6 * s, 1.2 * s) + '</g>'; }
+  };
+  var FREL = [[-0.5, -0.37], [0.05, -0.67], [0.41, 0.22], [-0.27, 0.44], [-0.77, 0.15], [0.62, -0.3]];   /* spread over a body ellipse */
+  function fBodyAcc(k, B, bk) {
+    var cx = B[0], cy = B[1], rx = B[2], ry = B[3], s = '', i, x;
+    if (k === 'spots') FREL.forEach(function (p, j) { s += '<ellipse cx="' + (cx + p[0] * rx).toFixed(1) + '" cy="' + (cy + p[1] * ry).toFixed(1) + '" rx="' + (rx * (j % 2 ? 0.13 : 0.17)).toFixed(1) + '" ry="' + (ry * (j % 2 ? 0.18 : 0.24)).toFixed(1) + '" fill="#2a2118" opacity=".22" stroke="none"/>'; });
+    else if (k === 'stripes') for (i = 0; i < 4; i++) { x = -0.6 + i * 0.38; var hh = ry * Math.sqrt(1 - x * x) * 0.8; s += '<path d="M' + (cx + x * rx).toFixed(1) + ' ' + (cy - hh).toFixed(1) + ' q' + (rx * 0.12).toFixed(1) + ' ' + hh.toFixed(1) + ' 0 ' + (2 * hh).toFixed(1) + '" fill="none" stroke="#2a2118" stroke-opacity=".22" stroke-width="' + (rx * 0.12).toFixed(1) + '" stroke-linecap="round"/>'; }
+    else if (k === 'glitter') s = '<g class="glit">' + FREL.slice(0, 5).map(function (p, j) { return dSpark(cx + p[0] * rx, cy + p[1] * ry, (rx / 44) * [1, 0.8, 1.1, 0.7, 0.8][j]); }).join('') + '</g>';
+    else if (k === 'tutu') {
+      var y0 = cy + ry * 0.2, y1 = cy + ry * 0.95, xl = cx - rx * 0.82, xr = cx + rx * 0.82, n = 8;
+      s = '<path d="M' + xl.toFixed(1) + ' ' + y0.toFixed(1) + ' Q' + cx + ' ' + (y0 + ry * 0.22).toFixed(1) + ' ' + xr.toFixed(1) + ' ' + y0.toFixed(1);
+      for (i = n; i >= 0; i--) s += ' L' + (xl + (xr - xl) * i / n).toFixed(1) + ' ' + (i % 2 ? y1 : y1 - ry * 0.28).toFixed(1);
+      s += ' Z" fill="#f7a8c8"/>';
+    } else if (k === 'cape') {
+      var bx = bk[0], by = bk[1], w = bk[2];
+      s = '<path d="M' + (bx + 0.3 * w).toFixed(1) + ' ' + (by + 2).toFixed(1) + ' C' + bx + ' ' + (by - 4) + ' ' + (bx - 0.4 * w).toFixed(1) + ' ' + by + ' ' + (bx - 0.62 * w).toFixed(1) + ' ' + (by + 0.25 * w).toFixed(1) +
+        ' L' + (bx - 0.7 * w).toFixed(1) + ' ' + (by + 0.6 * w).toFixed(1) + ' C' + (bx - 0.4 * w).toFixed(1) + ' ' + (by + 0.5 * w).toFixed(1) + ' ' + (bx - 0.1 * w).toFixed(1) + ' ' + (by + 0.45 * w).toFixed(1) + ' ' + (bx + 0.12 * w).toFixed(1) + ' ' + (by + 0.3 * w).toFixed(1) +
+        ' Z" fill="#8b5cf6"/><circle cx="' + (bx + 0.3 * w).toFixed(1) + '" cy="' + (by + 3).toFixed(1) + '" r="' + (w * 0.04).toFixed(1) + '" fill="#ffc533"/>';
+    } else if (k === 'blanket') {
+      var bw = bk[2] * 0.64, bh = bk[2] * 0.32, x0 = bk[0] - bw / 2, yb = bk[1] - 1;
+      s = '<rect x="' + x0.toFixed(1) + '" y="' + yb.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + bh.toFixed(1) + '" rx="5" fill="#2f74d0"/>' +
+        '<path d="M' + (x0 + 6).toFixed(1) + ' ' + (yb + bh * 0.35).toFixed(1) + ' h' + (bw - 12).toFixed(1) + ' M' + (x0 + 6).toFixed(1) + ' ' + (yb + bh * 0.65).toFixed(1) + ' h' + (bw - 12).toFixed(1) + '" stroke="#ffc533" stroke-width="3"/>';
+      for (i = 0; i <= 6; i++) s += '<path d="M' + (x0 + 4 + (bw - 8) * i / 6).toFixed(1) + ' ' + (yb + bh).toFixed(1) + ' v5" stroke-width="2"/>';
+    }
+    return s;
+  }
+  /* all the worn customizations, sorted into layers: body (over the body), head (moves and grows with the head), neck (bow tie, scarf) */
+  function fAcc(id, look) {
+    var A = FANC[id], o = { body: '', head: '', neck: '' }, t = A.top, e = A.eye, n = A.neck;
+    if (look.color === 'spots' || look.color === 'stripes') o.body += fBodyAcc(look.color, A.body, A.back);
+    if (look.body === 'blanket' || look.body === 'tutu' || look.body === 'cape') o.body += fBodyAcc(look.body, A.body, A.back);
+    if (look.fx === 'glitter') o.body += fBodyAcc('glitter', A.body, A.back);
+    if (look.head && FACC[look.head]) o.head += FACC[look.head](t[0], t[1], t[2]);
+    if (look.face === 'glasses' || look.face === 'sunglasses') o.head += FACC[look.face](e[0], e[1], e[2]);
+    if (look.fx === 'flower') o.head += FACC.flower(A.ear[0], A.ear[1], A.ear[2] * 1.1);
+    if (look.fx === 'sparkles') o.head += FACC.sparkles(t[0], t[1] - 4, t[2]);
+    if (look.face === 'bowtie') o.neck += FACC.bowtie(n[0], n[1], n[2]);
+    if (look.body === 'scarf') o.neck += FACC.scarf(n[0], n[1] - 4 * n[2], n[2] * 1.15);
+    return o;
+  }
+  /* an animal facing right. look: what it wears ({ slot: option }); st: its growth stage (head and eye size, leg length).
+     Shorter legs keep the feet on the ground and lower the body. Every animal's head is a .fhd group that can bend down;
+     the pig carries mud layers that show only while it is muddy. */
+  function fAnimalSVG(id, look, st) {
+    st = st || fStage(); look = look || {};
+    var A = FANC[id], P = fPal(id, look.color), h = st.head || 1, ey = st.eye || 1, lg = st.legs || 1;
+    var eye = function (x, y, r) { return '<circle cx="' + x + '" cy="' + y + '" r="' + (r * ey).toFixed(2) + '" fill="#2a2118" stroke="none"/><circle cx="' + (x + r * 0.35 * ey).toFixed(2) + '" cy="' + (y - r * 0.35 * ey).toFixed(2) + '" r="' + (r * 0.32 * ey).toFixed(2) + '" fill="#fff" stroke="none"/>'; };
+    var y0 = A.legs[0], len = A.legs[1];
+    var drop = function (inner) { return lg === 1 ? inner : '<g transform="translate(0 ' + ((1 - lg) * len).toFixed(2) + ')">' + inner + '</g>'; };
+    var legs = function (inner) { return lg === 1 ? inner : '<g transform="translate(0 ' + (y0 + (1 - lg) * len).toFixed(2) + ') scale(1 ' + lg + ') translate(0 ' + (-y0) + ')">' + inner + '</g>'; };
+    var d = FDRAW[id](P, look, eye, ey), c = fAcc(id, look);
+    var s = drop(d.back || '') + legs(d.legs) +
+      drop((d.wrap || '') + d.body + c.body + (d.mud || '') + (d.wrap ? '</g>' : '') +
+        '<g class="fhd" style="transform-origin:' + A.pivot[0] + 'px ' + A.pivot[1] + 'px">' + fHeadT(A.hp[0], A.hp[1], h, d.head + c.head + (d.mudHead || '')) + '</g>' + c.neck);
     return '<svg viewBox="0 0 ' + FVB[id][0] + ' ' + FVB[id][1] + '" overflow="visible" ' + INK + '>' + s + '</svg>';
   }
+  /* the picture on a customization's shop tile */
   function fDecorIcon(id, k) {
-    var v = '<svg viewBox="-22 -22 44 44" overflow="visible" ' + INK + '>', s = '';
+    var v = '<svg viewBox="-22 -22 44 44" overflow="visible" ' + INK + '>', s = '', P, i;
     if (k === 'glitter') s = dSpark(-8, -6, 1.4) + dSpark(9, 2, 1.1) + dSpark(-3, 11, 0.9);
-    else if (k === 'bow') s = dBow(0, 0, 1.4, id === 'pig' ? '#e8417a' : '#8b5cf6');
+    else if (k === 'sparkles') s = dSpark(-10, 4, 1.6) + dSpark(6, -10, 1.3) + dSpark(12, 10, 1.5);
+    else if (k === 'bow') s = dBow(0, 0, 1.4, '#e8417a');
     else if (k === 'crown') s = dCrown(0, 2, 1.5);
+    else if (k === 'hat' || k === 'tophat') s = FACC[k](0, 13, 1.15);
+    else if (k === 'glasses' || k === 'sunglasses') s = FACC[k](5, 0, 1.6);
+    else if (k === 'bowtie') s = FACC.bowtie(0, 0, 1.6);
+    else if (k === 'scarf') s = FACC.scarf(0, -4, 1.25);
     else if (k === 'flower') s = dFlower(0, 0, 2, '#e8417a');
+    else if (k === 'tutu' || k === 'cape' || k === 'blanket') s = fBodyAcc(k, [0, -10, 22, 22], [6, -14, 40]);
+    else if (k === 'c1' || k === 'c2' || k === 'spots' || k === 'stripes') {
+      P = fPal(id, k === 'c1' || k === 'c2' ? k : ''); var c = P.main || P.wool;
+      s = '<circle r="16" fill="' + c + '"/>' + (k === 'spots' || k === 'stripes' ? fBodyAcc(k, [0, 0, 16, 16]) : '');
+    } else if (k === 'rainbow' && id === 'chicken') s = '<ellipse cx="-8" cy="4" rx="5" ry="13" transform="rotate(-35 -8 4)" fill="#e8417a"/><ellipse cy="0" rx="5" ry="14" fill="#ffc533"/><ellipse cx="8" cy="4" rx="5" ry="13" transform="rotate(35 8 4)" fill="#2f74d0"/>';
     else if (k === 'rainbow') {
       s = '<path d="M-11.25 12 A11.25 11.25 0 0 1 11.25 12" fill="none" stroke="#2a2118" stroke-width="20.5" stroke-linecap="butt"/>';
       RAINBOW.forEach(function (c, i) { var r = 18 - i * 4.5; s += '<path d="M' + (-r) + ' 12 A' + r + ' ' + r + ' 0 0 1 ' + r + ' 12" fill="none" stroke="' + c + '" stroke-width="4.5" stroke-linecap="butt"/>'; });
     } else if (k === 'braid') {
-      for (var i = 0; i < 5; i++) s += '<ellipse cx="' + (i % 2 ? 2 : -2) + '" cy="' + (-16 + i * 7) + '" rx="6" ry="4.5" fill="#8a5530" stroke-width="2"/>';
+      for (i = 0; i < 5; i++) s += '<ellipse cx="' + (i % 2 ? 2 : -2) + '" cy="' + (-16 + i * 7) + '" rx="6" ry="4.5" fill="#8a5530" stroke-width="2"/>';
       s += '<circle cy="18" r="4" fill="#e8417a" stroke-width="2"/>';
-    } else if (k === 'hat') s = '<path d="M-10 14 L0 -14 L10 14 Z" fill="#2f74d0"/><circle cx="-3" cy="5" r="1.8" fill="#ffc533" stroke="none"/><circle cx="3" cy="-3" r="1.8" fill="#ffc533" stroke="none"/><circle cy="-15" r="4.5" fill="#ffc533"/>';
-    else if (k === 'tail') s = '<ellipse cx="-8" cy="4" rx="5" ry="13" transform="rotate(-35 -8 4)" fill="#e8417a"/><ellipse cy="0" rx="5" ry="14" fill="#ffc533"/><ellipse cx="8" cy="4" rx="5" ry="13" transform="rotate(35 8 4)" fill="#2f74d0"/>';
+    } else if (k === 'ponytail') s = fThick('M4 -14 C-14 -10 -16 8 -6 18', '#6b4226', 11) + dBow(4, -14, 1, '#e8417a');
+    else if (k === 'curls') [[-10, -12], [0, -14], [10, -10], [-12, 0], [-2, -2], [8, 2], [-6, 10], [4, 12]].forEach(function (p) { s += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="6" fill="#6b4226" stroke-width="2.5"/>'; });
+    else if (k === 'mohawk') s = '<path d="M-16 14 L-12 -6 L-6 8 L-2 -16 L3 6 L9 -10 L12 8 L17 14 Z" fill="#e8417a"/>';
     return v + s + '</svg>';
   }
+  /* a small picture at the start of each row in the decorate list */
+  var FSLOTPIC = { hair: 'rainbow', head: 'crown', face: 'sunglasses', body: 'scarf', color: 'spots', fx: 'sparkles' };
+  /* the newer world items (the first four are drawn in fItemSVG below) */
+  function fSv(w, h, inner) { return '<svg viewBox="0 0 ' + w + ' ' + h + '" ' + INK + '>' + inner + '</svg>'; }
+  function fLeaves(x0, x1, y) { var s = '', x; for (x = x0; x <= x1; x += 11) s += '<ellipse cx="' + x + '" cy="' + (y + (x % 2 ? 2 : -1)) + '" rx="8" ry="6" transform="rotate(' + (x % 3 * 15 - 15) + ' ' + x + ' ' + y + ')" fill="' + (x % 2 ? '#7cc24a' : '#5e9a35') + '"/>'; return s; }
+  function fClover(x, y) { return '<path d="M' + x + ' ' + (y + 9) + ' V' + y + '" stroke="#3f7a2a" stroke-width="2" fill="none"/><circle cx="' + (x - 3.5) + '" cy="' + (y - 1) + '" r="3.8" fill="#4fae46" stroke-width="1.5"/><circle cx="' + (x + 3.5) + '" cy="' + (y - 1) + '" r="3.8" fill="#4fae46" stroke-width="1.5"/><circle cx="' + x + '" cy="' + (y - 5.5) + '" r="3.8" fill="#4fae46" stroke-width="1.5"/>'; }
+  var FITEM = {
+    trough: function () { return fSv(110, 60, fThick('M18 58 L22 40', '#7a4e32', 5) + fThick('M92 58 L88 40', '#7a4e32', 5) + fLeaves(16, 94, 22) + '<path d="M8 24 H102 L94 48 H16 Z" fill="#a86b3d"/><path d="M12 36 H98" fill="none" stroke="#7a4e32"/>'); },
+    bigtrough: function () { return fSv(150, 62, fThick('M20 60 L24 42', '#7a4e32', 5) + fThick('M130 60 L126 42', '#7a4e32', 5) + fThick('M75 60 V44', '#7a4e32', 5) + fLeaves(14, 136, 22) + '<path d="M6 24 H144 L134 50 H16 Z" fill="#a86b3d"/><path d="M10 37 H140" fill="none" stroke="#7a4e32"/>'); },
+    clover: function () { var s = '<ellipse cx="60" cy="38" rx="56" ry="11" fill="#6fae42"/>'; [[18, 30], [34, 34], [50, 28], [66, 35], [82, 29], [98, 33], [42, 40], [74, 41]].forEach(function (p) { s += fClover(p[0], p[1]); }); return fSv(120, 50, s); },
+    rock: function () { return fSv(120, 80, '<path d="M6 78 C10 52 26 38 40 34 C46 20 64 14 78 22 C94 26 104 44 108 58 C112 66 114 72 114 78 Z" fill="#a9a39b"/><path d="M28 62 L38 52 L48 60 M70 48 L80 40 L88 50 M54 30 L62 26" fill="none" stroke="#7a756e" stroke-width="2.5"/><ellipse cx="62" cy="24" rx="14" ry="4" fill="#bdb8b0" stroke="none"/>'); },
+    puddle: function () { return fSv(90, 34, '<ellipse cx="45" cy="20" rx="42" ry="12" fill="#8a6a4a"/><ellipse cx="38" cy="18" rx="16" ry="4" fill="#bfe3f2" opacity=".6" stroke="none"/><circle cx="66" cy="22" r="2.5" fill="#6b4226" stroke-width="1.5"/>'); },
+    slide: function () { return fSv(120, 70, '<path d="M10 66 V18 M22 66 V18 M10 30 H22 M10 42 H22 M10 54 H22" fill="none" stroke="#7a4e32" stroke-width="3"/><path d="M14 16 H26 L112 60 V66 H98 L22 26 Z" fill="#a86b3d"/><path d="M26 22 L104 62" fill="none" stroke="#6b4226" stroke-width="7"/><ellipse cx="104" cy="64" rx="14" ry="5" fill="#7a4e32"/>'); },
+    jump: function () { return fSv(110, 60, '<rect x="8" y="10" width="10" height="48" rx="2" fill="#fff8e6"/><rect x="92" y="10" width="10" height="48" rx="2" fill="#fff8e6"/><rect x="6" y="22" width="98" height="9" rx="3" fill="#e8413a"/><path d="M26 22 V31 M46 22 V31 M66 22 V31 M86 22 V31" stroke="#fff" stroke-width="6"/><rect x="6" y="22" width="98" height="9" rx="3" fill="none"/>'); },
+    apples: function () { return fSv(80, 60, '<circle cx="24" cy="22" r="9" fill="#e8413a"/><circle cx="40" cy="18" r="9" fill="#e8413a"/><circle cx="56" cy="22" r="9" fill="#8fd45a"/><path d="M40 9 V5" stroke-width="2.5"/><path d="M10 28 H70 L62 56 H18 Z" fill="#c98a52"/><path d="M14 40 H66 M24 28 L28 56 M40 28 V56 M56 28 L52 56" fill="none" stroke="#8a5530" stroke-width="2"/>'); },
+    nest: function () { return fSv(80, 40, '<ellipse cx="30" cy="20" rx="8" ry="10" fill="#fffaf0"/><ellipse cx="46" cy="18" rx="8" ry="10" fill="#f5e6c8"/><path d="M6 22 C10 40 70 40 74 22 C60 30 20 30 6 22 Z" fill="#d9a441"/><path d="M14 28 L24 30 M30 32 L42 31 M50 30 L62 28" fill="none" stroke="#a7791c" stroke-width="2"/>'); },
+    coop: function () { return fSv(100, 90, '<rect x="14" y="36" width="72" height="44" fill="#c4402f"/><path d="M6 40 L50 10 L94 40 Z" fill="#5a3a2a"/><path d="M40 80 V58 A10 10 0 0 1 60 58 V80 Z" fill="#2a2118"/><path d="M4 86 L40 72 H60" fill="none" stroke="#a86b3d" stroke-width="4"/><rect x="62" y="44" width="14" height="12" fill="#fff8e6"/>'); },
+    bell: function () { return fSv(60, 100, '<rect x="26" y="20" width="8" height="78" fill="#a86b3d"/><path d="M14 20 H46" stroke="#7a4e32" stroke-width="5"/><path d="M18 52 C18 36 24 28 30 28 C36 28 42 36 42 52 L46 58 H14 Z" fill="#ffc533"/><circle cx="30" cy="61" r="4" fill="#d9a400"/><path d="M30 20 V28" stroke-width="2.5"/>'); },
+    yarn: function () { return fSv(60, 56, '<path d="M44 46 C54 50 56 40 58 52" fill="none" stroke="#e8417a" stroke-width="2.5"/><circle cx="28" cy="30" r="22" fill="#f27ab6"/><path d="M10 22 C22 30 34 30 46 18 M8 34 C22 42 38 40 50 30 M16 46 C26 48 40 46 48 40 M22 10 C26 22 26 36 22 50" fill="none" stroke="#c2477e" stroke-width="2"/>'); },
+    shelter: function () { return fSv(120, 90, '<path d="M14 88 V30 M106 88 V48" stroke="#7a4e32" stroke-width="5"/><path d="M4 30 L116 50 L116 58 L4 38 Z" fill="#c4402f"/><path d="M14 88 C30 74 60 74 104 88 Z" fill="#e8b93a"/><path d="M30 84 L36 78 M58 82 L62 76 M80 84 L84 78" fill="none" stroke="#a7791c" stroke-width="2"/>'); },
+    duckhouse: function () { return fSv(90, 80, '<path d="M24 78 V54 M66 78 V54" stroke="#7a4e32" stroke-width="5"/><rect x="16" y="28" width="58" height="28" fill="#ffd23f"/><path d="M8 32 L45 8 L82 32 Z" fill="#2f74d0"/><path d="M36 56 V44 A9 9 0 0 1 54 44 V56 Z" fill="#2a2118"/>'); },
+    boat: function () { return fSv(100, 50, '<path d="M48 34 V6" stroke-width="3"/><path d="M50 8 L72 30 H50 Z" fill="#fff8e6"/><path d="M6 32 H94 L82 46 H18 Z" fill="#e8413a"/><path d="M12 38 H88" fill="none" stroke="#fff" stroke-width="2"/>'); },
+    tire: function () { return fSv(70, 50, '<ellipse cx="35" cy="28" rx="31" ry="19" fill="#3a3330"/><ellipse cx="35" cy="26" rx="15" ry="8" fill="#86c454"/><path d="M10 22 L16 20 M58 22 L52 20 M20 42 L24 38 M50 42 L46 38" stroke="#6a6560" stroke-width="2.5"/>'); },
+    seesaw: function () { return fSv(130, 50, '<path d="M52 48 L65 26 L78 48 Z" fill="#a86b3d"/><path d="M6 36 L124 16" stroke="#2a2118" stroke-width="11"/><path d="M6 36 L124 16" stroke="#e8b93a" stroke-width="6"/><rect x="6" y="26" width="8" height="12" rx="2" fill="#e8413a" transform="rotate(-10 10 32)"/><rect x="114" y="6" width="8" height="12" rx="2" fill="#2f74d0" transform="rotate(-10 118 12)"/>'); }
+  };
+  /* the front rim of the pond: drawn over an animal while it is in the water */
+  var PONDLIP = '<svg viewBox="0 0 140 64" ' + INK + '><path d="M6 42 C30 49 50 46 70 50 C90 46 110 49 134 42 A64 20 0 0 1 6 42 Z" fill="#5fb3e0"/><ellipse cx="96" cy="54" rx="10" ry="2.5" fill="none" stroke="#fff" stroke-width="2" opacity=".8"/></svg>';
+  function fLipSVG(k) { return k === 'mud' ? MUDLIP : k === 'pond' ? PONDLIP : ''; }   /* items with a front rim (looked up late: MUDLIP is defined further down) */
+  var FSTAND = FARM.standing.split(' ');
+  /* items for animals living on the farm (and anything already bought) */
+  function fItemFor(k) { return FST.items.indexOf(k) >= 0 || FARM.itemOf[k].split(' ').some(function (a) { return FST.animals.indexOf(a) >= 0; }); }
   function fItemSVG(k) {
+    if (FITEM[k]) return FITEM[k]();
     if (k === 'mud') return '<svg viewBox="0 0 120 50" ' + INK + '><ellipse cx="60" cy="30" rx="56" ry="17" fill="#7a4e32"/><ellipse cx="46" cy="27" rx="20" ry="6" fill="#946344" stroke="none"/><circle cx="84" cy="25" r="4" fill="#946344" stroke-width="2"/><circle cx="94" cy="33" r="2.5" fill="#946344" stroke-width="2"/><circle cx="28" cy="35" r="3" fill="#946344" stroke-width="2"/></svg>';
     if (k === 'pond') return '<svg viewBox="0 0 140 64" ' + INK + '><path d="M10 42 L8 12 M17 42 L19 18 M130 42 L132 16" fill="none" stroke="#3f7a2a" stroke-width="4"/><ellipse cx="8" cy="12" rx="3" ry="7" fill="#7a4e32" stroke-width="2"/><ellipse cx="132" cy="16" rx="3" ry="7" fill="#7a4e32" stroke-width="2"/>' +
       '<ellipse cx="70" cy="42" rx="64" ry="20" fill="#5fb3e0"/><ellipse cx="56" cy="40" rx="22" ry="6" fill="none" stroke="#fff" stroke-width="2.5" opacity=".8"/><ellipse cx="88" cy="48" rx="12" ry="3.5" fill="none" stroke="#fff" stroke-width="2.5" opacity=".8"/><ellipse cx="104" cy="36" rx="9" ry="5" fill="#5e9a35" stroke-width="2"/><path d="M104 36 L112 33" stroke-width="2"/></svg>';
@@ -2508,7 +2739,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     drop: '<svg viewBox="0 0 20 20"><path d="M10 2C14 8 16 11 16 13a6 6 0 0 1-12 0c0-2 2-5 6-11Z" fill="#7cc6ee" stroke="#2a2118" stroke-width="2"/></svg>',
     straw: '<svg viewBox="0 0 20 20"><path d="M3 15 L17 5" stroke="#e8b93a" stroke-width="4" stroke-linecap="round"/></svg>',
     petal: '<svg viewBox="0 0 20 20"><ellipse cx="10" cy="10" rx="5" ry="8" fill="#f7a8c8" stroke="#2a2118" stroke-width="2"/></svg>',
-    bubble: '<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" fill="#e6f6ff" fill-opacity=".75" stroke="#5fb3e0" stroke-width="2"/><circle cx="7.5" cy="7.5" r="2" fill="#fff"/></svg>'
+    bubble: '<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" fill="#e6f6ff" fill-opacity=".75" stroke="#5fb3e0" stroke-width="2"/><circle cx="7.5" cy="7.5" r="2" fill="#fff"/></svg>',
+    leaf: '<svg viewBox="0 0 20 20"><ellipse cx="10" cy="10" rx="5" ry="8" transform="rotate(30 10 10)" fill="#7cc24a" stroke="#2a2118" stroke-width="2"/></svg>'
   };
   /* the front rim of the mud pit: drawn over the pig while it is in the mud, so it sinks in */
   var MUDLIP = '<svg viewBox="0 0 120 50" ' + INK + '><path d="M4 30 C20 36 40 33 60 36 C80 33 100 36 116 30 A56 17 0 0 1 4 30 Z" fill="#7a4e32"/><circle cx="34" cy="40" r="3" fill="#946344" stroke-width="2"/><circle cx="88" cy="41" r="2.5" fill="#946344" stroke-width="2"/></svg>';
@@ -2526,6 +2758,10 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     o.connect(f); f.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.05);
   }
   var FSND = {
+    cow: function () { fSound(function (a, t) { fTone(a, t, 'sawtooth', [[0, 150], [0.3, 138], [0.9, 112]], 1, 0.18, 600, [5, 4]); }); },
+    sheep: function () { fSound(function (a, t) { fTone(a, t, 'sawtooth', [[0, 380], [0.5, 340]], 0.6, 0.14, 1400, [7, 18]); }); },
+    duck: function () { fSound(function (a, t) { [0, 0.22].forEach(function (d) { fTone(a, t + d, 'square', [[0, 520], [0.12, 420]], 0.14, 0.1, 1600); }); }); },
+    goat: function () { fSound(function (a, t) { fTone(a, t, 'sawtooth', [[0, 420], [0.5, 380]], 0.55, 0.13, 1800, [11, 30]); }); },
     pig: function () { fSound(function (a, t) { fTone(a, t, 'sawtooth', [[0, 190], [0.14, 120]], 0.16, 0.22, 800, [32, 25]); fTone(a, t + 0.22, 'sawtooth', [[0, 210], [0.16, 130]], 0.2, 0.22, 800, [32, 25]); }); },
     horse: function () { fSound(function (a, t) { fTone(a, t, 'sawtooth', [[0, 700], [0.12, 1100], [0.5, 900], [0.9, 450]], 0.95, 0.14, 2400, [17, 80]); fTone(a, t + 1, 'sawtooth', [[0, 160], [0.2, 110]], 0.22, 0.1, 500, [40, 30]); }); },
     chicken: function () { fSound(function (a, t) { [0, 0.13, 0.26].forEach(function (d) { fTone(a, t + d, 'square', [[0, 620], [0.06, 380]], 0.07, 0.12, 2000); }); fTone(a, t + 0.42, 'square', [[0, 700], [0.08, 1050], [0.24, 640]], 0.26, 0.12, 2200, [12, 30]); }); }
@@ -2552,7 +2788,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     var sun = sc.querySelector('.fsun'), ss = clamp(Math.min(fW, fH) * 0.15, 40, 90); sun.style.width = sun.style.height = ss + 'px';
     fClouds.forEach(function (c) { c.w = c.k * clamp(fW / 5, 60, 160); c.el.style.width = c.w + 'px'; c.el.style.top = (c.top * fH / 100) + 'px'; if (c.x > fW) c.x = Math.random() * fW; });
   }
-  function fAW(id) { return fBase * fStage().size * FARM.animals[id]; }
+  function fAW(id) { return fBase * fStage().size * FARM.animals[id] * Math.min(1, 1 - (FST.animals.length - 3) * FARM.crowdShrink); }
   var FI = {};   /* each item's size and where it is drawn: { w, h, x, y } in px and % */
   function fSpot(k) { return FST.pos[k] || FARM.spots[k]; }
   function fItemAt(k) { return FI[k] ? [FI[k].x, FI[k].y] : fSpot(k); }
@@ -2569,23 +2805,24 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     var f = FI[k]; f.x = x; f.y = y;
     el.style.left = (x * fW / 100 - f.w / 2).toFixed(1) + 'px'; el.style.bottom = (y * fH / 100).toFixed(1) + 'px';
     /* lower on the screen draws in front; flat items stay under the animals, the haystack stands among them */
-    el.style.zIndex = el.classList.contains('held') ? '3000' : k === 'hay' ? String(1000 - Math.round(y * 10)) : String(150 - Math.round(y));
-    if (k === 'mud') { var lip = $('#fLayer .fi-lip'); if (lip) { lip.style.width = f.w + 'px'; lip.style.left = el.style.left; lip.style.bottom = el.style.bottom; } }
+    el.style.zIndex = el.classList.contains('held') ? '3000' : FSTAND.indexOf(k) >= 0 ? String(1000 - Math.round(y * 10)) : String(150 - Math.round(y));
+    var lip = fLipSVG(k) && $('#fLayer .fi-lip[data-lip="' + k + '"]'); if (lip) { lip.style.width = f.w + 'px'; lip.style.left = el.style.left; lip.style.bottom = el.style.bottom; }
   }
   function fBuild() {
     var st = fStage(), L = $('#fLayer'), h = '';
     $('#fScene').setAttribute('data-stage', st.id);
-    FST.items.forEach(function (k) { h += '<div class="fi" data-i="' + k + '"><div class="fi-in">' + fItemSVG(k) + '</div></div>' + (k === 'mud' ? '<div class="fi-lip">' + MUDLIP + '</div>' : ''); });
-    FST.animals.forEach(function (id) { var m = FA[id] && FA[id].mud > 0; h += '<button class="fa' + (fSel === id ? ' sel' : '') + (m ? ' muddy' : '') + '" type="button" data-a="' + id + '" aria-label="' + id + '"><div class="fa-flip"><div class="fa-act"><div class="fa-hop">' + fAnimalSVG(id, FST.decor[id], st) + '</div></div></div></button>'; });
+    FST.items.forEach(function (k) { h += '<div class="fi" data-i="' + k + '"><div class="fi-in">' + fItemSVG(k) + '</div></div>' + (fLipSVG(k) ? '<div class="fi-lip" data-lip="' + k + '">' + fLipSVG(k) + '</div>' : ''); });
+    FST.animals.forEach(function (id) { var m = FA[id] && FA[id].mud > 0; h += '<button class="fa' + (fSel === id ? ' sel' : '') + (m ? ' muddy' : '') + '" type="button" data-a="' + id + '" aria-label="' + id + '"><div class="fa-flip"><div class="fa-act"><div class="fa-hop">' + fAnimalSVG(id, fLook(id), st) + '</div></div></div></button>'; });
+    if (FST.animals.indexOf('duck') >= 0 && fStageI() >= 2) { var dk = fAnimalSVG('duck', { color: fLook('duck').color }, FARM.growthStages[0]);   /* her color, not her clothes */ h += new Array(4).join('<div class="fdk"><div>' + dk + '</div></div>'); }
     if (fGifts() > 0) h += '<button class="fgift" type="button" aria-label="gift">' + fGiftSVG() + '</button>';
     L.innerHTML = h; fFxN = 0;
     FST.animals.forEach(function (id) {
       var a = FA[id] || (FA[id] = { x: fSpot(id)[0], y: fSpot(id)[1], tx: 0, ty: 0, face: 1, mode: 'home', t: fRand(FARM.wander.every), next: fRand(FARM.actFirst), crowdT: 0,
-        item: '', walk: 0, act: null, pose: [0, 0, 0, 1, 1], head: 0, mud: 0, lip: false });
+        item: '', walk: 0, act: null, pose: [0, 0, 0, 1, 1], head: 0, mud: 0, lip: '', z: 0 });
       a.el = L.querySelector('[data-a="' + id + '"]'); a.faceSet = 0; a.actEl = a.el.querySelector('.fa-act'); a.hdEl = a.el.querySelector('.fhd'); a.poseK = a.headK = null;
     });
-    fItemsShow(); fLayout(); fProg(); $('#fPaint').hidden = !fSel;
-    if (FA.pig && FA.pig.lip) fLip(FA.pig, true);
+    fItemsShow(); fLayout(); fDucklings(); fProg(); $('#fPaint').hidden = !fSel;
+    FST.animals.forEach(function (id) { if (FA[id].lip) fLip(FA[id], FA[id].lip); });
   }
   function fLayout() {
     var L = $('#fLayer'), g = L.querySelector('.fgift');
@@ -2595,12 +2832,13 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       c = fClamp(k, fSpot(k)[0], fSpot(k)[1]); fPlaceItem(el, k, c[0], c[1]);
     });
     if (g) { var p = FARM.spots.gift, w = clamp(fBase * 0.8, 60, 120); g.style.width = w + 'px'; g.style.left = (p[0] * fW / 100 - w / 2) + 'px'; g.style.bottom = p[1] + '%'; }
+    Array.prototype.forEach.call(L.querySelectorAll('.fdk'), function (el) { el.style.width = (fAW('duck') * 0.36).toFixed(1) + 'px'; });
     FST.animals.forEach(function (id) { var a = FA[id], c; a.w = fAW(id); a.el.style.width = a.w + 'px'; a.el.style.setProperty('--tp', Math.max(0, (64 - a.w) / 2).toFixed(0) + 'px'); c = fClamp(id, a.x, a.y); a.x = c[0]; a.y = c[1]; });
     /* animals standing side by side and covering each other (after growing, or a smaller screen) step apart */
     FST.animals.forEach(function (id) { var a = FA[id], c; if (a.mode === 'home' && fCrowd(id, a.x, a.y) > FARM.room && (c = fRoomSpot(id, true))) { a.x = c[0]; a.y = c[1]; } fPut(id, 0); });
   }
   function fPut(id, lift) {
-    var a = FA[id], z = a.mode === 'held' ? '3000' : String(1000 - Math.round(a.y * 10));
+    var a = FA[id], z = a.mode === 'held' ? '3000' : String(a.z || 1000 - Math.round(a.y * 10));   /* z: kept in front of the rock it climbs */
     a.el.style.transform = 'translate3d(' + (a.x * fW / 100 - a.w / 2).toFixed(1) + 'px,' + (-(a.y * fH / 100) - lift).toFixed(1) + 'px,0)';
     if (a.el.style.zIndex !== z) a.el.style.zIndex = z;
     if (a.faceSet !== a.face) { a.faceSet = a.face; a.el.firstChild.style.transform = a.face < 0 ? 'scaleX(-1)' : ''; }
@@ -2646,10 +2884,16 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function fAnimalSound(id) {
     if (muted) return;
     var k = DSND[id];
-    if (k && !vSpeaking && k.some(function (x) { return VOICE[x]; })) dClip(k); else FSND[id]();
+    var rec = k ? k.filter(function (x) { return VOICE[x]; }) : [];
+    if (rec.length && !vSpeaking) vsay([Pc(pick(rec))]); else FSND[id]();   /* her clip goes through the voice, so no line ever plays over it */
   }
   function fMuddy(id, on) { var a = FA[id]; a.mud = on ? FARM.mudSeconds : 0; if (a.el) a.el.classList.toggle('muddy', on); }
-  function fLip(a, on) { a.lip = on; var el = $('#fLayer .fi-lip'); if (!el) return; el.classList.toggle('on', on); if (on) el.style.zIndex = String(1001 - Math.round(a.y * 10)); }
+  /* k: the item it is in (its front rim shows over the animal), or '' */
+  function fLip(a, k) {
+    var old = a.lip, el; a.lip = k || '';
+    if (old && old !== a.lip && (el = $('#fLayer .fi-lip[data-lip="' + old + '"]'))) el.classList.remove('on');
+    if (a.lip && (el = $('#fLayer .fi-lip[data-lip="' + a.lip + '"]'))) { el.classList.add('on'); el.style.zIndex = String(1001 - Math.round(a.y * 10)); }
+  }
 
   /* --- items: eaten flowers and the haystack, and growing back --- */
   function fFlowerPos(i) { var it = FI.flowers; return [it.x + (FXS[i] / 110 - 0.5) * it.w / fW * 100, it.y + it.h * 0.55 / fH * 100]; }
@@ -2671,6 +2915,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function fCrowd(id, x, y) {
     var r = fRect(id, x, y), m = 0;
     FST.animals.forEach(function (o) { var b = FA[o]; if (o === id || !b || !b.w || Math.abs(b.y - y) > FARM.depth) return; m = Math.max(m, fCover(r, fRect(o, b.x, b.y))); });
+    /* a thing another animal is busy with (the pond the duck swims round) counts as taken too */
+    FST.animals.forEach(function (o) { var b = FA[o], f = b && b.item && FI[b.item]; if (o === id || !f || (b.mode !== 'act' && b.mode !== 'go') || Math.abs(f.y - y) > FARM.depth * 1.5) return; m = Math.max(m, fCover(r, fRect(b.item, f.x, f.y))); });
     return m;
   }
   /* a spot near its home with room; wide: look further away */
@@ -2689,6 +2935,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     var a = FA[id], c = [];
     if (id === 'pig') return a.mud > 0 ? (fHas('pond') ? 'pond' : '') : fHas('mud') ? 'mud' : '';
     if (id === 'chicken') return fHas('flowers') && FIS.gone.indexOf(false) >= 0 ? 'flowers' : '';
+    if (id === 'cow' || id === 'sheep' || id === 'goat' || id === 'duck') { var k = { cow: 'trough', sheep: 'clover', goat: 'rock', duck: 'pond' }[id]; return fHas(k) ? k : ''; }
     if (fHas('hay') && FIS.bites < FARM.hayBites) c.push('hay');
     if (fHas('pond')) c.push('pond');
     return c.length ? pick(c) : '';
@@ -2696,7 +2943,10 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   /* where to stand: beside the thing, mouth over it (the head is on the right of each picture, about 0.42 of its width from the middle) */
   function fApproach(id, k) {
     var a = FA[id], it = FI[k], w = it.w / fW * 100, h = it.h / fH * 100, aw = a.w / fW * 100, cx = it.x, side = a.x <= cx ? -1 : 1, x, y;
-    if (k === 'mud' || (k === 'pond' && id === 'pig')) { x = cx + side * (w / 2 + aw * 0.3); y = it.y + h * 0.3; }
+    if (k === 'mud' || (k === 'pond' && (id === 'pig' || id === 'duck'))) { x = cx + side * (w / 2 + aw * 0.3); y = it.y + h * 0.3; }
+    else if (k === 'trough') { x = cx + side * aw * 0.42; y = Math.max(0, it.y - 2); }
+    else if (k === 'clover') { x = cx + side * (w / 2 + aw * 0.1); y = it.y + h * 0.2; }
+    else if (k === 'rock') { x = cx + side * (w / 2 + aw * 0.15); y = it.y; }
     else if (k === 'flowers') { var o = fHenOrder(a), fx = o.length ? fFlowerPos(o[0])[0] : cx; side = a.x <= fx ? -1 : 1; x = fx + side * aw * 0.42; y = Math.max(0, it.y - 1); }
     else if (k === 'hay') { x = cx + side * aw * 0.42; y = Math.max(0, it.y - 2); }
     else { x = cx + side * (w * 0.3 + aw * 0.42); y = it.y + h * 0.4; }   /* the horse drinks at the pond's edge */
@@ -2707,7 +2957,10 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     fActStop(id);
     var c = fApproach(id, k); a.item = k; a.tx = c[0]; a.ty = c[1]; a.mode = 'go'; a.next = fRand(FARM.actEvery);   /* any visit restarts the wait for the next one */
   }
-  function fSendFan(k) { var id = k === 'pond' && FA.pig && FA.pig.mud > 0 ? 'pig' : FARM.likes[k]; if (FST.animals.indexOf(id) >= 0) fGo(id, k); }
+  function fSendFan(k) {
+    var id = k !== 'pond' ? FARM.likes[k] : FA.pig && FA.pig.mud > 0 ? 'pig' : FST.animals.indexOf('duck') >= 0 ? 'duck' : 'horse';   /* the pond: a muddy pig washes, else the duck swims, else the horse drinks */
+    if (id && FST.animals.indexOf(id) >= 0) fGo(id, k);
+  }
   function fPlayLine(k) { var l = FSAY.play[k], now = performance.now(); if (l && !(now - (fPlayT[l] || -1e9) < FSAY.playGapMs) && fAmbient([l])) fPlayT[l] = now; }
 
   /* --- the interactions: a list of timed steps; go() at the start of a step, f(progress 0-1, seconds) every frame, end() when it is done --- */
@@ -2715,24 +2968,24 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function fPigMud(a) {
     var it = FI.mud, cx = it.x, py = it.y + it.h * 0.4 / fH * 100, ex = a.x, ey = a.y, H = fTall('pig'), sink = Math.min(H * 0.24, it.h * 0.24), sp = 0;
     return [
-      { d: 0.55, go: function () { fAnimalSound('pig'); }, f: function (p) { fHop(a, ex, ey, cx, py, H, p); }, end: function () { fLip(a, true); fFx('mud', cx, py + 2, 3); } },
+      { d: 0.55, go: function () { fAnimalSound('pig'); }, f: function (p) { fHop(a, ex, ey, cx, py, H, p); }, end: function () { fLip(a, 'mud'); fFx('mud', cx, py + 2, 3); } },
       { d: 0.6, f: function (p) { var q = Math.sin(Math.PI * p); fPose(a, 0, fEase(p) * sink, 0, 1 + q * 0.08, 1 - q * 0.14); }, end: function () { fMuddy('pig', true); } },
       { d: 2.2, f: function (p, t) { fPose(a, 0, sink, Math.sin(t * Math.PI * 2.6) * 22, 1, 1); if (t >= sp) { sp = t + 0.45; fFx('mud', cx + Math.random() * 12 - 6, py + 3, 1); } } },
       { d: 0.4, f: function (p) { fPose(a, 0, sink * (1 - fEase(p)), 0, 1, 1); } },
-      { d: 0.55, f: function (p) { fHop(a, cx, py, ex, ey, H, p); if (p > 0.35 && a.lip) fLip(a, false); } },
+      { d: 0.55, f: function (p) { fHop(a, cx, py, ex, ey, H, p); if (p > 0.35 && a.lip) fLip(a, ''); } },
       { d: 0.8, f: function (p, t) { fPose(a, 0, -Math.abs(Math.sin(t * 9)) * H * 0.08, Math.sin(t * 16) * 6, 1, 1); } }
     ];
   }
   function fPigWash(a) {
     var it = FI.pond, cx = it.x, py = it.y + it.h * 0.35 / fH * 100, ex = a.x, ey = a.y, H = fTall('pig'), bp = 0;
     return [
-      { d: 0.5, f: function (p) { fHop(a, ex, ey, cx, py, H, p); } },
+      { d: 0.5, f: function (p) { fHop(a, ex, ey, cx, py, H, p); }, end: function () { fLip(a, 'pond'); } },
       { d: 2.6, f: function (p, t) {
         fPose(a, 0, H * 0.06, Math.sin(t * 15) * 7, 1, 1);
         if (t >= bp) { bp = t + 0.22; fFx('bubble', cx + Math.random() * 14 - 7, py + H * 0.5 / fH * 100, 1); }
         if (p > 0.35 && a.mud > 0) fMuddy('pig', false);
       } },
-      { d: 0.5, f: function (p) { fHop(a, cx, py, ex, ey, H, p); } },
+      { d: 0.5, f: function (p) { fHop(a, cx, py, ex, ey, H, p); if (p > 0.35 && a.lip) fLip(a, ''); } },
       { d: 0.6, f: function (p, t) { fPose(a, 0, -Math.abs(Math.sin(t * 9)) * H * 0.06, Math.sin(t * 16) * 5, 1, 1); } }
     ];
   }
@@ -2784,11 +3037,85 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       { d: 0.45, f: function (p) { a.head = 42 * (1 - fEase(p)); } }
     ];
   }
+  function fCowEat(a) {
+    var H = fTall('cow'), it = FI.trough, lp = 0;
+    return [
+      { d: 0.7, f: function (p) { a.head = 32 * fEase(p); } },
+      { d: 3.6, go: function () { a.el.classList.add('swish'); },   /* slow chewing, tail swishing */
+        f: function (p, t) { a.head = 32 + Math.sin(t * 4) * 2.5; fPose(a, 0, Math.sin(t * 4) * H * 0.004, 0, 1, 1); if (t >= lp) { lp = t + 1.2; fFx('leaf', it.x + Math.random() * 10 - 5, it.y + it.h * 0.6 / fH * 100, 1); } } },
+      { d: 0.6, f: function (p) { a.head = 32 * (1 - fEase(p)); }, end: function () { a.el.classList.remove('swish'); } },
+      { d: 0.9, go: function () { fAnimalSound('cow'); fFx('heart', a.x, a.y + H / fH * 100, 1); },   /* a happy moo and a little hop */
+        f: function (p) { var q = Math.sin(Math.PI * p * 2) * 0.05; fPose(a, 0, -Math.sin(Math.PI * p) * H * 0.18, 0, 1 + q, 1 - q); } }
+    ];
+  }
+  function fSheepBoing(a) {
+    var it = FI.clover, H = fTall('sheep'), w = it.w / fW * 100, side = a.x <= it.x ? 1 : -1, by = it.y + it.h * 0.25 / fH * 100, ph = [];
+    [-0.25, 0.2, -0.05, 0.35].forEach(function (k, i) {   /* big "boing" leaps across the meadow */
+      var x0, x1;
+      ph.push({ d: 0.65, go: function () { x0 = a.x; x1 = fClamp('sheep', it.x + side * w * k, by)[0]; a.face = x1 >= x0 ? 1 : -1; if (!i) { a.el.classList.add('boing'); fAnimalSound('sheep'); } },
+        f: function (p) { a.x = fLerp(x0, x1, p); a.y = by; var s = p > 0.85 ? Math.sin((p - 0.85) / 0.15 * Math.PI) * 0.1 : 0; fPose(a, 0, -Math.sin(Math.PI * p) * H * 0.6, (p - 0.5) * -14, 1 + s, 1 - s); } });
+    });
+    ph.push({ d: 0.5, go: function () { a.el.classList.remove('boing'); }, f: function (p) { fPose(a, 0, fEase(p) * H * 0.1, 0, 1 + 0.06 * fEase(p), 1 - 0.15 * fEase(p)); } });   /* lie down */
+    ph.push({ d: 2.2, f: function (p, t) { fPose(a, 0, H * 0.1, 0, 1.06, 0.85 + Math.sin(t * 3) * 0.015); } });   /* rest, breathing */
+    ph.push({ d: 0.5, f: function (p) { var q = 1 - fEase(p); fPose(a, 0, q * H * 0.1, 0, 1 + 0.06 * q, 1 - 0.15 * q); } });
+    return ph;
+  }
+  function fDuckSwim(a) {
+    var it = FI.pond, cx = it.x, cy = it.y + it.h * 0.42 / fH * 100, rx = it.w * 0.26 / fW * 100, ry = it.h * 0.14 / fH * 100,
+      ex = a.x, ey = a.y, s = ex <= cx ? -1 : 1, dir = -s, H = fTall('duck'), sp = 0;
+    return [
+      { d: 0.5, f: function (p) { fHop(a, ex, ey, cx + s * rx, cy, H, p); }, end: function () { fLip(a, 'pond'); fFx('drop', a.x, cy + 2, 2); } },
+      { d: 4, f: function (p, t) {   /* swims a circle */
+        var g = (s > 0 ? 0 : Math.PI) + dir * p * Math.PI * 2, nx = cx + Math.cos(g) * rx, ny = cy + Math.sin(g) * ry;
+        if (Math.abs(nx - a.x) > 0.005) a.face = nx > a.x ? 1 : -1;
+        a.x = nx; a.y = ny; fPose(a, 0, Math.sin(t * 5) * H * 0.02, Math.sin(t * 5) * 3, 1, 1);
+      } },
+      { d: 1.4, go: function () { fAnimalSound('duck'); }, f: function (p, t) {   /* head under, tail up, splash */
+        var q = Math.sin(Math.PI * Math.min(1, p * 1.25)); fPose(a, 0, H * 0.05 * q, 62 * q, 1, 1);
+        if (q > 0.6 && t >= sp) { sp = t + 0.25; fFx('drop', a.x + a.face * 3, a.y + 2, 1); }
+      } },
+      { d: 0.5, f: function (p) { fHop(a, cx + s * rx, cy, ex, ey, H, p); if (p > 0.35 && a.lip) fLip(a, ''); } },
+      { d: 0.7, go: function () { a.el.classList.add('flap'); }, f: function (p, t) { fPose(a, 0, 0, Math.sin(t * 30) * 5, 1, 1); }, end: function () { a.el.classList.remove('flap'); } }
+    ];
+  }
+  function fGoatClimb(a) {
+    var it = FI.rock, cx = it.x, top = it.y + it.h * 0.72 / fH * 100, ex = a.x, ey = a.y, side = ex <= cx ? -1 : 1, H = fTall('goat'),
+      lx = fClamp('goat', cx - side * (it.w / 2 + a.w * 0.2) / fW * 100, it.y)[0], up = 1001 - Math.round(it.y * 10);
+    return [
+      { d: 1.5, go: function () { a.z = up; a.face = -side; }, f: function (p, t) { a.x = fLerp(ex, cx, fEase(p)); a.y = fLerp(ey, top, fEase(p)); fPose(a, 0, -Math.abs(Math.sin(t * 9)) * H * 0.04, -14 * Math.sin(Math.PI * p), 1, 1); } },
+      { d: 0.8, f: function (p, t) { fPose(a, 0, 0, Math.sin(t * 7) * 3, 1, 1); } },   /* on top of the world */
+      { d: 1, go: function () { fAnimalSound('goat'); }, f: function (p) {   /* jumps off the far side with a spin */
+        a.x = fLerp(cx, lx, p); a.y = fLerp(top, it.y, p); fPose(a, 0, -Math.sin(Math.PI * p) * H * 0.6, -360 * fEase(p), 1, 1);
+      } },
+      { d: 0.55, go: function () { a.z = 0; fFx('spark', a.x, a.y + 2, 2); }, f: function (p) { var q = Math.sin(Math.PI * p); fPose(a, 0, -Math.sin(Math.PI * p * 2) * H * 0.06 * (1 - p), 0, 1 + q * 0.12, 1 - q * 0.18); } }
+    ];
+  }
+  /* --- ducklings: at the grown stage three little ducks follow her in a line, walking or swimming --- */
+  var FDK = [];
+  function fDucklings() {
+    var d = FA.duck; FDK = [];
+    Array.prototype.forEach.call($('#fLayer').querySelectorAll('.fdk'), function (el, i) { FDK.push({ el: el, x: d.x - (i + 1) * 3, y: d.y, face: 1, w: fAW('duck') * 0.36, hop: 0 }); });
+    if (d) d.trail = [[d.x, d.y]];
+  }
+  function fDuckTick(dt) {
+    var d = FA.duck; if (!FDK.length || !d || !d.el) return;
+    var T = d.trail || (d.trail = []), last = T[T.length - 1], gap = FDK[0].w / fW * 100 * 0.3;
+    if (!last || Math.abs(last[0] - d.x) + Math.abs(last[1] - d.y) > gap) { T.push([d.x, d.y]); if (T.length > 40) T.shift(); }
+    FDK.forEach(function (k, i) {
+      var g = T[Math.max(0, T.length - 1 - (i + 1) * 4)], dx = g[0] - k.x, dy = g[1] - k.y, m = Math.min(1, dt * 5), moving = Math.abs(dx) + Math.abs(dy) > 0.2;
+      if (Math.abs(dx) > 0.05) k.face = dx > 0 ? 1 : -1;
+      k.x += dx * m; k.y += dy * m; k.hop = moving ? k.hop + dt : 0;
+      k.el.style.transform = 'translate3d(' + (k.x * fW / 100 - k.w / 2).toFixed(1) + 'px,' + (-(k.y * fH / 100) - Math.abs(Math.sin(k.hop * 12)) * k.w * 0.12).toFixed(1) + 'px,0)';
+      k.el.firstChild.style.transform = k.face < 0 ? 'scaleX(-1)' : '';
+      k.el.style.zIndex = String(1000 - Math.round(k.y * 10));
+    });
+  }
   function fActStart(id) {
     var a = FA[id], k = a.item, ph;
     if (!fHas(k)) { a.mode = 'home'; a.item = ''; return; }
     a.face = FI[k].x >= a.x ? 1 : -1;
-    ph = id === 'pig' ? (k === 'mud' ? fPigMud(a) : fPigWash(a)) : id === 'chicken' ? fHenEat(a) : k === 'hay' ? fHorseHay(a) : fHorseDrink(a);
+    ph = id === 'pig' ? (k === 'mud' ? fPigMud(a) : fPigWash(a)) : id === 'chicken' ? fHenEat(a) : id === 'horse' ? (k === 'hay' ? fHorseHay(a) : fHorseDrink(a)) :
+      id === 'cow' ? fCowEat(a) : id === 'sheep' ? fSheepBoing(a) : id === 'duck' ? fDuckSwim(a) : fGoatClimb(a);
     if (!ph) { fActDone(id); return; }   /* nothing left to eat: back home */
     a.act = { ph: ph, i: 0, t: 0 }; a.mode = 'act';
     if (k !== 'pond' || id === 'horse') fPlayLine(k);
@@ -2808,15 +3135,15 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   }
   function fActDone(id) {
     var a = FA[id], k = a.item, c;
-    a.act = null; a.item = ''; fPose(a, 0, 0, 0, 1, 1); a.head = 0;
+    a.act = null; a.item = ''; a.z = 0; fPose(a, 0, 0, 0, 1, 1); a.head = 0; a.el.classList.remove('flap', 'swish', 'boing');
     if (id === 'pig' && k === 'mud' && fWant('pig') === 'pond') { fGo('pig', 'pond'); return; }   /* muddy and there is a pond: straight off for a wash */
     c = fRoomSpot(id) || fClamp(id, fSpot(id)[0], fSpot(id)[1]); a.mode = 'back'; a.tx = c[0]; a.ty = c[1];
   }
   /* stop whatever it is doing and stand still (picked up, item moved, farm closed) */
   function fActStop(id) {
     var a = FA[id]; if (!a) return;
-    a.act = null; a.item = ''; if (a.lip) fLip(a, false);
-    if (a.el) a.el.classList.remove('flap');
+    a.act = null; a.item = ''; a.z = 0; if (a.lip) fLip(a, '');
+    if (a.el) a.el.classList.remove('flap', 'swish', 'boing');
     fPose(a, 0, 0, 0, 1, 1); a.head = 0;
     if (a.mode === 'act' || a.mode === 'go') { a.mode = 'home'; a.t = fRand(FARM.wander.every); }
   }
@@ -2849,6 +3176,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       }
     }
     fApply(id); fPut(id, lift);
+    if (a.lip) { var le = $('#fLayer .fi-lip[data-lip="' + a.lip + '"]'); if (le) le.style.zIndex = String(+a.el.style.zIndex + 1); }   /* the rim stays in front as it moves in the water */
   }
   function fLoop(now) {
     if (!fOn) return;
@@ -2856,6 +3184,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     fClouds.forEach(function (c) { c.x += c.v * dt; if (c.x > fW + 10) c.x = -c.w - 10; c.el.style.transform = 'translate3d(' + c.x.toFixed(1) + 'px,0,0)'; });
     fItemsTick(dt);
     FST.animals.forEach(function (id) { if (FA[id] && FA[id].el) fTick(id, dt); });
+    fDuckTick(dt);
     fRaf = requestAnimationFrame(fLoop);
   }
   /* the app hidden (another tab, the tablet asleep): stop the clock and the little CSS wiggles */
@@ -2875,12 +3204,18 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     gift: 'You have a gift! Tap to open it!', grow: ['Wow! Your friends are growing!', 'Look how big they got!'], biggest: 'Your farm is so big!',
     almost: 'Almost at your next gift!', almostAt: 0.8,
     decorate: "Let's decorate!", build: "Let's build something!", earn: "Let's write to earn stars!", bye: 'Come back and write more to grow your farm!',
-    names: { glitter: 'Glitter', bow: 'Bow', crown: 'Crown', rainbow: 'Rainbow mane', braid: 'Braid', flower: 'Flower', hat: 'Hat', tail: 'Rainbow tail',
-      mud: 'Mud pit', pond: 'pond', hay: 'Haystack', flowers: 'Flower patch', pig: 'pig', horse: 'horse', chicken: 'chicken' },
+    names: { glitter: 'Glitter', bow: 'Bow', crown: 'Crown', rainbow: 'Rainbow mane', braid: 'Braid', flower: 'Flower', hat: 'Hat', tophat: 'Top hat',
+      glasses: 'Glasses', sunglasses: 'Sunglasses', bowtie: 'Bow tie', scarf: 'Scarf', tutu: 'Tutu', cape: 'Cape', blanket: 'Saddle blanket', spots: 'Spots', stripes: 'Stripes',
+      sparkles: 'Sparkles', ponytail: 'Ponytail', curls: 'Curls', mohawk: 'Mohawk',
+      mud: 'Mud pit', pond: 'pond', hay: 'Haystack', flowers: 'Flower patch', trough: 'Trough', clover: 'Clover meadow', rock: 'Rock hill', puddle: 'Puddle', slide: 'Mud slide',
+      jump: 'Jump', apples: 'Apples', nest: 'Nest', coop: 'Chicken coop', bell: 'Bell', bigtrough: 'Big trough', yarn: 'Yarn', shelter: 'Sheep shed', boat: 'Boat', duckhouse: 'Duck house',
+      tire: 'Tire', seesaw: 'Seesaw', pig: 'pig', horse: 'horse', chicken: 'chicken', cow: 'cow', sheep: 'sheep', duck: 'duck', goat: 'goat' },
     play: { hay: 'Time to feed the animals!', mud: 'The pig is playing in the mud!', pond: 'The horse is drinking at the pond!', flowers: 'The chicken is pecking in the flowers!' },
     playGapMs: 60000                    /* each play line at most once a minute */
   };
   var fNoLast = '', fNoT = -1e9, fPlayT = {}, fEarnSaid = false, FSKEY = 'ww_farm_said', FSD = null;
+  /* an option's spoken name: the color names belong to each animal (the chicken's "rainbow" is its tail) */
+  function fName(id, k) { var p = id && FPAL[id] && FPAL[id][k]; return p && p.name || FSAY.names[k]; }
   function fRec(keys) { return keys.filter(function (k) { return k && VOICE[k]; }); }
   function fRespond(keys) { keys = fRec(keys); if (keys.length && !muted) vsay(keys.map(Pc)); }
   function fAmbient(keys) { keys = fRec(keys); if (!keys.length || muted || vSpeaking) return false; vsay(keys.map(Pc)); return true; }
@@ -2891,8 +3226,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   }
   function fCanBuy() {
     var n = fSpendable(), ok = false;
-    FST.animals.forEach(function (id) { Object.keys(FARM.decor[id]).forEach(function (k) { if (FST.decor[id][k] === undefined && FARM.decor[id][k] <= n) ok = true; }); });
-    Object.keys(FARM.items).forEach(function (k) { if (FST.items.indexOf(k) < 0 && FARM.items[k] <= n) ok = true; });
+    FST.animals.forEach(function (id) { var L = FLOOKS[id]; Object.keys(L).forEach(function (sl) { Object.keys(L[sl]).forEach(function (k) { if (FST.looks[id].own.indexOf(k) < 0 && L[sl][k] <= n) ok = true; }); }); });
+    Object.keys(FARM.items).forEach(function (k) { if (FST.items.indexOf(k) < 0 && fItemFor(k) && FARM.items[k] <= n) ok = true; });
     return ok;
   }
   /* "Let's write to earn stars!": no stars to spend, nothing to buy, no gift waiting; once per visit */
@@ -2932,7 +3267,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function fTapAnimal(id) {
     var a = FA[id]; if (!a || !a.el) return;
     var hop = a.el.querySelector('.fa-hop'); hop.classList.remove('hop', 'fnew'); void hop.offsetWidth; hop.classList.add('hop');
-    FSND[id]();
+    fAnimalSound(id);   /* one of her two clips for this animal, or the made-up sound */
     fFx(Math.random() < 0.5 ? 'heart' : 'spark', a.x, a.y + a.w * FVB[id][1] / FVB[id][0] * 90 / fH, 2);
     fSelect(id);
   }
@@ -2953,39 +3288,50 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       FIDS.forEach(function (id) { if (FST.animals.indexOf(id) < 0) h += '<button class="ft big" type="button" data-k="' + id + '" aria-label="' + id + '"><span class="ft-pic">' + fAnimalSVG(id, null, st) + '</span></button>'; });
       vsay([Pc('Pick a friend for your farm!')]);
     } else if (kind === 'decor') {
-      $('#fPrev').innerHTML = fAnimalSVG(fSel, FST.decor[fSel], st);
-      Object.keys(FARM.decor[fSel]).forEach(function (k) { var o = FST.decor[fSel][k]; h += fTile(k, fDecorIcon(fSel, k), o === undefined ? FARM.decor[fSel][k] : 0, o === true); });
+      /* one row per slot: a small picture of the slot, then its options (price, or a check when worn, a circle when owned) */
+      var L = FST.looks[fSel], cat = FLOOKS[fSel];
+      $('#fPrev').innerHTML = fAnimalSVG(fSel, L.wear, st);
+      Object.keys(cat).forEach(function (sl) {
+        h += '<div class="fslot" data-slot="' + sl + '"><span class="fslot-ic" aria-hidden="true">' + fDecorIcon(fSel, FSLOTPIC[sl]) + '</span><div class="fslot-t">';
+        Object.keys(cat[sl]).forEach(function (k) { var own = L.own.indexOf(k) >= 0; h += fTile(k, fDecorIcon(fSel, k), own ? 0 : cat[sl][k], own && L.wear[sl] === k); });
+        h += '</div></div>';
+      });
     } else {
-      Object.keys(FARM.items).forEach(function (k) { var own = FST.items.indexOf(k) >= 0; h += fTile(k, fItemSVG(k), own ? 0 : FARM.items[k], own); });
+      Object.keys(FARM.items).forEach(function (k) { var own = FST.items.indexOf(k) >= 0; if (fItemFor(k)) h += fTile(k, fItemSVG(k), own ? 0 : FARM.items[k], own); });
     }
-    $('#fTiles').innerHTML = h; $('#fSheet').hidden = false;
+    $('#fTiles').innerHTML = h; $('#fTiles').classList.toggle('rows', kind === 'decor'); $('#fSheet').hidden = false;
   }
   function fCloseSheet() { $('#fSheet').hidden = true; fSheetKind = ''; fBuild(); }
   /* not enough stars: a wiggle and an encouraging line; nothing negative, nothing bought, no numbers change */
-  function fNo(b, k) { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); fBump(); var l = fNoLine(); if (l) fRespond([FSAY.names[k], l]); else fAmbient([FSAY.names[k]]); }
+  function fNo(b, k) { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); fBump(); var l = fNoLine(); if (l) fRespond([fName(fSel, k), l]); else fAmbient([fName(fSel, k)]); }
   function fYay(k) { var b = $('#fTiles').querySelector('[data-k="' + k + '"]'); if (b) b.classList.add('yay'); }
   function fAdopt(id) {
     if (FST.animals.indexOf(id) >= 0 || fGifts() <= 0) return;
     FST.animals.push(id); fSave(); fBadge();
     $('#fSheet').hidden = true; fSheetKind = ''; fBuild();
     var a = FA[id]; a.el.querySelector('.fa-hop').classList.add('fnew');
-    fFx('heart', a.x, a.y + 8, 4); FSND[id](); fRespond([FSAY.names[id], 'A new friend!']);
+    fFx('heart', a.x, a.y + 8, 4); FSND[id](); fRespond([FSAY.names[id], 'A new friend!']);   /* her words come next, so the made-up sound here */
   }
+  /* a customization: buy it (it is worn at once), or switch it on and off for free; one worn per slot */
   function fDecor(b, k) {
-    var id = fSel, o = FST.decor[id][k];
-    if (o === undefined) {
-      if (!fPay(FARM.decor[id][k])) { fNo(b, k); return; }
-      FST.decor[id][k] = true; sfx.good(); fBump(); fRespond([FSAY.names[k], FSAY.thanks[id] || FSAY.got].concat(fEarnLine()));
-    } else { FST.decor[id][k] = !o; sfx.pop(); fAmbient([FSAY.names[k]]); }
-    fSave(); renderStars();
-    if (FA[id] && FA[id].el) FA[id].el.querySelector('.fa-hop').innerHTML = fAnimalSVG(id, FST.decor[id]);
+    var id = fSel, L = FST.looks[id], sl = fSlotOf(id, k), nm = fName(id, k);
+    if (!sl) return;
+    if (L.own.indexOf(k) < 0) {
+      if (!fPay(FLOOKS[id][sl][k])) { fNo(b, k); return; }
+      L.own.push(k); L.wear[sl] = k; sfx.good(); fBump(); fRespond([nm, FSAY.thanks[id] || FSAY.got].concat(fEarnLine()));
+    } else { if (L.wear[sl] === k) delete L.wear[sl]; else L.wear[sl] = k; sfx.pop(); fAmbient([nm]); }
+    fSave(); renderStars(); fRedress(id);
     fSheet('decor'); fYay(k);
   }
+  function fRedress(id) { var a = FA[id]; if (!a || !a.el) return; a.el.querySelector('.fa-hop').innerHTML = fAnimalSVG(id, fLook(id)); a.hdEl = a.el.querySelector('.fhd'); a.headK = null; if (id === 'duck') fBuild(); }
   function fBuyItem(b, k) {
-    if (FST.items.indexOf(k) >= 0) { fAmbient([FSAY.names[k]]); fCloseSheet(); fSendFan(k); return; }
+    if (FST.items.indexOf(k) >= 0) { fAmbient([fName('', k)]); fCloseSheet(); fSendFan(k); return; }
     if (!fPay(FARM.items[k])) { fNo(b, k); return; }
-    FST.items.push(k); fSave(); renderStars(); fBump(); sfx.good(); fRespond([FSAY.names[k], FSAY.got].concat(fEarnLine()));
+    FST.items.push(k); fSave(); renderStars(); fBump(); sfx.good(); fRespond([fName('', k), FSAY.got].concat(fEarnLine()));
     fCloseSheet();
+    /* a new item goes to its usual place, or the nearest place where it does not sit on top of another one */
+    var f = FI[k], p = f && !FST.pos[k] && fNearFree(k, f.x, f.y);
+    if (p && (p[0] !== f.x || p[1] !== f.y)) { FST.pos[k] = fRound(p); fSave(); fPlaceItem($('#fLayer [data-i="' + k + '"]'), k, p[0], p[1]); }
     var el = $('#fLayer').querySelector('[data-i="' + k + '"] .fi-in'); if (el) el.classList.add('fnew');
     fFx('spark', fItemAt(k)[0], fItemAt(k)[1] + 4, 6);
     clearTimeout(fTimer); fTimer = setTimeout(function () { if (fOn) fSendFan(k); }, 700);
