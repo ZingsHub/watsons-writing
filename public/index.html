@@ -589,6 +589,85 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 .ft.big .ft-pic { width: 112px; height: 100px; }
 .ft-price { display: flex; align-items: center; gap: 3px; min-height: 30px; font-family: var(--display); font-weight: 700; font-size: 22px; }
 .ft-ok svg { width: 30px; height: 30px; display: block; }
+/* ---------- the farm map and its areas ---------- */
+#farm[data-view="map"] > .fprog, #farm[data-view="map"] > #fScene, #farm[data-view="map"] > .fbar2, #farm[data-view="map"] > #fArea,
+#farm[data-view="barnyard"] > #fMap, #farm[data-view="barnyard"] > #fArea,
+#farm[data-view="area"] > .fprog, #farm[data-view="area"] > #fScene, #farm[data-view="area"] > .fbar2, #farm[data-view="area"] > #fMap { display: none; }
+.fmap { position: relative; flex: 1; min-height: 0; overflow: hidden; border: 3px solid var(--ink); border-radius: 14px; background: #86c454; transition: transform 0.36s ease-in, opacity 0.36s ease-in; }
+.fmap.zoom { transform: scale(2.6); opacity: 0; }
+.fmap-bg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; }
+.fmtree { position: absolute; transform: translate(-50%, -80%); pointer-events: none; }
+.fmtree svg, .fmpic svg { display: block; width: 100%; height: auto; overflow: visible; }
+.fmarea { position: absolute; transform: translate(-50%, -50%); padding: 0; margin: 0; border: 0; background: none; cursor: pointer; min-height: 56px; }
+.fmarea.locked .fmpic { filter: grayscale(1) contrast(0.45) brightness(1.4); opacity: 0.75; }
+.fmarea.locked .fmpic * { animation: none !important; }
+.fmlock { position: absolute; left: 50%; top: 40%; width: 30%; max-width: 70px; transform: translate(-50%, -50%); }
+.fmlock svg, .fmgift svg { display: block; width: 100%; height: auto; }
+.fmprice { position: absolute; left: 50%; bottom: -8%; transform: translateX(-50%); display: flex; align-items: center; gap: 3px; padding: 2px 12px; background: var(--paper); border: 3px solid var(--ink); border-radius: 999px; font-family: var(--display); font-weight: 700; font-size: 22px; line-height: 1.3; white-space: nowrap; }
+.fmprice .s, .funl-buy .s { color: #e0a000; }
+.fmgift { position: absolute; right: 0; top: -6%; width: 24%; animation: fbounce 1.1s ease-in-out infinite; }
+.fmarea.shake .fmpic { animation: shake 0.35s; }
+.fmarea.fappear .fmpic { animation: fpop 0.7s cubic-bezier(0.3, 1.6, 0.5, 1); }
+.fin { animation: fin 0.35s ease-out; }
+@keyframes fin { from { opacity: 0; transform: scale(0.94); } }
+/* small live details on unlocked areas: chimney smoke, a turning wheel, a little pig strolling */
+.fmsmoke circle { animation: fmsmoke 2.4s ease-out infinite; transform-box: fill-box; transform-origin: center; opacity: 0; }
+.fmsmoke circle:nth-child(2) { animation-delay: 0.8s; }
+.fmsmoke circle:nth-child(3) { animation-delay: 1.6s; }
+@keyframes fmsmoke { 0% { transform: translate(0, 0) scale(0.5); opacity: 0.9; } 100% { transform: translate(6px, -22px) scale(1.5); opacity: 0; } }
+.fwhl { transform-box: fill-box; transform-origin: center; }
+.fmspin { animation: fmspin 3s linear infinite; }
+@keyframes fmspin { to { transform: rotate(360deg); } }
+.fmwalk { animation: fmwalk 6s ease-in-out infinite alternate; }
+@keyframes fmwalk { to { transform: translateX(44px); } }
+.fflag { transform-box: view-box; animation: fflag 1.2s ease-in-out infinite alternate; }
+@keyframes fflag { to { transform: skewY(6deg) scaleX(0.92); } }
+.fswing { transform-box: view-box; animation: fswing 2.4s ease-in-out infinite alternate; }
+@keyframes fswing { from { transform: rotate(-8deg); } to { transform: rotate(8deg); } }
+/* the unlock card */
+.funl { align-items: center; }
+.funl-pic { width: min(70%, 260px); padding-top: 18px; }
+.funl-pic svg { display: block; width: 100%; height: auto; overflow: visible; filter: grayscale(1) contrast(0.45) brightness(1.4); }
+.funl-buy { min-height: 96px; min-width: 200px; padding: 6px 28px; font-size: 46px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; }
+/* the area screens */
+.farea { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.fsh, .fho { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+.fyard, .fhscene { flex: 1; min-height: 120px; position: relative; overflow: hidden; border: 3px solid var(--ink); border-radius: 14px; }
+.fyard { background: linear-gradient(#93d0ee, #d4f0fb 52%, #d8b47c 52%, #c49a5e); }
+.fhscene { background: linear-gradient(#93d0ee, #d4f0fb 48%, #86c454 48%, #6aa83f); }
+.fveh { position: absolute; left: 14%; width: 72%; bottom: 6%; padding: 0; margin: 0; border: 0; background: none; cursor: pointer; }
+.fveh svg { display: block; width: 100%; height: auto; max-height: 100%; overflow: visible; }
+.fveh.go .fwhl { animation: fmspin 0.45s linear infinite; }
+.ftools { flex: none; max-height: 52%; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 2px; }
+.ftrow { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px; }
+.ftrow .ft { width: 78px; padding: 4px; gap: 2px; }
+.ftrow .ft-pic { width: 64px; height: 46px; }
+.ftrow .ft-price { min-height: 24px; font-size: 19px; }
+.ftrow .ft-ok svg { width: 24px; height: 24px; }
+.ft.fdt { justify-content: center; min-height: 60px; }
+.ft.fdt.on, .ftrow .ft.on { background: #fff4b8; box-shadow: 0 1px 0 var(--ink), 0 0 0 4px #ffd640; }
+.ftrow .dsw { flex: none; width: 56px; height: 56px; }   /* the drawing page sizes its own swatches; these are sized here */
+.fhouse { position: absolute; left: 50%; bottom: 47%; height: 44%; max-width: 86%; aspect-ratio: 224 / 160; transform: translateX(-50%); }   /* stands on the horizon */
+.fhouse svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.fplots { position: absolute; left: 4%; right: 4%; bottom: 3%; display: flex; justify-content: space-around; gap: 4px; }
+.fplot { width: 22%; max-width: 110px; min-width: 56px; padding: 0; margin: 0; border: 0; background: none; cursor: pointer; }
+.fplot svg { display: block; width: 100%; height: auto; overflow: visible; }
+.fplot.ripe svg { animation: fbounce 1.2s ease-in-out infinite; transform-origin: 50% 90%; }
+.fplot.shake svg { animation: shake 0.35s; }
+.fplot.pop svg { animation: fpluck 0.38s ease-in forwards; }
+@keyframes fpluck { 40% { transform: translateY(-30%) scale(1.25); } 100% { transform: translateY(-70%) scale(0.2); opacity: 0; } }
+.fbasket { position: absolute; right: 3%; top: 4%; display: flex; align-items: center; gap: 4px; padding: 2px 10px; background: var(--paper); border: 3px solid var(--ink); border-radius: 14px; font-family: var(--display); font-size: 24px; }
+.fbk svg { display: block; width: 40px; height: auto; }
+.fbasket.bump { animation: bump 0.5s ease; }
+@media (orientation: landscape) {
+  .fsh, .fho { flex-direction: row; }
+  .ftools { width: min(44%, 340px); max-height: none; }
+}
+@media (orientation: landscape) and (max-height: 560px) {
+  .ftrow .ft { width: 66px; } .ftrow .ft-pic { width: 54px; height: 36px; }
+  .funl-buy { min-height: 72px; font-size: 36px; }
+  .funl-pic { width: min(40%, 180px); }
+}
 @media (prefers-reduced-motion: reduce) {
   .fgift, .farmbtn .fbadge, .glit path, .fscene.build .fi, .fa.held .fa-act, .fi.held .fi-in { animation: none; }
   .fscene.build .fi { outline: 3px dashed var(--ink); outline-offset: 4px; border-radius: 12px; }
@@ -870,13 +949,22 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           </div>
         </div>
       </div>
-      <div id="farm" class="panel farm" hidden>
+      <div id="farm" class="panel farm" data-view="map" hidden>
+        <div id="fMap" class="fmap"></div>
+        <div id="fArea" class="farea"></div>
         <div class="fprog"><span class="fnum"><b class="s">&#9733;</b><span id="fLife">0</span></span><div class="fmeter"><i id="fFill"></i></div><span id="fGoal" class="fnum"><span id="fGoalIcon" class="fgi"></span><b class="s">&#9733;</b><span id="fNext">3</span></span></div>
         <div id="fScene" class="fscene" data-stage="baby"><div id="fLayer" class="flayer"></div></div>
         <div class="fbar2">
           <span class="grow"></span>
           <button id="fPaint" class="btn ficon" type="button" aria-label="Decorate" hidden><svg viewBox="0 0 48 48" stroke="#2a2118" stroke-width="3" stroke-linejoin="round"><g transform="rotate(35 24 24)"><rect x="20" y="22" width="8" height="24" rx="3" fill="#c98a52"/><rect x="18.5" y="15" width="11" height="8" fill="#b9bec6"/><path d="M18.5 15 C18.5 7 24 1 24 1 C24 1 29.5 7 29.5 15 Z" fill="#e8417a"/></g></svg></button>
           <button id="fHammer" class="btn ficon" type="button" aria-label="Build"><svg viewBox="0 0 48 48" stroke="#2a2118" stroke-width="3" stroke-linejoin="round"><g transform="rotate(-40 24 24)"><rect x="21" y="16" width="6" height="30" rx="2" fill="#c98a52"/><rect x="9" y="5" width="30" height="13" rx="3" fill="#8a8f98"/></g></svg></button>
+        </div>
+        <div id="fUnlock" class="fsheet" hidden>
+          <div class="fcard funl">
+            <button class="btn quiet fx-close" type="button" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M4 4 L20 20 M20 4 L4 20" stroke="#2a2118" stroke-width="4" stroke-linecap="round"/></svg></button>
+            <div id="fUnlPic" class="funl-pic"></div>
+            <button id="fUnlBuy" class="btn funl-buy" type="button" aria-label="Unlock"><b class="s">&#9733;</b><span id="fUnlN"></span></button>
+          </div>
         </div>
         <div id="fSheet" class="fsheet" hidden>
           <div class="fcard">
@@ -2289,7 +2377,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   /* --- the top Back button: one step up from wherever he is --- */
   $('#topBack').addEventListener('click', function () {
     audio();
-    if (current === farm) { sfx.pop(); farmClose(); return; }
+    if (current === farm) { sfx.pop(); if (fView !== 'map') fMapBack(); else farmClose(); return; }   /* an area -> the map -> out */
     if (current !== write) return;
     if (!$('#nEntry').hidden || !$('#gHome').hidden) wMenu();
     else if (!$('#nLevel').hidden || !$('#nDone').hidden) nEntry(false);
@@ -2401,7 +2489,11 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   });
   function fSlotOf(id, k) { var L = FLOOKS[id], sl; for (sl in L) if (L[sl].hasOwnProperty(k)) return sl; return ''; }
   function fPrice(id, k) { var sl = fSlotOf(id, k); return sl ? FLOOKS[id][sl][k] : 0; }
-  function fBlank() { var L = {}; FIDS.forEach(function (a) { L[a] = { own: [], wear: {} }; }); return { spent: 0, animals: [], looks: L, items: [], pos: {} }; }
+  function fBlank() {
+    var L = {}, now = Date.now(); FIDS.forEach(function (a) { L[a] = { own: [], wear: {} }; });
+    return { spent: 0, animals: [], looks: L, items: [], pos: {}, areas: ['barnyard'], shed: { own: ['tractor'], sel: 'tractor', look: {} },
+      house: { wall: 0, door: 0, roof: 0, own: [], on: {} }, garden: { plots: GARDEN.plots.map(function (v) { return { v: v, t: now }; }), picked: 0 } };
+  }
   /* the old save (v1) kept { decor: { animal: { option: true (on) / false (off) } } }; those are owned now, with the dearest one per slot worn */
   var FOLD = { chicken: { bow: 'bowtie', tail: 'rainbow' } };
   /* read the saved farm, keeping only the pieces that make sense; a broken save is set aside, never trusted */
@@ -2428,13 +2520,33 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       });
     });
     if (Array.isArray(d.items)) d.items.forEach(function (k) { if (FARM.items.hasOwnProperty(k) && st.items.indexOf(k) < 0) st.items.push(k); });
+    /* the map's areas and what he has in each; anything unknown or damaged is left out */
+    if (Array.isArray(d.areas)) d.areas.forEach(function (a) { if (typeof a === 'string' && fAreaOf(a) && st.areas.indexOf(a) < 0) st.areas.push(a); });
+    var ix = function (v, list) { return typeof v === 'number' && v === Math.floor(v) && v >= 0 && v < list.length; };
+    var sh = d.shed;
+    if (sh && typeof sh === 'object') {
+      if (Array.isArray(sh.own)) sh.own.forEach(function (v) { if (SHED.vehicles.hasOwnProperty(v) && st.shed.own.indexOf(v) < 0) st.shed.own.push(v); });
+      if (st.shed.own.indexOf(sh.sel) >= 0) st.shed.sel = sh.sel;
+      if (sh.look && typeof sh.look === 'object') Object.keys(SHED.vehicles).forEach(function (v) { var L = sh.look[v]; if (L && ix(L.c, SHED.colors) && SHED.decals.indexOf(L.d) >= 0 && SHED.wheels.indexOf(L.w) >= 0) st.shed.look[v] = { c: L.c, d: L.d, w: L.w }; });
+    }
+    var ho = d.house;
+    if (ho && typeof ho === 'object') {
+      if (ix(ho.wall, HOUSE.walls)) st.house.wall = ho.wall; if (ix(ho.door, HOUSE.doors)) st.house.door = ho.door; if (ix(ho.roof, HOUSE.roofs)) st.house.roof = ho.roof;
+      if (Array.isArray(ho.own)) ho.own.forEach(function (x) { if (HOUSE.extras.hasOwnProperty(x) && st.house.own.indexOf(x) < 0) st.house.own.push(x); });
+      if (ho.on && typeof ho.on === 'object') st.house.own.forEach(function (x) { if (ho.on[x] === true) st.house.on[x] = true; });
+    }
+    var ga = d.garden, now = Date.now();
+    if (ga && typeof ga === 'object') {
+      if (Array.isArray(ga.plots)) ga.plots.forEach(function (p, i) { if (i < GARDEN.plots.length && p && GARDEN.plots.indexOf(p.v) >= 0 && isFinite(p.t) && p.t !== null) st.garden.plots[i] = { v: p.v, t: Math.min(Number(p.t), now) }; });
+      var pk = Number(ga.picked); if (isFinite(pk) && pk > 0) st.garden.picked = Math.floor(pk);
+    }
     if (d.pos && typeof d.pos === 'object') Object.keys(FARM.spots).forEach(function (k) {   /* where he dragged things to */
       var p = d.pos[k]; if (k === 'gift' || !Array.isArray(p) || p.length !== 2) return;
       var x = Number(p[0]), y = Number(p[1]); if (isFinite(x) && isFinite(y)) st.pos[k] = [clamp(x, 0, 100), clamp(y, 0, 100)];
     });
     return st;
   }
-  function fSave() { try { localStorage.setItem(FKEY, JSON.stringify({ v: 2, spent: FST.spent, animals: FST.animals, looks: FST.looks, items: FST.items, pos: FST.pos })); } catch (e) {} }
+  function fSave() { try { localStorage.setItem(FKEY, JSON.stringify({ v: 3, spent: FST.spent, animals: FST.animals, looks: FST.looks, items: FST.items, pos: FST.pos, areas: FST.areas, shed: FST.shed, house: FST.house, garden: FST.garden })); } catch (e) {} }
   /* what an animal is wearing: { slot: option } */
   function fLook(id) { return FST && FST.looks[id] ? FST.looks[id].wear : {}; }
   function fSpendable() { return Math.max(0, stars - (FST ? FST.spent : 0)); }
@@ -3414,16 +3526,305 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function (n) {
     $('#fLayer').addEventListener(n, function (e) { if (fDrag && e.pointerId === fDrag.id) fEndDrag(); });
   });
+  /* ---------- the farm map: areas he unlocks with stars, each with its own things to do ---------- */
+  /* Unlock prices, in the order the areas are listed below (the Barnyard is free): the first is cheap and each later one costs more.
+     All eight together come to 237, under the ~250 one-time stars there are to earn (see STARS), so the whole set takes weeks of practice
+     but never asks for more than he can earn. */
+  var AREA_PRICES = [6, 12, 18, 25, 32, 40, 48, 56];
+  /* each area: id, name (what her voice would say), where it sits on the map (% across, % down), its picture's size (share of the map's
+     short side), its map picture, and the function that opens its screen. Pond and Meadow, Big Barn, Orchard, Playground, Windmill and
+     Beehive go here the same way, taking the next prices. */
+  var AREAS = [
+    { id: 'barnyard', name: 'Barnyard', at: [28, 62], size: 0.44, price: 0, pic: fMapBarnyard, open: fBarnyardOpen },
+    { id: 'shed', name: 'Tractor Shed', at: [75, 72], size: 0.38, price: AREA_PRICES[0], pic: fMapShed, open: fShedOpen },
+    { id: 'house', name: 'Farmhouse and Garden', at: [70, 26], size: 0.42, price: AREA_PRICES[1], pic: fMapHouse, open: fHouseOpen }
+  ];
+  var AREA_SAY = { welcome: 'A new place to explore!', honk: 'Honk honk!', pick: 'Time to pick!' };   /* not recorded yet: silent until they are */
+  /* the Tractor Shed: vehicles cost stars (the tractor comes with the shed); paint, stripes or flames, and wheels are free */
+  var SHED = {
+    vehicles: { tractor: 0, car: 4, pickup: 7, combine: 10 },
+    names: { tractor: 'Tractor', car: 'Little car', pickup: 'Pickup truck', combine: 'Combine' },
+    colors: ['#e8413a', '#ff8a3d', '#ffd23f', '#3fb04a', '#2f74d0', '#8b5cf6', '#f27ab6', '#3a3330'],
+    start: { tractor: 0, car: 4, pickup: 3, combine: 2 },   /* each vehicle's first color */
+    decals: ['none', 'stripes', 'flames'], wheels: ['plain', 'big', 'star'], driveMs: 2600
+  };
+  /* the Farmhouse: paint is free; the flag, mailbox and porch swing cost stars once, then switch on and off for free.
+     The garden: each plot grows seed -> sprout -> plant -> ready, one stage every GARDEN.stageMs of real time; picking replants it. */
+  var HOUSE = {
+    walls: ['#fff1c9', '#bfe3f2', '#cfeccf', '#f9cfe0', '#ffe58a', '#ffffff'],
+    doors: ['#2f74d0', '#e8413a', '#3fb04a', '#ffc533', '#8b5cf6', '#8a5530'],
+    roofs: ['#c4402f', '#2f74d0', '#3f7a2a', '#7a4e32', '#8b5cf6', '#6a6560'],
+    extras: { flag: 3, mailbox: 3, swing: 5 }, names: { flag: 'Flag', mailbox: 'Mailbox', swing: 'Porch swing' }
+  };
+  var GARDEN = { plots: ['carrot', 'tomato', 'pumpkin', 'corn'], stageMs: 60000 };
+
+  /* --- pictures --- */
+  function fInner(svg) { return svg.replace(/^<svg[^>]*>/, '').replace(/<\/svg>\s*$/, ''); }
+  function fNest(svg, x, y, w, h) { var m = /viewBox="([^"]+)"/.exec(svg); return '<svg x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" viewBox="' + m[1] + '" overflow="visible" ' + INK + '>' + fInner(svg) + '</svg>'; }
+  var SMOKE = function (x, y) { return '<g class="fmsmoke" stroke="none">' + [0, 1, 2].map(function () { return '<circle cx="' + x + '" cy="' + y + '" r="5" fill="#fff" opacity=".9"/>'; }).join('') + '</g>'; };
+  function fWheel(x, y, r, kind, spin) {
+    r = kind === 'big' ? r * 1.15 : r;
+    var s = '<circle cx="' + x + '" cy="' + y + '" r="' + r.toFixed(1) + '" fill="#2a2118"/>';
+    if (kind === 'star') { var p = '', i, a, q; for (i = 0; i < 10; i++) { a = -Math.PI / 2 + i * Math.PI / 5; q = i % 2 ? r * 0.22 : r * 0.55; p += (i ? 'L' : 'M') + (x + Math.cos(a) * q).toFixed(1) + ' ' + (y + Math.sin(a) * q).toFixed(1); } s += '<path d="' + p + 'Z" fill="#ffc533" stroke-width="1.5"/>'; }
+    else s += '<circle cx="' + x + '" cy="' + y + '" r="' + (r * 0.45).toFixed(1) + '" fill="#b9bec6"/><path d="M' + (x - r * 0.45).toFixed(1) + ' ' + y + ' H' + (x + r * 0.45).toFixed(1) + ' M' + x + ' ' + (y - r * 0.45).toFixed(1) + ' V' + (y + r * 0.45).toFixed(1) + '" stroke-width="2"/>';
+    return '<g class="fwhl' + (spin ? ' fmspin' : '') + '">' + s + '</g>';   /* spins around its own middle */
+  }
+  /* a vehicle facing right: look { c: color index, d: decal, w: wheels } */
+  var FVEH = {
+    tractor: { box: [74, 148, 66], draw: function (c) { return '<rect x="114" y="30" width="7" height="28" fill="#4a4540"/><rect x="70" y="56" width="82" height="30" rx="5" fill="' + c + '"/><path d="M30 86 V24 H74 L80 56 V86 Z" fill="' + c + '"/><path d="M38 32 H68 L72 54 H38 Z" fill="#bfe3f2"/>'; }, wheels: [[52, 84, 26], [136, 92, 14]] },
+    pickup: { box: [18, 160, 66], draw: function (c) { return '<path d="M14 82 V56 H90 V40 C90 36 94 34 98 34 H122 C128 34 132 40 134 56 H156 C162 56 164 62 164 70 V82 Z" fill="' + c + '"/><path d="M98 40 H120 C124 40 126 46 127 54 H98 Z" fill="#bfe3f2"/><path d="M90 56 V82" fill="none"/>'; }, wheels: [[42, 86, 15], [138, 86, 15]] },
+    car: { box: [26, 146, 70], draw: function (c) { return '<path d="M18 84 C18 66 32 62 48 60 C60 40 104 38 118 58 C140 60 154 66 154 84 Z" fill="' + c + '"/><path d="M58 60 C66 46 98 46 108 60 Z" fill="#bfe3f2"/><path d="M83 47 V60" stroke-width="3"/>'; }, wheels: [[52, 86, 14], [124, 86, 14]] },
+    combine: { box: [44, 136, 64], draw: function (c) { return '<path d="M16 30 L46 40" stroke="#4a4540" stroke-width="7"/><rect x="40" y="34" width="100" height="54" rx="6" fill="' + c + '"/><rect x="98" y="8" width="36" height="30" rx="4" fill="' + c + '"/><rect x="104" y="13" width="24" height="18" fill="#bfe3f2"/>' +
+      '<rect x="140" y="60" width="26" height="32" rx="4" fill="#b9bec6"/><path d="M144 66 H162 M144 74 H162 M144 82 H162" fill="none" stroke-width="2"/>'; }, wheels: [[70, 86, 22], [124, 92, 14]] }
+  };
+  function fVehicleSVG(k, L, spin) {
+    var V = FVEH[k], c = SHED.colors[L.c] || SHED.colors[0], b = V.box, s = V.draw(c), i;
+    if (L.d === 'stripes') s += '<path d="M' + b[0] + ' ' + b[2] + ' H' + b[1] + ' M' + b[0] + ' ' + (b[2] + 7) + ' H' + b[1] + '" stroke="#fff" stroke-width="3.5" fill="none"/>';
+    else if (L.d === 'flames') {
+      var x1 = b[1] - 4, len = (b[1] - b[0]) * 0.6, y = b[2] + 10, p = 'M' + x1 + ' ' + y;
+      for (i = 0; i <= 6; i++) p += ' L' + (x1 - len * i / 6).toFixed(1) + ' ' + (y - (i % 2 ? 14 : 4) * (1 - i / 9)).toFixed(1);
+      s += '<path d="' + p + ' L' + (x1 - len).toFixed(1) + ' ' + (y + 4) + ' Z" fill="#ff8a3d" stroke-width="2"/><path d="M' + (x1 - 4) + ' ' + (y - 1) + ' L' + (x1 - len * 0.5).toFixed(1) + ' ' + (y - 6) + ' L' + (x1 - len * 0.6).toFixed(1) + ' ' + (y + 2) + ' Z" fill="#ffd23f" stroke="none"/>';
+    }
+    V.wheels.forEach(function (w) { s += fWheel(w[0], w[1], w[2], L.w, spin); });
+    return '<svg viewBox="0 0 170 110" overflow="visible" ' + INK + '>' + s + '</svg>';
+  }
+  function fHouseSVG(H) {
+    var on = function (k) { return H.own.indexOf(k) >= 0 && H.on[k]; }, s = '';
+    if (on('flag')) s += '<path d="M18 152 V36" stroke-width="3"/><path class="fflag" style="transform-origin:19px 44px" d="M19 38 L52 46 L19 56 Z" fill="#e8413a"/>';
+    s += '<rect x="138" y="22" width="16" height="34" fill="#c4402f"/>' + SMOKE(146, 16) +
+      '<rect x="50" y="64" width="120" height="86" fill="' + HOUSE.walls[H.wall] + '"/><path d="M40 68 L110 20 L180 68 Z" fill="' + HOUSE.roofs[H.roof] + '"/>' +
+      '<rect x="60" y="80" width="26" height="22" fill="#bfe3f2"/><path d="M73 80 V102 M60 91 H86" fill="none" stroke-width="2"/><rect x="134" y="80" width="26" height="22" fill="#bfe3f2"/><path d="M147 80 V102 M134 91 H160" fill="none" stroke-width="2"/>' +
+      '<rect x="97" y="100" width="26" height="50" rx="3" fill="' + HOUSE.doors[H.door] + '"/><circle cx="117" cy="127" r="2.2" fill="#2a2118" stroke="none"/><rect x="40" y="148" width="140" height="8" fill="#a86b3d"/>';
+    if (on('swing')) s += '<path d="M132 108 H168" stroke="#7a4e32" stroke-width="4"/><g class="fswing" style="transform-origin:150px 108px"><path d="M138 108 V130 M162 108 V130" fill="none" stroke-width="2"/><rect x="134" y="128" width="32" height="7" rx="2" fill="#a86b3d"/></g>';
+    if (on('mailbox')) s += '<path d="M202 154 V122" stroke="#7a4e32" stroke-width="5"/><path d="M188 122 V110 C188 102 214 102 214 110 V122 Z" fill="#2f74d0"/><path d="M210 112 V100 H218 V106 H210" fill="#e8413a" stroke-width="2"/>';
+    return '<svg viewBox="0 0 224 160" overflow="visible" ' + INK + '>' + s + '</svg>';
+  }
+  function fPlotSVG(v, st) {
+    var s = '<ellipse cx="30" cy="54" rx="26" ry="8" fill="#7a4e32"/>', G = '#3fb04a';
+    if (st === 0) s += '<ellipse cx="22" cy="51" rx="2.5" ry="1.6" fill="#e3c48f" stroke="none"/><ellipse cx="30" cy="53" rx="2.5" ry="1.6" fill="#e3c48f" stroke="none"/><ellipse cx="38" cy="51" rx="2.5" ry="1.6" fill="#e3c48f" stroke="none"/>';
+    else if (st === 1) s += '<path d="M30 52 V40" stroke="' + G + '" stroke-width="3"/><ellipse cx="25" cy="39" rx="5" ry="3" transform="rotate(-25 25 39)" fill="#8fd45a" stroke-width="2"/><ellipse cx="35" cy="39" rx="5" ry="3" transform="rotate(25 35 39)" fill="#8fd45a" stroke-width="2"/>';
+    else if (st === 2) s += '<path d="M30 52 V24" stroke="' + G + '" stroke-width="3"/>' + [[22, 40, -30], [38, 36, 30], [23, 28, -35], [37, 24, 35]].map(function (l) { return '<ellipse cx="' + l[0] + '" cy="' + l[1] + '" rx="8" ry="4" transform="rotate(' + l[2] + ' ' + l[0] + ' ' + l[1] + ')" fill="#5fae42" stroke-width="2"/>'; }).join('');
+    else if (v === 'carrot') s += '<path d="M30 40 L23 18 M30 40 L30 15 M30 40 L37 18" stroke="' + G + '" stroke-width="4"/><path d="M21 52 C21 38 39 38 39 52 Z" fill="#ff8a3d"/>';
+    else if (v === 'tomato') s += '<path d="M30 52 V22" stroke="' + G + '" stroke-width="3"/><ellipse cx="22" cy="34" rx="8" ry="4" transform="rotate(-30 22 34)" fill="#5fae42" stroke-width="2"/><circle cx="20" cy="44" r="6" fill="#e8413a"/><circle cx="38" cy="38" r="6" fill="#e8413a"/><circle cx="31" cy="26" r="5" fill="#e8413a"/>';
+    else if (v === 'pumpkin') s += '<path d="M30 30 C30 24 34 22 36 20" fill="none" stroke="' + G + '" stroke-width="3"/><ellipse cx="30" cy="44" rx="18" ry="12" fill="#ff8a3d"/><path d="M24 34 C21 40 21 50 24 55 M36 34 C39 40 39 50 36 55" fill="none" stroke="#d9731f" stroke-width="2"/>';
+    else s += '<path d="M30 52 V14" stroke="' + G + '" stroke-width="3"/><ellipse cx="34" cy="28" rx="6" ry="12" fill="#ffd23f"/><path d="M28 40 C30 30 32 22 34 16 M40 40 C38 30 36 22 34 16" fill="#7cc24a" stroke-width="2"/>';
+    return '<svg viewBox="0 0 60 60" overflow="visible" ' + INK + '>' + s + '</svg>';
+  }
+  var PADLOCK = '<svg viewBox="0 0 40 44" ' + INK + '><path d="M10 20 V13 A10 10 0 0 1 30 13 V20" fill="none" stroke-width="5"/><rect x="5" y="19" width="30" height="23" rx="4" fill="#ffc533"/><circle cx="20" cy="29" r="3" fill="#2a2118" stroke="none"/><rect x="18.5" y="30" width="3" height="7" fill="#2a2118" stroke="none"/></svg>';
+  var TREE = '<svg viewBox="0 0 40 50" ' + INK + '><path d="M17 48 L18 30 H22 L23 48 Z" fill="#8a5530"/><circle cx="20" cy="20" r="15" fill="#5e9a35"/><circle cx="14" cy="16" r="3" fill="#7cc24a" stroke="none"/></svg>';
+  var MAPBG = '<rect width="100" height="100" fill="#86c454"/><path d="M0 0 H100 V16 C70 22 30 12 0 20 Z" fill="#9fd468"/><path d="M0 100 V82 C30 76 60 88 100 80 V100 Z" fill="#79b84a"/>' +
+    '<path d="M-2 44 C18 50 30 34 48 42 C62 48 72 58 102 52" fill="none" stroke="#2a2118" stroke-width="22" vector-effect="non-scaling-stroke"/><path d="M-2 44 C18 50 30 34 48 42 C62 48 72 58 102 52" fill="none" stroke="#5fb3e0" stroke-width="16" vector-effect="non-scaling-stroke"/>' +
+    '<path d="M28 62 C45 70 58 74 75 72 M28 62 C40 44 54 30 70 26" fill="none" stroke="#e3c48f" stroke-width="14" stroke-linecap="round" vector-effect="non-scaling-stroke"/>';
+  var MAPTREES = [[8, 14], [20, 30], [92, 46], [48, 90], [8, 88], [92, 92], [44, 10], [90, 10], [52, 56]];
+  function fMapBarnyard() {
+    return '<svg viewBox="0 0 160 120" overflow="visible" ' + INK + '><ellipse cx="80" cy="104" rx="78" ry="16" fill="#79b84a" stroke="none"/>' + fNest(BARN, 38, 4, 76, 71) +
+      '<path d="M4 96 H156 M4 86 H156" stroke="#fff8e6" stroke-width="4"/>' + [8, 40, 72, 104, 136].map(function (x) { return '<rect x="' + x + '" y="80" width="6" height="22" rx="2" fill="#fff8e6" stroke-width="2"/>'; }).join('') +
+      '<path d="M120 96 C118 78 128 70 138 70 C148 70 158 80 156 96 Z" fill="#e8b93a"/>' +
+      '<g class="fmwalk">' + fNest(fAnimalSVG('pig', {}, FARM.growthStages[2]), 8, 90, 34, 26) + '</g></svg>';
+  }
+  function fMapShed() {
+    return '<svg viewBox="0 0 160 120" overflow="visible" ' + INK + '><ellipse cx="80" cy="104" rx="78" ry="16" fill="#c9a66b" stroke="none"/><path d="M20 92 V44 L80 18 L140 44 V92 Z" fill="#7aa6c9"/><path d="M12 48 L80 14 L148 48" fill="none" stroke="#3a5f80" stroke-width="8"/>' +
+      '<rect x="48" y="52" width="64" height="40" fill="#3a3330"/>' + fNest(fVehicleSVG('tractor', { c: 0, d: 'none', w: 'plain' }, true), 60, 62, 70, 46) + '</svg>';
+  }
+  function fMapHouse() {
+    var H = FST ? FST.house : null, rows = '', i;
+    for (i = 0; i < 3; i++) rows += '<path d="M' + (10 + i * 6) + ' ' + (98 + i * 7) + ' H' + (150 - i * 6) + '" stroke="#7a4e32" stroke-width="5"/>' + [30, 60, 90, 120].map(function (x) { return '<circle cx="' + (x + i * 4) + '" cy="' + (95 + i * 7) + '" r="2.8" fill="#5fae42" stroke-width="1.5"/>'; }).join('');
+    return '<svg viewBox="0 0 160 120" overflow="visible" ' + INK + '><ellipse cx="80" cy="104" rx="78" ry="16" fill="#79b84a" stroke="none"/>' + rows +
+      fNest(fHouseSVG(H || { wall: 0, door: 0, roof: 0, own: [], on: {} }), 30, 0, 100, 72) + '</svg>';
+  }
+  function fBasketSVG() { return '<svg viewBox="0 0 48 40" ' + INK + '><path d="M10 16 C10 4 38 4 38 16" fill="none" stroke="#a86b3d" stroke-width="4"/><circle cx="18" cy="16" r="6" fill="#e8413a"/><circle cx="30" cy="15" r="6" fill="#ff8a3d"/><path d="M4 16 H44 L38 38 H10 Z" fill="#c98a52"/><path d="M8 26 H40" fill="none" stroke="#8a5530" stroke-width="2"/></svg>'; }
+
+  /* --- the map --- */
+  var fView = 'map', fGrowFrom = -1, fZoomT = 0, fUnlockId = '', fGardenI = 0, fDriving = false;
+  function fAreaOf(id) { return AREAS.filter(function (a) { return a.id === id; })[0]; }
+  function fHasArea(id) { return FST.areas.indexOf(id) >= 0; }
+  function fSetView(v) {
+    fView = v; $('#farm').setAttribute('data-view', v === 'map' || v === 'barnyard' ? v : 'area');
+    var a = fAreaOf(v); $('#prompt').textContent = a ? a.name : 'My Farm';
+  }
+  function fMapShow(appear) {
+    fSetView('map');
+    var M = $('#fMap'), h = '<svg class="fmap-bg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">' + MAPBG + '</svg>';
+    MAPTREES.forEach(function (t) { h += '<span class="fmtree" style="left:' + t[0] + '%;top:' + t[1] + '%">' + TREE + '</span>'; });
+    AREAS.forEach(function (a) {
+      var open = fHasArea(a.id);
+      h += '<button class="fmarea' + (open ? '' : ' locked') + (a.id === appear ? ' fappear' : '') + '" type="button" data-area="' + a.id + '" aria-label="' + a.name + '" style="left:' + a.at[0] + '%;top:' + a.at[1] + '%"><span class="fmpic">' + a.pic() + '</span>' +
+        (open ? (a.id === 'barnyard' && fGifts() > 0 ? '<span class="fmgift">' + fGiftSVG() + '</span>' : '') : '<span class="fmlock">' + PADLOCK + '</span><span class="fmprice"><b class="s">&#9733;</b>' + a.price + '</span>') + '</button>';
+    });
+    M.innerHTML = h; fMapLayout();
+  }
+  function fMapLayout() {
+    var M = $('#fMap'), m = Math.min(M.clientWidth, M.clientHeight); if (!m) return;
+    Array.prototype.forEach.call(M.querySelectorAll('.fmarea'), function (b) { b.style.width = Math.max(100, m * fAreaOf(b.getAttribute('data-area')).size).toFixed(0) + 'px'; });
+    Array.prototype.forEach.call(M.querySelectorAll('.fmtree'), function (t) { t.style.width = Math.max(24, m * 0.08).toFixed(0) + 'px'; });
+  }
+  /* tapping an area: open it (a short zoom), or offer to unlock it, or a gentle "not yet" */
+  $('#fMap').addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.fmarea') : null; if (!b || current !== farm || fView !== 'map') return;
+    audio(); var a = fAreaOf(b.getAttribute('data-area'));
+    if (fHasArea(a.id)) { sfx.pop(); fZoomTo(a); return; }
+    if (fSpendable() < a.price) { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); fBump(); var l = fNoLine(); if (l) fRespond([l]); return; }
+    sfx.pop(); fUnlockId = a.id; $('#fUnlPic').innerHTML = a.pic(); $('#fUnlN').textContent = String(a.price); $('#fUnlock').hidden = false; fAmbient([a.name]);
+  });
+  $('#fUnlock').addEventListener('click', function (e) {
+    if (!e.target.closest) return;
+    if (e.target === this || e.target.closest('.fx-close')) { sfx.pop(); $('#fUnlock').hidden = true; return; }
+    if (!e.target.closest('#fUnlBuy')) return;
+    var a = fAreaOf(fUnlockId); if (!a || fHasArea(a.id)) return;
+    if (!fPay(a.price)) { $('#fUnlock').hidden = true; return; }
+    FST.areas.push(a.id); fSave(); renderStars(); fBump();
+    $('#fUnlock').hidden = true; domConfetti(); sfx.win(); fRespond([FSAY.got, AREA_SAY.welcome]);   /* unlocked forever, with a celebration */
+    fMapShow(a.id);
+  });
+  function fZoomTo(a) {
+    var M = $('#fMap'); M.style.transformOrigin = a.at[0] + '% ' + a.at[1] + '%'; M.classList.add('zoom'); fAmbient([a.name]);
+    clearTimeout(fZoomT); fZoomT = setTimeout(function () {
+      if (current !== farm) return;
+      M.classList.remove('zoom'); a.open();
+      var el = fView === 'barnyard' ? $('#fScene') : $('#fArea'); el.classList.remove('fin'); void el.offsetWidth; el.classList.add('fin');
+    }, 360);
+  }
+  /* back from an area: stop what it was doing, then the map zooms back out */
+  function fLeaveArea() {
+    if (fView === 'barnyard') fBarnyardStop();
+    clearInterval(fGardenI); fGardenI = 0; fDriving = false; $('#fArea').innerHTML = '';
+  }
+  function fMapBack() {
+    fLeaveArea(); fMapShow();
+    var M = $('#fMap'); M.style.transition = 'none'; M.classList.add('zoom'); void M.offsetWidth; M.style.transition = ''; M.classList.remove('zoom');   /* start zoomed in, then ease back out */
+  }
+
+  /* --- the Barnyard: the animals' farm --- */
+  function fBarnyardOpen() {
+    fSetView('barnyard');
+    fMeasure(); fSel = ''; fBuild(); fOn = true;
+    FST.animals.forEach(function (id) { FA[id].next = fRand(FARM.actFirst); });
+    fLast = performance.now(); cancelAnimationFrame(fRaf); if (!document.hidden) fRaf = requestAnimationFrame(fLoop);
+    if (fGrowFrom >= 0) { fGrowFx(FARM.growthStages[fGrowFrom]); fGrowFrom = -1; }   /* they grew since last time */
+  }
+  function fBarnyardStop() {
+    fEndDrag(); fBuildMode(false); fOn = false; FST.animals.forEach(function (id) { if (FA[id]) fActStop(id); });
+    cancelAnimationFrame(fRaf); clearTimeout(fTimer); $('#fSheet').hidden = true; fSheetKind = '';
+  }
+
+  /* --- the Tractor Shed --- */
+  function fVLook(k) { return FST.shed.look[k] || { c: SHED.start[k], d: 'none', w: 'plain' }; }
+  /* a tile like the shop's (a price until bought; then a check when chosen, a circle when not), keyed by its own attribute */
+  function fTileA(attr, k, pic, price, on) {
+    var tag = price ? '<span class="ft-price"><b class="s">&#9733;</b>' + price + '</span>' : '<span class="ft-ok">' + (on ? CHECK : CIRCLE) + '</span>';
+    return '<button class="ft' + (price ? ' lock' : on ? ' on' : '') + '" type="button" ' + attr + '="' + k + '" aria-label="' + k + '"><span class="ft-pic">' + pic + '</span>' + tag + '</button>';
+  }
+  function fRow(label, inner) { return '<div class="ftrow" data-row="' + label + '">' + inner + '</div>'; }
+  function fSwatch(attr, i, col, on) { return '<button class="dsw' + (on ? ' on' : '') + '" type="button" ' + attr + '="' + i + '" aria-label="color ' + (i + 1) + '" style="--c:' + col + '"><i></i></button>'; }
+  function fShedOpen() {
+    fSetView('shed');
+    $('#fArea').innerHTML = '<div class="fsh"><div id="fYard" class="fyard"><button id="fVeh" class="fveh" type="button" aria-label="honk"></button></div><div id="fTools" class="ftools"></div></div>';
+    fShedDraw();
+  }
+  function fShedDraw() {
+    var S = FST.shed, k = S.sel, L = fVLook(k), h = '';
+    $('#fVeh').innerHTML = fVehicleSVG(k, L);
+    Object.keys(SHED.vehicles).forEach(function (v) { var own = S.own.indexOf(v) >= 0; h += fTileA('data-v', v, fVehicleSVG(v, fVLook(v)), own ? 0 : SHED.vehicles[v], own && v === k); });
+    var rows = fRow('veh', h);
+    rows += fRow('color', SHED.colors.map(function (c, i) { return fSwatch('data-c', i, c, L.c === i); }).join(''));
+    rows += fRow('decal', SHED.decals.map(function (d) { var m = { c: L.c, d: d, w: 'plain' }; return '<button class="ft fdt' + (L.d === d ? ' on' : '') + '" type="button" data-d="' + d + '" aria-label="' + d + '"><span class="ft-pic">' + fVehicleSVG('car', m) + '</span></button>'; }).join(''));
+    rows += fRow('wheels', SHED.wheels.map(function (w) { return '<button class="ft fdt' + (L.w === w ? ' on' : '') + '" type="button" data-w="' + w + '" aria-label="' + w + ' wheels"><span class="ft-pic"><svg viewBox="-20 -20 40 40" ' + INK + '>' + fWheel(0, 0, 15, w) + '</svg></span></button>'; }).join(''));
+    $('#fTools').innerHTML = rows;
+  }
+  function fShedSet(key, val) { var k = FST.shed.sel, L = fVLook(k); L[key] = val; FST.shed.look[k] = { c: L.c, d: L.d, w: L.w }; fSave(); sfx.pop(); fShedDraw(); }
+  function fHonk() {
+    if (fDriving) return; fDriving = true;
+    fSound(function (a, t) { fTone(a, t, 'square', [[0, 440]], 0.16, 0.12, 1800); fTone(a, t + 0.22, 'square', [[0, 440]], 0.22, 0.12, 1800); });
+    fAmbient([AREA_SAY.honk]);
+    var v = $('#fVeh'), y = $('#fYard'), w = y.clientWidth, anim;
+    v.classList.add('go');
+    var fin = function () { fDriving = false; if (v.isConnected) v.classList.remove('go'); };
+    try {
+      anim = v.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(' + w + 'px)', offset: 0.45 }, { transform: 'translateX(' + (-w) + 'px)', offset: 0.4501 }, { transform: 'translateX(0)' }], { duration: SHED.driveMs, easing: 'ease-in-out' });
+      anim.onfinish = fin; anim.oncancel = fin;
+    } catch (e) { setTimeout(fin, SHED.driveMs); }
+  }
+
+  /* --- the Farmhouse and Garden --- */
+  function fPlotStage(p) { return Math.max(0, Math.min(3, Math.floor((Date.now() - p.t) / GARDEN.stageMs))); }
+  function fHouseOpen() {
+    fSetView('house');
+    $('#fArea').innerHTML = '<div class="fho"><div id="fHScene" class="fhscene"><div id="fHouse" class="fhouse"></div><div id="fPlots" class="fplots"></div>' +
+      '<div class="fbasket"><span class="fbk">' + fBasketSVG() + '</span><b id="fPicked"></b></div></div><div id="fTools" class="ftools"></div></div>';
+    fHouseDraw(); fGardenDraw(true);
+    clearInterval(fGardenI); fGardenI = setInterval(function () { if (current === farm && fView === 'house') fGardenDraw(false); }, 2000);
+  }
+  function fHouseDraw() {
+    var H = FST.house, rows = '';
+    $('#fHouse').innerHTML = fHouseSVG(H);
+    rows += fRow('wall', HOUSE.walls.map(function (c, i) { return fSwatch('data-wall', i, c, H.wall === i); }).join(''));
+    rows += fRow('door', HOUSE.doors.map(function (c, i) { return fSwatch('data-door', i, c, H.door === i); }).join(''));
+    rows += fRow('roof', HOUSE.roofs.map(function (c, i) { return fSwatch('data-roof', i, c, H.roof === i); }).join(''));
+    var x = '', pics = { flag: '<svg viewBox="0 0 40 40" ' + INK + '><path d="M8 38 V4" stroke-width="3"/><path d="M9 6 L34 12 L9 20 Z" fill="#e8413a"/></svg>', mailbox: '<svg viewBox="0 0 40 40" ' + INK + '><path d="M20 38 V24" stroke="#7a4e32" stroke-width="5"/><path d="M6 24 V14 C6 6 34 6 34 14 V24 Z" fill="#2f74d0"/><path d="M30 14 V4 H37 V9 H30" fill="#e8413a" stroke-width="2"/></svg>', swing: '<svg viewBox="0 0 40 40" ' + INK + '><path d="M4 6 H36" stroke="#7a4e32" stroke-width="4"/><path d="M10 6 V28 M30 6 V28" stroke-width="2"/><rect x="6" y="26" width="28" height="7" rx="2" fill="#a86b3d"/></svg>' };
+    Object.keys(HOUSE.extras).forEach(function (k) { var own = H.own.indexOf(k) >= 0; x += fTileA('data-x', k, pics[k], own ? 0 : HOUSE.extras[k], own && !!H.on[k]); });
+    rows += fRow('extras', x);
+    $('#fTools').innerHTML = rows;
+  }
+  /* the garden: redrawn when a plot reaches its next stage; "Time to pick!" when something becomes ready while he is here */
+  function fGardenDraw(all) {
+    var P = $('#fPlots'); if (!P) return;
+    var G = FST.garden, newRipe = false;
+    G.plots.forEach(function (p, i) {
+      var st = fPlotStage(p), el = P.querySelector('[data-p="' + i + '"]');
+      if (!el) { P.insertAdjacentHTML('beforeend', '<button class="fplot" type="button" data-p="' + i + '" aria-label="' + p.v + '"></button>'); el = P.querySelector('[data-p="' + i + '"]'); }
+      if (all || +el.getAttribute('data-st') !== st) { if (!all && st === 3) newRipe = true; el.setAttribute('data-st', st); el.classList.toggle('ripe', st === 3); el.innerHTML = fPlotSVG(p.v, st); }
+    });
+    $('#fPicked').textContent = String(G.picked);
+    if (newRipe || (all && G.plots.some(function (p) { return fPlotStage(p) === 3; }))) fAmbient([AREA_SAY.pick]);
+  }
+  function fPick(i, el) {
+    var p = FST.garden.plots[i];
+    if (fPlotStage(p) < 3) { el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); sfx.pop(); return; }   /* not ready yet: a wiggle */
+    FST.garden.picked++; p.t = Date.now(); fSave(); sfx.good();   /* ripe: it pops into the basket (just for fun: stars come only from writing) */
+    el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+    var bk = document.querySelector('.fbasket'); if (bk) { bk.classList.remove('bump'); void bk.offsetWidth; bk.classList.add('bump'); }
+    setTimeout(function () { if (el.isConnected) { el.classList.remove('pop'); fGardenDraw(true); } }, 380);
+  }
+  /* taps in the Shed and the House */
+  function fAreaBuy(b, price, nm, done) {
+    if (!fPay(price)) { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); fBump(); var l = fNoLine(); if (l) fRespond([nm, l]); else fAmbient([nm]); return; }
+    done(); fSave(); renderStars(); fBump(); sfx.good(); fRespond([nm, FSAY.got]);
+  }
+  $('#fArea').addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target : null; if (!t || current !== farm) return;
+    audio();
+    var b, S = FST.shed, H = FST.house;
+    if (t.closest('#fVeh')) { fHonk(); return; }
+    if ((b = t.closest('[data-v]'))) {
+      var v = b.getAttribute('data-v');
+      if (S.own.indexOf(v) >= 0) { S.sel = v; fSave(); sfx.pop(); fAmbient([SHED.names[v]]); fShedDraw(); }
+      else fAreaBuy(b, SHED.vehicles[v], SHED.names[v], function () { S.own.push(v); S.sel = v; fShedDraw(); });
+      return;
+    }
+    if ((b = t.closest('[data-c]'))) { fShedSet('c', +b.getAttribute('data-c')); return; }
+    if ((b = t.closest('[data-d]'))) { fShedSet('d', b.getAttribute('data-d')); return; }
+    if ((b = t.closest('[data-w]'))) { fShedSet('w', b.getAttribute('data-w')); return; }
+    if ((b = t.closest('[data-wall]')) || (b = t.closest('[data-door]')) || (b = t.closest('[data-roof]'))) {
+      ['wall', 'door', 'roof'].forEach(function (k) { if (b.hasAttribute('data-' + k)) H[k] = +b.getAttribute('data-' + k); });
+      fSave(); sfx.pop(); fHouseDraw(); return;
+    }
+    if ((b = t.closest('[data-x]'))) {
+      var x = b.getAttribute('data-x');
+      if (H.own.indexOf(x) >= 0) { H.on[x] = !H.on[x]; fSave(); sfx.pop(); fAmbient([HOUSE.names[x]]); fHouseDraw(); }
+      else fAreaBuy(b, HOUSE.extras[x], HOUSE.names[x], function () { H.own.push(x); H.on[x] = true; fHouseDraw(); });
+      return;
+    }
+    if ((b = t.closest('.fplot'))) fPick(+b.getAttribute('data-p'), b);
+  });
+  window.addEventListener('resize', function () { if (current === farm && fView === 'map') fMapLayout(); });
+
+  /* opening My Farm shows the map; the Barnyard (the animals) is one of its areas */
   var farm = {
     start: function () {
-      var was = fSaid().grow, grew = fStageI() > was;   /* read before the hello marks the new stage as announced */
-      fMeasure(); fSel = ''; fBuild(); fOn = true;
-      FST.animals.forEach(function (id) { FA[id].next = fRand(FARM.actFirst); });
-      fLast = performance.now(); cancelAnimationFrame(fRaf); if (!document.hidden) fRaf = requestAnimationFrame(fLoop);
-      if (grew) fGrowFx(FARM.growthStages[Math.max(0, was)]);
-      fHello();
+      var was = fSaid().grow; fGrowFrom = fStageI() > was ? Math.max(0, was) : -1;   /* read before the hello marks the new stage as announced */
+      fMapShow(); fHello();
     },
-    stop: function () { fEndDrag(); fBuildMode(false); fOn = false; FST.animals.forEach(function (id) { if (FA[id]) fActStop(id); }); cancelAnimationFrame(fRaf); clearTimeout(fTimer); $('#fSheet').hidden = true; fSheetKind = ''; vstop(); }
+    stop: function () { fLeaveArea(); clearTimeout(fZoomT); $('#fUnlock').hidden = true; vstop(); }
   };
   function farmOpen() { write.stop(); current = farm; $('#write').hidden = true; $('#farm').hidden = false; $('#prompt').textContent = 'My Farm'; syncBack(); farm.start(); }
   function farmClose() {
@@ -3450,7 +3851,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (fBuildOn) fBuildMode(false); else { fBuildMode(true); fSheet('build'); fAmbient([FSAY.build]); }
   });
   $('#fPaint').addEventListener('click', function () { if (current !== farm || !fSel) return; audio(); sfx.pop(); fSheet('decor'); fAmbient([FSAY.decorate]); });
-  window.addEventListener('resize', function () { if (current === farm) { fMeasure(); fLayout(); } });
+  window.addEventListener('resize', function () { if (current === farm && fView === 'barnyard') { fMeasure(); fLayout(); } });
   FST = fLoad(); renderStars();
 
   /* ---------- Free writing: a blank drawing page with colors, brush sizes, eraser, undo, clear, stamps and save. No voice, no stars, no scoring. ---------- */
