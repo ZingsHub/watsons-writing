@@ -735,6 +735,22 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 .gkid .btn { flex: none; min-height: 52px; padding: 4px 12px; font-size: 17px; }
 .gadd { min-height: 56px; font-size: 20px; padding: 4px 20px; background: #d6f0c2; }
 .grow2 { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.grow2 .btn { min-height: 56px; }
+@media (orientation: landscape) and (max-height: 560px) {   /* a sideways phone: Grown-ups fits without scrolling */
+  #gHome > .gp { display: none; }
+  #gHome .grow2 { gap: 8px; } #gHome .grow2 .btn { font-size: 16px; padding: 4px 12px; }
+}
+.gfile { position: relative; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.gfile input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.gfile:focus-within { outline: 3px solid #1c6fd1; outline-offset: 2px; }
+.gclassmsg { width: min(100%, 560px); display: flex; flex-direction: column; gap: 4px; }
+.gclassmsg:empty { display: none; }
+.gclassmsg p { margin: 0; padding: 6px 12px; font-size: 16px; text-align: left; background: #fff; border: 2px solid var(--ink); border-radius: 12px; overflow-wrap: anywhere; }
+.gclassmsg p.gbad { background: #ffe1db; }
+.gcopen { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 0; border: 0; background: none; cursor: pointer; font: inherit; color: inherit; text-align: left; min-height: 56px; }
+.gcopen .pface { flex: none; width: 56px; height: 56px; border-width: 3px; box-shadow: none; }
+.gcopen b { flex: 1; min-width: 0; font-size: 20px; overflow-wrap: anywhere; }
+.gcopen b small { display: block; font-size: 14px; font-weight: 600; color: #4f6b3a; }
 .gnote { margin: 0; font-size: 15px; color: #4f6b3a; }
 .gname { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; }
 .gname input { width: 13ch; min-width: 0; font: inherit; font-size: 24px; padding: 8px 12px; border: 3px solid var(--ink); border-radius: 12px; background: #fff; }
@@ -821,6 +837,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   #printRep .rp-tips { margin-top: 6px; gap: 1px; }
   #printRep .rp-foot { font-size: 8pt; padding-top: 6px; }
   #printRep .rp section, #printRep .rp-cell, #printRep tr { break-inside: avoid; }
+  #printRep .rp + .rp { break-before: page; }   /* Print all: one page per child */
 }
 /* ---------- picture icons, result popup eye, quiz summary ---------- */
 .ic { display: block; width: 36px; height: 36px; }
@@ -1034,7 +1051,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
         <div id="gHome" class="nscreen gscreen" hidden>
           <p class="gp">For parents and teachers. Each child has their own stars, letters, farm and names.</p>
           <div id="gKids" class="gkids"></div>
-          <div class="grow2"><button id="gRepBtn" class="btn gadd" type="button">Progress report</button><button id="gAdd" class="btn gadd" type="button">+ Add a child</button></div>
+          <div class="grow2"><button id="gRepBtn" class="btn gadd" type="button">Progress report</button><button id="gShareBtn" class="btn gadd" type="button">Share progress file</button><button id="gClassBtn" class="btn gadd" type="button">Class view (for teachers)</button><button id="gAdd" class="btn gadd" type="button">+ Add a child</button></div>
           <p id="gFull" class="gnote" hidden>8 children is the most on one device.</p>
           <button id="gReset" class="btn greset" type="button">Reset progress for <span id="gResetN"></span></button>
         </div>
@@ -1045,6 +1062,23 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
         <div id="gRep" class="nscreen rpscreen" hidden>
           <div class="rp-tools"><button id="gPrint" class="btn" type="button"><svg viewBox="0 0 32 32" aria-hidden="true" stroke="#2a2118" stroke-width="2.5" stroke-linejoin="round"><rect x="9" y="4" width="14" height="8" fill="#fff"/><rect x="4" y="11" width="24" height="12" rx="3" fill="#8fcbe6"/><rect x="9" y="18" width="14" height="10" fill="#fff"/><path d="M12 22 H20 M12 25 H18" fill="none" stroke-width="2"/><circle cx="24" cy="15" r="1.2" fill="#2a2118" stroke="none"/></svg>Print</button></div>
           <div id="gRepBox"></div>
+        </div>
+        <div id="gShare" class="nscreen gscreen" hidden>
+          <p class="gwarn">This file includes your child's first name and progress. You choose who to send it to.</p>
+          <p class="gp">Pick a child to make their progress file. It holds their name, face, letter stars, quiz results, names practiced and practice days. Nothing else.</p>
+          <div id="gShareKids" class="pfaces"></div>
+          <button id="gShareAll" class="btn gadd" type="button">All children on this device</button>
+          <p id="gShareMsg" class="gmsg" role="status"></p>
+        </div>
+        <div id="gClass" class="nscreen gscreen" hidden>
+          <p class="gp">Load the progress files that families send you. They stay on this device only, apart from the children who play here.</p>
+          <div class="grow2"><label class="btn gadd gfile">Choose files<input id="gClassFile" type="file" accept=".json,application/json" multiple></label><button id="gClassPrint" class="btn gadd" type="button">Print all</button><button id="gClassClear" class="btn quiet gdanger" type="button">Clear class</button></div>
+          <div id="gClassMsg" class="gclassmsg" role="status"></div>
+          <div id="gClassList" class="gkids"></div>
+        </div>
+        <div id="gAsk" class="nscreen gscreen" hidden>
+          <p id="gAskTxt" class="gwarn"></p>
+          <div class="gyn"><button id="gAskNo" class="btn gno" type="button" aria-label="No"><svg viewBox="0 0 24 24"><path d="M5 5 L19 19 M19 5 L5 19" stroke="#fff" stroke-width="4.5" stroke-linecap="round"/></svg></button><button id="gAskYes" class="btn gyes" type="button" aria-label="Yes"><svg viewBox="0 0 24 24"><path d="M4 12.5 L10 18 L20 6" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
         </div>
         <div id="gEdit" class="nscreen gscreen" hidden>
           <label class="gname">Name <input id="gEName" type="text" maxlength="12" autocomplete="off" autocapitalize="words" spellcheck="false"></label>
@@ -2004,7 +2038,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function wBest() { var o = {}; try { o = JSON.parse(localStorage.getItem(pkey('ty_write')) || '{}') || {}; } catch (e) {} return o; }
   function wSaveBest(ch, st) { var o = wBest(); if (!o[ch] || o[ch] < st) { o[ch] = st; try { localStorage.setItem(pkey('ty_write'), JSON.stringify(o)); } catch (e) {} } }
   function wShow(id) {
-    ['wMenu', 'wPick', 'wPlay', 'nEntry', 'nLevel', 'nDone', 'gHome', 'gGate', 'gConfirm', 'gDone', 'gEdit', 'gDel', 'gRepList', 'gRep', 'dPlay'].forEach(function (x) { $('#' + x).hidden = x !== id; }); $('#wOver').hidden = true;
+    ['wMenu', 'wPick', 'wPlay', 'nEntry', 'nLevel', 'nDone', 'gHome', 'gGate', 'gConfirm', 'gDone', 'gEdit', 'gDel', 'gRepList', 'gRep', 'gShare', 'gClass', 'gAsk', 'dPlay'].forEach(function (x) { $('#' + x).hidden = x !== id; }); $('#wOver').hidden = true;
     $('#nCardBox').hidden = !nm.on; $('#nCheck').hidden = $('#nErase').hidden = !nm.on; $('#wPlay').classList.toggle('nlv3', nm.on && nm.level === 3); $('#app').classList.toggle('drawing', id === 'dPlay');
     syncBack();
   }
@@ -2367,8 +2401,9 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       else if (wr.pickKind === 'quiz') wPickScreen('quiz');
       else wMenu();
     } else if (!$('#wPick').hidden) wMenu();
-    else if (!$('#gRep').hidden) gRepList();   /* a report: back to the list of children */
-    else if (!$('#gEdit').hidden || !$('#gDel').hidden || !$('#gConfirm').hidden || !$('#gRepList').hidden) gHome();   /* still inside Grown-ups */
+    else if (!$('#gRep').hidden) { if (gRepFrom === 'class') gClass(); else gRepList(); }   /* a report: back to where it was opened */
+    else if (!$('#gAsk').hidden) gClass();
+    else if (!$('#gEdit').hidden || !$('#gDel').hidden || !$('#gConfirm').hidden || !$('#gRepList').hidden || !$('#gShare').hidden || !$('#gClass').hidden) gHome();   /* still inside Grown-ups */
     else { wReset(); closeGame(); }
   }
   function wFillGrid(which) {
@@ -2875,8 +2910,9 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     var n = (pGet(gDelId) || {}).name; pDelete(gDelId); sfx.pop(); toast('Deleted ' + n); gHome();
   });
 
-  /* ---------- progress report: one printable page per child, filled from what is saved on this device. Every word is set with textContent.
-     The page is built twice: in the Grown-ups screen, and in #printRep (outside the app) which is all that prints. ---------- */
+  /* ---------- progress report: one printable page per child. rpData(id) gathers a child's saved progress into one plain object; rpRender(host, D)
+     draws it, every word with textContent. The same object is what a progress file carries and what Class view keeps.
+     On screen the page is in #gRepBox; #printRep (outside the app) holds what prints. ---------- */
   function rpEl(tag, cls, text, parent) { var e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined && text !== null) e.textContent = text; if (parent) parent.appendChild(e); return e; }
   function rpJSON(id, k) { try { return JSON.parse(lsGet(pKey(id, k)) || 'null'); } catch (e) { return null; } }
   function rpD(s) { var m = /^(\d{4})-(\d\d)-(\d\d)$/.exec(s || ''); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(); }
@@ -2885,24 +2921,42 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function rpCap(s) { return String(s).split(' ').map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join(' '); }
   function rpStars(n) { return '★★★'.slice(0, n); }
   function rpChips(parent, list, cls) { var ul = rpEl('ul', 'rp-chips' + (cls ? ' ' + cls : ''), null, parent); list.forEach(function (t) { rpEl('li', '', t, ul); }); return ul; }
-  function rpBuild(host, id) {
+  var RPSETS = [['up', 'Capitals'], ['lo', 'Lowercase'], ['mix', 'Mixed'], ['num', 'Numbers']];
+  /* one child's progress: { name, face, letters { A: 1-3 }, stars, tracked, since, days [], quiz { set: { stars 0-3, best points or null, n plays or null } }, names [{ n, l }] }.
+     best and n are null when they were not tracked (before profiles); days and since only once tracking began */
+  function rpData(id) {
     var p = pGet(id), w = rpJSON(id, 'ty_write') || {}, R = rpJSON(id, 'ww_reward') || {}, N = rpJSON(id, 'ww_names');
-    var tracked = lsGet(pKey(id, 'ww_stats')) !== null, st = stGet(id), lifetime = parseInt(lsGet(pKey(id, 'ty_stars')), 10) || 0;
-    var best = function (c) { var v = Number(w[c]); return v >= 1 && v <= 3 ? Math.floor(v) : 0; };
+    var tracked = lsGet(pKey(id, 'ww_stats')) !== null, st = stGet(id), names = {}, order = [];
+    var D = { name: p.name, face: p.face, letters: {}, stars: Math.max(0, parseInt(lsGet(pKey(id, 'ty_stars')), 10) || 0), tracked: tracked, since: tracked ? st.since : null, days: tracked ? st.days.slice() : [], quiz: {}, names: [] };
+    (WUP + WLO + WNUM).split('').forEach(function (c) { var v = Number(w[c]); if (v >= 1 && v <= 3) D.letters[c] = Math.floor(v); });
+    RPSETS.forEach(function (x) {
+      var s = st.quiz[x[0]], rs = Math.max(0, Math.min(3, Math.floor(Number(R.quiz && R.quiz[x[0]]) || 0)));
+      if (s || rs) D.quiz[x[0]] = { stars: rs, best: s ? s.best : null, n: s ? s.n : null };
+    });
+    var addName = function (raw, lvl, typed) { var k = String(raw || '').toLowerCase().trim(); if (!k) return; if (!names[k]) { names[k] = { n: typed ? String(raw).trim() : rpCap(k), l: 0 }; order.push(k); } if (lvl >= 1 && lvl <= 3) names[k].l = Math.max(names[k].l, lvl); };
+    if (Array.isArray(N)) N.forEach(function (o) { if (o && typeof o.n === 'string') addName(o.n, 0, true); });   /* names typed in, as they were spelled */
+    Object.keys(st.names).forEach(function (k) { addName(k, st.names[k]); });   /* finished, with the level */
+    if (R.names && typeof R.names === 'object') Object.keys(R.names).forEach(function (k) { (Array.isArray(R.names[k]) ? R.names[k] : []).forEach(function (l) { addName(k, Number(l)); }); });
+    D.names = order.slice(0, 30).map(function (k) { return { n: names[k].n.slice(0, 12), l: names[k].l }; });
+    return D;
+  }
+  /* note: a line in the footer, such as where a class report came from */
+  function rpRender(host, D, note) {
+    var best = function (c) { return D.letters[c] || 0; };
     var all = (WUP + WLO + WNUM).split(''), three = all.filter(function (c) { return best(c) === 3; }).length, tried = all.filter(function (c) { return best(c) > 0; }).length;
-    host.textContent = '';
-    var sh = rpEl('article', 'rp', null, host); sh.setAttribute('aria-label', 'Progress report for ' + p.name);
+    var first = D.days[0], last = D.days[D.days.length - 1];
+    var sh = rpEl('article', 'rp', null, host); sh.setAttribute('aria-label', 'Progress report for ' + D.name);
     /* header: name and dates */
     var top = rpEl('header', 'rp-top', null, sh), t1 = rpEl('div', '', null, top), who = rpEl('div', 'rp-who', null, top);
     rpEl('h1', '', "Watson's Writing Progress Report", t1); rpEl('p', '', 'Handwriting practice summary', t1);
-    rpEl('b', '', p.name, who); rpEl('p', '', st.first ? rpRange(st.first, st.last) : 'As of ' + rpDay(pDay()), who);
+    rpEl('b', '', D.name, who); rpEl('p', '', first ? rpRange(first, last) : 'As of ' + rpDay(pDay()), who);
     /* summary boxes */
     var S = rpEl('section', 'rp-stats', null, sh); S.setAttribute('aria-label', 'Summary');
     var box = function (big, small, nt) { var d = rpEl('div', 'rp-stat', null, S); rpEl('b', nt ? 'rp-nt' : '', big, d); rpEl('span', '', small, d); };
     box(three + ' of 62', 'letters and numbers with 3 stars');
     box(tried + ' of 62', 'letters and numbers tried');
-    if (tracked && st.days.length) box(String(st.days.length), st.days.length === 1 ? 'day practiced' : 'days practiced'); else box('Not tracked yet', 'days practiced', true);
-    box(String(lifetime), 'stars earned');
+    if (D.tracked && D.days.length) box(String(D.days.length), D.days.length === 1 ? 'day practiced' : 'days practiced'); else box('Not tracked yet', 'days practiced', true);
+    box(String(D.stars), 'stars earned');
     /* the three grids, colored by best stars, with the star marks for black-and-white printers */
     [['Capital letters', WUP], ['Lowercase letters', WLO], ['Numbers', WNUM]].forEach(function (g, gi) {
       var sec = rpEl('section', '', null, sh), grid; rpEl('h2', '', g[0], sec); grid = rpEl('div', 'rp-grid', null, sec);
@@ -2921,20 +2975,16 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     rpEl('h2', '', 'Writing quiz', q); tb = rpEl('table', 'rp-table', null, q); tr = rpEl('tr', '', null, rpEl('thead', '', null, tb));
     ['Quiz', 'Best', 'Played'].forEach(function (h) { rpEl('th', '', h, tr); });
     body = rpEl('tbody', '', null, tb);
-    [['up', 'Capitals'], ['lo', 'Lowercase'], ['mix', 'Mixed'], ['num', 'Numbers']].forEach(function (x) {
-      var s = st.quiz[x[0]], rs = Math.max(0, Math.min(3, Math.floor(Number(R.quiz && R.quiz[x[0]]) || 0))), row = rpEl('tr', '', null, body);
+    RPSETS.forEach(function (x) {
+      var s = D.quiz[x[0]], rs = s ? s.stars : 0, row = rpEl('tr', '', null, body);
       rpEl('td', '', x[1], row);
-      rpEl('td', 'rp-num', s ? s.best + ' points' + (rs ? ' ' + rpStars(rs) : '') : rs ? rpStars(rs) : 'Not played yet', row);
-      rpEl('td', 'rp-num', s ? String(s.n) : rs ? 'Not tracked yet' : '–', row);   /* plays before tracking began are not known */
+      rpEl('td', 'rp-num', s && s.best !== null ? s.best + ' points' + (rs ? ' ' + rpStars(rs) : '') : rs ? rpStars(rs) : 'Not played yet', row);
+      rpEl('td', 'rp-num', s && s.n !== null ? String(s.n) : rs ? 'Not tracked yet' : '–', row);   /* plays before tracking began are not known */
     });
-    var ns = rpEl('section', '', null, two), names = {}, order = [];
+    var ns = rpEl('section', '', null, two);
     rpEl('h2', '', 'Names practiced', ns);
-    var addName = function (raw, lvl, typed) { var k = String(raw || '').toLowerCase().trim(); if (!k) return; if (!names[k]) { names[k] = { n: typed ? String(raw).trim() : rpCap(k), l: 0 }; order.push(k); } if (lvl >= 1 && lvl <= 3) names[k].l = Math.max(names[k].l, lvl); };
-    if (Array.isArray(N)) N.forEach(function (o) { if (o && typeof o.n === 'string') addName(o.n, 0, true); });   /* names typed in, as they were spelled */
-    Object.keys(st.names).forEach(function (k) { addName(k, st.names[k]); });   /* finished, with the level */
-    if (R.names && typeof R.names === 'object') Object.keys(R.names).forEach(function (k) { (Array.isArray(R.names[k]) ? R.names[k] : []).forEach(function (l) { addName(k, Number(l)); }); });
-    if (order.length) {
-      rpChips(ns, order.slice(0, 12).map(function (k) { return names[k].n + (names[k].l ? ' · Level ' + names[k].l : ''); }));
+    if (D.names.length) {
+      rpChips(ns, D.names.slice(0, 12).map(function (x) { return x.n + (x.l ? ' · Level ' + x.l : ''); }));
       rpEl('p', 'rp-small', 'Level 1 traces the letters, Level 2 has dots only, Level 3 is just the lines.', ns);
     } else rpEl('p', 'rp-small', 'No names practiced yet.', ns);
     /* good next steps, kindly */
@@ -2949,26 +2999,197 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     var tips = rpEl('ul', 'rp-tips', null, nx);
     ['Short and often works best: 5 to 10 minutes a few times a week.', 'Saying the stroke names out loud while writing helps the shapes stick.', 'Celebrate the letters that already have 3 stars.'].forEach(function (t) { rpEl('li', '', t, tips); });
     rpEl('footer', 'rp-foot', "Made with Watson's Writing. Progress is saved only on the device that was used. Printed " + rpDay(pDay()) + '.' +
-      (tracked ? ' Days practiced and quiz plays are counted from ' + rpDay(st.since) + '.' : ''), sh);
+      (D.tracked && D.since ? ' Days practiced and quiz plays are counted from ' + rpDay(D.since) + '.' : '') + (note ? ' ' + note : ''), sh);
   }
-  var gRepId = '';
-  function gRepList() {
-    wShow('gRepList'); $('#prompt').textContent = 'Progress report';
-    var host = $('#gRepKids'); host.textContent = '';
-    PIDX.list.forEach(function (p) {
+  /* the report screen shows one child: from this device, or from Class view */
+  var gRepD = null, gRepNote = '', gRepFrom = 'kids';
+  function gRepShow(D, note, from) {
+    gRepD = D; gRepNote = note || ''; gRepFrom = from;
+    $('#gRepBox').textContent = ''; rpRender($('#gRepBox'), D, gRepNote);
+    $('#printRep').textContent = ''; rpRender($('#printRep'), D, gRepNote);
+    wShow('gRep'); $('#prompt').textContent = D.name + "'s report"; $('#gRep').scrollTop = 0;
+  }
+  function gKidButtons(host, list) {   /* face pictures (app drawings) with the names as text */
+    host.textContent = '';
+    list.forEach(function (p) {
       var b = rpEl('button', 'pkid', null, host); b.type = 'button'; b.setAttribute('data-id', p.id); b.setAttribute('aria-label', p.name);
-      b.innerHTML = pFaceEl(p.face);   /* the face picture only; the name goes in as text */
-      rpEl('span', 'pkn', p.name, b);
+      b.innerHTML = pFaceEl(p.face); rpEl('span', 'pkn', p.name, b);
     });
   }
-  function gRep(id) {
-    var p = pGet(id); if (!p) { gRepList(); return; }
-    gRepId = id; rpBuild($('#gRepBox'), id); rpBuild($('#printRep'), id);
-    wShow('gRep'); $('#prompt').textContent = p.name + "'s report"; $('#gRep').scrollTop = 0;
-  }
+  function gRepList() { wShow('gRepList'); $('#prompt').textContent = 'Progress report'; gKidButtons($('#gRepKids'), PIDX.list); }
+  function gRep(id) { if (!pGet(id)) { gRepList(); return; } gRepShow(rpData(id), '', 'kids'); }
   $('#gRepBtn').addEventListener('click', function () { if (current === write) { audio(); sfx.pop(); gRepList(); } });
   $('#gRepKids').addEventListener('click', function (e) { var b = e.target.closest ? e.target.closest('.pkid') : null; if (b && current === write) { audio(); sfx.pop(); gRep(b.getAttribute('data-id')); } });
-  $('#gPrint').addEventListener('click', function () { if (current !== write || $('#gRep').hidden) return; audio(); rpBuild($('#printRep'), gRepId); try { window.print(); } catch (e) {} });
+  $('#gPrint').addEventListener('click', function () {
+    if (current !== write || $('#gRep').hidden || !gRepD) return; audio();
+    $('#printRep').textContent = ''; rpRender($('#printRep'), gRepD, gRepNote); try { window.print(); } catch (e) {}
+  });
+
+  /* ---------- progress files: a grown-up shares a child's progress as a small JSON file; a teacher loads many into Class view.
+     File: { app, format, exported, children: [{ id, name, face, progress }] }, progress as rpData without name and face. Nothing else
+     (no farm, no settings). The id is this device's random code plus the profile id, so children on different devices never collide. ---------- */
+  var CL_APP = 'watsons-writing-progress', CL_FMT = 1, CL_BYTES = 200 * 1024, CL_MAX = 40, CL_KEY = 'ww_class', CL_NAME = 12, DAYRE = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+  function shDevice() { var d = lsGet('ww_device'); if (!/^[a-z0-9]{8}$/.test(d || '')) { d = ''; while (d.length < 8) d += Math.floor(Math.random() * 36).toString(36); lsSet('ww_device', d); } return d; }
+  function shChild(id) { var D = rpData(id), P = {}; ['letters', 'stars', 'tracked', 'since', 'days', 'quiz', 'names'].forEach(function (k) { P[k] = D[k]; }); return { id: shDevice() + '-' + id, name: D.name, face: D.face, progress: P }; }
+  function shSafe(s) { return String(s).replace(/[^A-Za-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'Child'; }
+  function shMsg(t) { $('#gShareMsg').textContent = t; }
+  function shExport(ids) {
+    var one = ids.length === 1 ? pGet(ids[0]) : null;
+    var txt = JSON.stringify({ app: CL_APP, format: CL_FMT, exported: new Date().toISOString(), children: ids.map(shChild) });
+    var fname = 'Watson-Writing-' + (one ? shSafe(one.name) : 'All') + '-' + pDay() + '.json', blob = new Blob([txt], { type: 'application/json' }), file = null;
+    try { file = new File([blob], fname, { type: 'application/json' }); } catch (e) {}
+    /* the share sheet, where the device can share files */
+    if (file && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: fname }).then(function () { shMsg('Shared ' + fname + '.'); }, function (err) {
+        if (err && err.name === 'AbortError') shMsg('Not sent. You can try again any time.'); else shSave(txt, blob, fname);
+      });
+      return;
+    }
+    shSave(txt, blob, fname);
+  }
+  /* a download; on an iPhone or iPad home-screen app, where downloads do not work, a new tab with the file and how to save it */
+  function shSave(txt, blob, fname) {
+    var ios = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    var home = navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches), a = document.createElement('a');
+    if (!(ios && home) && 'download' in a) {
+      var url = URL.createObjectURL(blob); a.href = url; a.download = fname; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
+      shMsg('Saved ' + fname + ' to your downloads.'); return;
+    }
+    shTab(txt, fname);
+  }
+  function shTab(txt, fname) {
+    var w = null; try { w = window.open('', '_blank'); } catch (e) {}
+    if (!w) { shMsg('Your device blocked the new tab. Allow pop-ups for this app and try again.'); return; }
+    var d = w.document, mk = function (tag, text, parent) { var e = d.createElement(tag); if (text) e.textContent = text; (parent || d.body).appendChild(e); return e; };
+    d.title = fname; d.body.style.cssText = 'font: 17px/1.5 system-ui, sans-serif; margin: 16px; color: #1f2a26; background: #fff;';
+    mk('h1', 'Save the progress file');
+    var ol = mk('ol');
+    mk('li', 'Tap the link below. If a menu opens, choose Download Linked File, or Share and then Save to Files.', ol);
+    mk('li', 'Send the file ' + fname + ' to the teacher however you like.', ol);
+    var link = mk('a', 'Save ' + fname); link.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(txt); link.download = fname; link.style.cssText = 'display: inline-block; margin: 8px 0 16px; font-size: 20px;';
+    mk('p', 'Or press and hold the text below, choose Select All, then Copy, and paste it into a message.');
+    var pre = mk('pre', txt); pre.style.cssText = 'white-space: pre-wrap; word-break: break-all; font-size: 12px; background: #f3f5f4; padding: 10px; border-radius: 8px;';
+    shMsg('The file opened in a new tab, with how to save it.');
+  }
+  function gShare() { wShow('gShare'); $('#prompt').textContent = 'Share progress file'; shMsg(''); gKidButtons($('#gShareKids'), PIDX.list); $('#gShareAll').hidden = PIDX.list.length < 2; }
+  $('#gShareBtn').addEventListener('click', function () { if (current === write) { audio(); sfx.pop(); gShare(); } });
+  $('#gShareKids').addEventListener('click', function (e) { var b = e.target.closest ? e.target.closest('.pkid') : null; if (b && current === write) { audio(); shExport([b.getAttribute('data-id')]); } });
+  $('#gShareAll').addEventListener('click', function () { if (current === write) { audio(); shExport(PIDX.list.map(function (p) { return p.id; })); } });
+
+  /* --- reading a file: untrusted. Exact app and format, required fields with the right types, text cut to length, numbers clamped,
+     unknown fields ignored. Any problem: the whole file is turned away and nothing changes. --- */
+  function clInt(v, lo, hi) { return typeof v === 'number' && isFinite(v) ? Math.max(lo, Math.min(hi, Math.floor(v))) : null; }
+  function clText(s) { return typeof s === 'string' ? s.replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u2028-\u202e\u2066-\u2069\ufeff]/g, '').replace(/\s+/g, ' ').trim().slice(0, CL_NAME).trim() : ''; }   /* no control or invisible direction characters */
+  function clDay(s) { return typeof s === 'string' && DAYRE.test(s) ? s : null; }
+  function clObj(o) { return !!o && typeof o === 'object' && !Array.isArray(o); }
+  function clOwn(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
+  function clKid(o) {
+    if (!clObj(o) || typeof o.id !== 'string' || !/^[a-z0-9-]{1,40}$/.test(o.id)) return null;
+    var name = clText(o.name), P = o.progress;
+    if (!name || !clObj(P) || !clObj(P.letters) || typeof P.stars !== 'number' || typeof P.tracked !== 'boolean' || !Array.isArray(P.days) || !clObj(P.quiz) || !Array.isArray(P.names)) return null;
+    if (P.since !== null && typeof P.since !== 'string') return null;
+    var D = { name: name, face: clInt(o.face, 0, PFACES.length - 1) || 0, letters: {}, stars: clInt(P.stars, 0, 1000000) || 0, tracked: P.tracked, since: clDay(P.since), days: [], quiz: {}, names: [] };
+    (WUP + WLO + WNUM).split('').forEach(function (c) { if (clOwn(P.letters, c)) { var v = clInt(P.letters[c], 0, 3); if (v) D.letters[c] = v; } });
+    P.days.slice(0, 4000).forEach(function (x) { x = clDay(x); if (x && D.days.indexOf(x) < 0) D.days.push(x); }); D.days.sort();
+    RPSETS.forEach(function (x) {
+      var q = clOwn(P.quiz, x[0]) ? P.quiz[x[0]] : null; if (!clObj(q)) return;
+      D.quiz[x[0]] = { stars: clInt(q.stars, 0, 3) || 0, best: q.best === null || q.best === undefined ? null : clInt(q.best, 0, 50), n: q.n === null || q.n === undefined ? null : clInt(q.n, 0, 100000) };
+    });
+    P.names.slice(0, 30).forEach(function (x) { var n = clObj(x) ? clText(x.n) : ''; if (n) D.names.push({ n: n, l: clInt(x.l, 0, 3) || 0 }); });
+    if (!D.tracked) { D.days = []; D.since = null; }
+    return { id: o.id, D: D };
+  }
+  function clFile(txt) {
+    if (typeof txt !== 'string' || txt.length > CL_BYTES) return null;
+    var d = null; try { d = JSON.parse(txt); } catch (e) { return null; }
+    if (!clObj(d) || d.app !== CL_APP || d.format !== CL_FMT || typeof d.exported !== 'string' || d.exported.length > 40 || !Array.isArray(d.children) || d.children.length < 1 || d.children.length > PMAX) return null;
+    var t = Date.parse(d.exported); if (!isFinite(t) || t > Date.now() + 86400000) return null;   /* no dates from the future */
+    var out = [], i, k;
+    for (i = 0; i < d.children.length; i++) { k = clKid(d.children[i]); if (!k) return null; k.exported = new Date(t).toISOString(); out.push(k); }
+    return out;
+  }
+  /* Class view keeps its own list (ww_class), apart from the children who play here; it is checked again every time it is read */
+  function clLoad() {
+    var d = null, out = []; try { d = JSON.parse(lsGet(CL_KEY) || 'null'); } catch (e) {}
+    if (clObj(d) && Array.isArray(d.kids)) d.kids.slice(0, CL_MAX).forEach(function (o) {
+      var k = clObj(o) ? clKid({ id: o.id, name: o.name, face: o.face, progress: o.progress }) : null, t = clObj(o) && typeof o.exported === 'string' ? Date.parse(o.exported) : NaN;
+      if (k && isFinite(t) && !out.some(function (x) { return x.id === k.id; })) { k.exported = new Date(t).toISOString(); out.push(k); }
+    });
+    return out;
+  }
+  function clSave(list) {
+    lsSet(CL_KEY, JSON.stringify({ v: 1, kids: list.map(function (k) { var P = {}; ['letters', 'stars', 'tracked', 'since', 'days', 'quiz', 'names'].forEach(function (f) { P[f] = k.D[f]; }); return { id: k.id, exported: k.exported, name: k.D.name, face: k.D.face, progress: P }; }) }));
+  }
+  function clShared(iso) { return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+  function clLast(D) { return D.days.length ? rpDay(D.days[D.days.length - 1]) : 'Not tracked yet'; }
+  function gClassDraw() {
+    var list = clLoad().sort(function (a, b) { return a.D.name.toLowerCase() < b.D.name.toLowerCase() ? -1 : 1; }), host = $('#gClassList');
+    host.textContent = '';
+    if (!list.length) rpEl('p', 'gnote', 'No children loaded yet. Choose the progress files that families sent you.', host);
+    list.forEach(function (k) {
+      var row = rpEl('div', 'gkid gcrow', null, host), b = rpEl('button', 'gcopen', null, row), tx;
+      b.type = 'button'; b.setAttribute('data-id', k.id); b.innerHTML = pFaceEl(k.D.face);
+      tx = rpEl('b', '', k.D.name, b); rpEl('small', '', '★ ' + k.D.stars + ' · Last practice: ' + clLast(k.D), tx);
+      var rm = rpEl('button', 'btn quiet gdanger', 'Remove', row); rm.type = 'button'; rm.setAttribute('data-rm', k.id);
+    });
+    $('#gClassPrint').hidden = $('#gClassClear').hidden = !list.length;
+  }
+  function gClass(keepMsg) { wShow('gClass'); $('#prompt').textContent = 'Class view'; if (!keepMsg) $('#gClassMsg').textContent = ''; gClassDraw(); }
+  function clRead(f) {   /* a file's text, or null when it is too big or cannot be read */
+    return new Promise(function (ok) {
+      if (!f || f.size > CL_BYTES) { ok(null); return; }
+      try { var r = new FileReader(); r.onload = function () { ok(typeof r.result === 'string' ? r.result : null); }; r.onerror = function () { ok(null); }; r.readAsText(f); } catch (e) { ok(null); }
+    });
+  }
+  function clImport(files) {
+    files = Array.prototype.slice.call(files || [], 0, 100);
+    var lines = [];
+    Promise.all(files.map(clRead)).then(function (texts) {
+      var list = clLoad();
+      texts.forEach(function (txt, i) {
+        var kids = txt === null ? null : clFile(txt);
+        if (!kids) { lines.push("This file doesn't look right: " + (files[i] && files[i].name ? files[i].name.slice(0, 60) : 'file') + '. Nothing was changed.'); return; }
+        kids.forEach(function (k) {
+          var j = -1; list.forEach(function (x, n) { if (x.id === k.id) j = n; });
+          if (j < 0) { if (list.length >= CL_MAX) { lines.push('The class is full (' + CL_MAX + ' children). ' + k.D.name + ' was not added.'); return; } list.push(k); lines.push('Added ' + k.D.name + '.'); }
+          else if (Date.parse(k.exported) > Date.parse(list[j].exported)) { list[j] = k; lines.push('Updated ' + k.D.name + ' with the newer file.'); }
+          else lines.push(k.D.name + ': the copy already here is as new or newer, so it was kept.');
+        });
+      });
+      clSave(list);
+      var m = $('#gClassMsg'); m.textContent = ''; lines.forEach(function (t) { rpEl('p', /doesn't look right|full/.test(t) ? 'gbad' : '', t, m); });
+      gClassDraw(); $('#gClassFile').value = '';
+    });
+  }
+  /* "are you sure?" with a big check and X, for removing a child or clearing the class */
+  var gAskYes = null;
+  function gAsk(text, yes) { gAskYes = yes; wShow('gAsk'); $('#prompt').textContent = 'Are you sure?'; $('#gAskTxt').textContent = text; }
+  $('#gAskNo').addEventListener('click', function () { if (current === write) { audio(); sfx.pop(); gAskYes = null; gClass(); } });
+  $('#gAskYes').addEventListener('click', function () { if (current === write && gAskYes) { audio(); sfx.pop(); var f = gAskYes; gAskYes = null; f(); } });
+  $('#gClassBtn').addEventListener('click', function () { if (current === write) { audio(); sfx.pop(); gClass(); } });
+  $('#gClassFile').addEventListener('change', function () { if (current === write && this.files && this.files.length) clImport(this.files); });
+  $('#gClassList').addEventListener('click', function (e) {
+    if (current !== write || !e.target.closest) return;
+    var o = e.target.closest('.gcopen'), rm = e.target.closest('[data-rm]'), id, k;
+    if (o) { id = o.getAttribute('data-id'); k = clLoad().filter(function (x) { return x.id === id; })[0]; if (k) { audio(); sfx.pop(); gRepShow(k.D, 'From a progress file shared ' + clShared(k.exported) + '.', 'class'); } return; }
+    if (rm) {
+      id = rm.getAttribute('data-rm'); k = clLoad().filter(function (x) { return x.id === id; })[0]; if (!k) return;
+      audio(); sfx.pop();
+      gAsk('Remove ' + k.D.name + ' from Class view? This only removes the copy here; nothing changes on their own device.', function () { clSave(clLoad().filter(function (x) { return x.id !== id; })); gClass(); });
+    }
+  });
+  $('#gClassClear').addEventListener('click', function () {
+    if (current !== write) return; audio(); sfx.pop();
+    gAsk('Clear the whole class? Every loaded child is removed from Class view on this device. The children who play here are not changed.', function () { lsDel(CL_KEY); gClass(); });
+  });
+  $('#gClassPrint').addEventListener('click', function () {
+    if (current !== write) return;
+    var list = clLoad().sort(function (a, b) { return a.D.name.toLowerCase() < b.D.name.toLowerCase() ? -1 : 1; }), host = $('#printRep');
+    if (!list.length) return; audio();
+    host.textContent = ''; list.forEach(function (k) { rpRender(host, k.D, 'From a progress file shared ' + clShared(k.exported) + '.'); });   /* one page each */
+    try { window.print(); } catch (e) {}
+  });
 
   /* ---------- My Farm: stars earned from writing build a farm ---------- */
   /* Every farm number lives here so it is easy to tune. */
