@@ -709,6 +709,13 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 .gate .gl { font-size: 54px; }
 /* ---------- picture icons, result popup eye, quiz summary ---------- */
 .ic { display: block; width: 36px; height: 36px; }
+/* Write my name: a big green check to say "done", and the eraser to start the letter over */
+#nCheck { flex: none; width: 96px; min-height: 80px; padding: 0; display: grid; place-items: center; background: #3fb04a; }
+#nCheck svg { width: 54px; height: 54px; display: block; }
+#nCheck.off { opacity: 0.45; }
+#nCheck.glow { animation: hglow 0.9s ease-in-out infinite; z-index: 5; }
+#nErase { flex: none; width: 80px; min-height: 80px; padding: 0; display: grid; place-items: center; }
+#nErase .ic { width: 50px; height: 50px; display: block; }
 #wClear .ic { display: none; }
 #wClear.ico { min-height: 56px; min-width: 56px; padding: 2px 8px; }
 #wClear.ico .ic { display: block; margin: 0 auto; }
@@ -933,6 +940,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
             <button id="wHint" class="btn" type="button">&#128161; Hint</button>
             <button id="wClear" class="btn quiet" type="button" aria-label="Clear"><span class="tx">Clear</span><svg class="ic" aria-hidden="true"><use href="#ic-trash"/></svg></button>
             <button id="wDone" class="btn" type="button">Done</button>
+            <button id="nErase" class="btn quiet" type="button" aria-label="Start this letter over" hidden><svg class="ic" aria-hidden="true"><use href="#ic-eraser"/></svg></button>
+            <button id="nCheck" class="btn" type="button" aria-label="I'm done with this letter" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 L10 18 L20 6" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             <div id="wPts" class="wpts"></div>
           </div>
           <div id="wOver" class="wover" hidden>
@@ -1719,7 +1728,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function wSaveBest(ch, st) { var o = wBest(); if (!o[ch] || o[ch] < st) { o[ch] = st; try { localStorage.setItem('ty_write', JSON.stringify(o)); } catch (e) {} } }
   function wShow(id) {
     ['wMenu', 'wPick', 'wPlay', 'nEntry', 'nLevel', 'nDone', 'gHome', 'gGate', 'gConfirm', 'gDone', 'dPlay'].forEach(function (x) { $('#' + x).hidden = x !== id; }); $('#wOver').hidden = true;
-    $('#nCardBox').hidden = !nm.on; $('#wPlay').classList.toggle('nlv3', nm.on && nm.level === 3); $('#app').classList.toggle('drawing', id === 'dPlay');
+    $('#nCardBox').hidden = !nm.on; $('#nCheck').hidden = $('#nErase').hidden = !nm.on; $('#wPlay').classList.toggle('nlv3', nm.on && nm.level === 3); $('#app').classList.toggle('drawing', id === 'dPlay');
     syncBack();
   }
   /* one Back button, top left, on every screen below the main menu */
@@ -1815,6 +1824,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   }
   function wLoop(now) {
     wr.raf = requestAnimationFrame(wLoop);
+    if (nm.on) $('#nCheck').classList.toggle('off', !nHasInk());
     var dt = Math.min(0.05, (now - wr.last) / 1000 || 0); wr.last = now;
     if (wr.demo) {
       var L = WL[wr.letter], s = L.strokes[wr.demo.i], dur = s.dot ? 0.7 : 0.8 + wLen(s.pts) / 110;
@@ -1904,7 +1914,11 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
         wr.cur++;
       }
       wr.miss = 0; sfx.good(); wPts();
-      if (wr.cur >= L.strokes.length) { wr.locked = true; vstop(); setTimeout(nm.on ? nLetterDone : wGuidedFinish, 350); return { ok: true, end: end }; }
+      if (wr.cur >= L.strokes.length) {
+        wr.locked = true; vstop();
+        if (nm.on) wCaption(wSteps(wr.letter, wr.cur)); else setTimeout(wGuidedFinish, 350);   /* Write my name: he looks at it, then taps the check */
+        return { ok: true, end: end };
+      }
       wCaption(wSteps(wr.letter, wr.cur)); wr.locked = false;
       vsay(stepItems(wr.letter, wr.cur));
       return { ok: true, end: end };
@@ -1971,6 +1985,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function wQuizCheckAuto() {
     clearTimeout(wAutoT);
     var shape = wr.mode === 'nshape';
+    if (shape) return;   /* Write my name waits for the check */
     if (wr.qBusy || wr.locked || !(shape || wr.mode === 'quiz' || wr.mode === 'quizhint') || !wr.free.length) return;
     wAutoT = setTimeout(function () {
       if (wr.ink || !shMatch(wr.free, wr.letter).ok) return;   /* not it yet: his writing stays, he can add to it or start over */
@@ -2085,6 +2100,10 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   /* --- idle reminders: after 10 s of quiet, repeat the instructions; after two repeats, point at Hint --- */
   var wIdleI = 0;
   function wIdleCheck() {
+    if (current === write && nm.on && !$('#wPlay').hidden && $('#wOver').hidden && !vSpeaking && !wr.ink && !wr.demo && !nm.busy && nHasInk()) {
+      if (Date.now() - wLastAct >= wr.idleMs) { wLastAct = Date.now(); $('#nCheck').classList.add('glow'); }
+      return;
+    }
     if (current !== write || vSpeaking || wr.ink || wr.demo || wr.locked || wr.qBusy || wr.mode === 'result') return;
     if (!$('#wOver').hidden || !$('#dPlay').hidden) return;   /* drawing never talks */
     if (!$('#nEntry').hidden || !$('#nLevel').hidden || !$('#nDone').hidden) return;   /* a grown-up is typing, or he is done */
@@ -2102,7 +2121,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     wr.idleN++; wLastAct = Date.now();
     if (items) vsay(items);
   }
-  function wActivity() { wLastAct = Date.now(); wr.idleN = 0; $('#wHint').classList.remove('glow'); }
+  function wActivity() { wLastAct = Date.now(); wr.idleN = 0; $('#wHint').classList.remove('glow'); $('#nCheck').classList.remove('glow'); }
   ['pointerdown', 'keydown', 'touchstart'].forEach(function (ev) { document.addEventListener(ev, function () { if (current === write) wActivity(); }, true); });
   var write = {
     canvas: false,
@@ -2272,7 +2291,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   }
   function nNext(i) { for (i++; i < nm.word.length; i++) if (nm.word.charAt(i) !== ' ') return i; return -1; }
   function nLetter() {
-    nm.hinted = false; wShow('wPlay'); nCard();
+    nm.hinted = false; nm.busy = false; wShow('wPlay'); nCard();
     if (nm.level === 1) wGuidedStart(nm.word.charAt(nm.i));   /* trace: same as Learn to write, stroke by stroke */
     else nShapeStart(nm.word.charAt(nm.i));
   }
@@ -2280,7 +2299,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function nShapeStart(ch) {
     clearTimeout(wAutoT);
     wr.mode = 'nshape'; wr.letter = ch; wr.cur = 0; wr.strokes = []; wr.free = []; wr.ink = null; wr.ghost = {}; wr.demo = null; wr.locked = false; wr.qTry = 0; wr.hintLvl = 0; wr.qBusy = false;
-    wShow('wPlay'); $('#wHint').hidden = false; $('#wClear').hidden = false; $('#wDone').hidden = false; $('#wClear').classList.add('ico');
+    wShow('wPlay'); $('#wHint').hidden = false; $('#wClear').hidden = true; $('#wDone').hidden = true;
     $('#prompt').textContent = wTitle(ch); wCaption(''); $('#wPts').textContent = ''; wFit();
     vsay(lessonIntro(ch).concat([Pc('Your turn!')]));
   }
@@ -2288,19 +2307,26 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     clearTimeout(wAutoT);
     if (wr.mode !== 'nshape' || wr.locked || wr.ink || !wr.free.length) return;
     var tok = nm.tok;
-    if (shMatch(wr.free, wr.letter).ok) { wr.locked = true; vstop(); sfx.good(); setTimeout(function () { if (tok === nm.tok) nLetterDone(); }, 350); return; }
-    wr.qTry++; sfx.bonk(); wr.locked = true;
-    if (wr.qTry >= 2) {   /* two misses: watch it once, then try again */
-      nm.hinted = true; toast("Let's watch how it goes."); wr.free = [];
-      vsay([Pc("Here's a little hint.")], function () {
-        if (tok !== nm.tok) return;
-        wLesson(wr.letter, function () { if (tok !== nm.tok) return; wr.free = []; wr.ghost = {}; wr.qTry = 0; wr.locked = false; vsay([Pc('Your turn!')]); });
-      });
-    } else {
-      var t = pick(W_TRY); toast(t); vsay([Pc(t)]);
-      setTimeout(function () { if (tok !== nm.tok || wr.mode !== 'nshape') return; wr.free = []; wr.locked = false; }, 800);
-    }
+    if (shMatch(wr.free, wr.letter).ok) { nm.busy = true; wr.locked = true; vstop(); sfx.good(); setTimeout(function () { if (tok === nm.tok) nLetterDone(); }, 350); return; }
+    var t = pick(W_TRY); toast(t); vsay([Pc(t)]);   /* not yet: his writing stays, to add to or erase; no penalty, try the check as often as he likes */
   }
+  /* --- the check and the eraser (Write my name, every level) --- */
+  function nHasInk() { return nm.on && (wr.mode === 'guided' ? wr.strokes.length > 0 : wr.mode === 'nshape' && wr.free.length > 0); }
+  $('#nCheck').addEventListener('click', function () {
+    if (current !== write || !nm.on || nm.busy || wr.demo || wr.qBusy || !nHasInk()) return;   /* nothing written yet: nothing happens */
+    audio(); clearTimeout(wAutoT); this.classList.remove('glow');
+    if (wr.mode === 'nshape') { nShapeCheck(); return; }
+    var tok = nm.tok;
+    if (wr.cur >= WL[wr.letter].strokes.length) { nm.busy = true; vstop(); sfx.good(); setTimeout(function () { if (tok === nm.tok) nLetterDone(); }, 350); return; }
+    if (wr.locked) return;
+    var t = pick(W_TRY); toast(t); vsay([Pc(t)]);   /* a stroke or more still to go: his strokes stay */
+  });
+  $('#nErase').addEventListener('click', function () {
+    if (current !== write || !nm.on || nm.busy || wr.demo || wr.qBusy) return;
+    audio(); sfx.pop(); clearTimeout(wAutoT); vstop(); wr.lesson++; wr.ink = null;
+    if (wr.mode === 'guided') { wr.cur = 0; wr.strokes = []; wr.miss = 0; wr.pts = 0; wr.locked = false; wCaption(wSteps(wr.letter, 0)); wPts(); vsay([stepItems(wr.letter, 0)]); }
+    else if (wr.mode === 'nshape') { wr.free = []; wr.ghost = {}; wr.locked = false; }
+  });
   /* letter widths come from the template, so "m" gets more room than "l" */
   var NB = {};
   function nBounds(ch) {

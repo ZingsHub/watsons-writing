@@ -17,7 +17,7 @@ Sections are marked with `/* ---------- name ---------- */` comments; grep for t
 - Letter templates: `WD_(char, strokeNames, strokes)` calls, 62 of them (A-Z, a-z, 0-9), in a 100x160 space (top line y=20, midline 70, baseline 120, descender 150).
 - Grading: `evalStroke` scores each stroke on pointer release; the "whole-letter shape check" judges the finished letter in Writing Quiz and Write my name levels 2-3.
 - Writing game sections: state, pointer input, guided practice, quiz, hints, menus, idle reminders.
-- Write my name: a grown-up types a word; levels 1 trace, 2 dots only, 3 just the lines. Names are saved in localStorage (`ww_names`).
+- Write my name: a grown-up types a word; levels 1 trace, 2 dots only, 3 just the lines. Names are saved in localStorage (`ww_names`). Each letter waits for the big green check (`#nCheck`): nothing is judged until he taps it; a miss keeps his ink with a gentle line (no penalty); the eraser (`#nErase`) starts the letter over; idle with ink makes the check glow. Level 1 still traces stroke by stroke.
 - Back button and Grown-ups (reset all progress behind a math problem).
 - My Farm: stars earned from writing build a farm. Settings live in the `FARM` object; inline SVG pictures, Web Audio animal sounds, and dragging (animals any time, items only in build mode).
 
