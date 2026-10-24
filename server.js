@@ -9,7 +9,7 @@ const ROOT = path.join(__dirname, 'public');
 const TYPES = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.png': 'image/png', '.jpg': 'image/jpeg',
-  '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.mp3': 'audio/mpeg', '.txt': 'text/plain; charset=utf-8'
+  '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.mp3': 'audio/mpeg', '.txt': 'text/plain; charset=utf-8', '.woff2': 'font/woff2'
 };
 
 http.createServer((req, res) => {
@@ -24,7 +24,7 @@ http.createServer((req, res) => {
     const ext = path.extname(file).toLowerCase();
     const headers = { 'Content-Type': TYPES[ext] || 'application/octet-stream', 'X-Content-Type-Options': 'nosniff' };
     /* the page and the service worker must always be fresh; images can be cached */
-    headers['Cache-Control'] = (ext === '.png' || ext === '.mp3') ? 'public, max-age=86400' : 'no-cache';
+    headers['Cache-Control'] = (ext === '.png' || ext === '.mp3' || ext === '.woff2') ? 'public, max-age=86400' : 'no-cache';
     if (path.basename(file) === 'sw.js') headers['Service-Worker-Allowed'] = '/';
     /* Safari's <audio> asks for byte ranges and will not play clips without them */
     if (ext === '.mp3') {

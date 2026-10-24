@@ -1,7 +1,7 @@
 /* Watson's Writing service worker: works offline after the first visit.
    Bump VERSION whenever index.html changes so devices pick up the new copy. */
-const VERSION = 'ww-v20';
-const SHELL = ['/', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png', '/audio/manifest.json'];
+const VERSION = 'ww-v21';
+const SHELL = ['/', '/manifest.webmanifest', '/fonts/fredoka-latin.woff2', '/fonts/fredoka-latin-ext.woff2', '/fonts/nunito-latin.woff2', '/fonts/nunito-latin-ext.woff2', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png', '/audio/manifest.json'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL)
@@ -32,8 +32,7 @@ self.addEventListener('fetch', (e) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   const sameOrigin = url.origin === location.origin;
-  const fonts = url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com';
-  if (!sameOrigin && !fonts) return;
+  if (!sameOrigin) return;   /* everything the app needs, fonts too, comes from its own server */
   /* pages: network first (so updates arrive), fall back to the saved copy when offline */
   if (req.mode === 'navigate') {
     e.respondWith(

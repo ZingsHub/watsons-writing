@@ -13,10 +13,12 @@
 <link rel="icon" href="/icons/icon-192.png">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <title>Watson's Writing</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
 <style>
+/* the two fonts are served with the app (SIL Open Font License, see /fonts/LICENSE.txt), so nothing is fetched from anywhere else */
+@font-face { font-family: 'Fredoka'; font-style: normal; font-weight: 500 700; font-display: swap; src: url(/fonts/fredoka-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Fredoka'; font-style: normal; font-weight: 500 700; font-display: swap; src: url(/fonts/fredoka-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Nunito'; font-style: normal; font-weight: 600 800; font-display: swap; src: url(/fonts/nunito-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Nunito'; font-style: normal; font-weight: 600 800; font-display: swap; src: url(/fonts/nunito-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 /* Layout concept: one full-height play surface. A menu of three chunky game cards opens a single-purpose game under a slim top bar. Single bright daytime look, chosen on purpose for a kids' game. */
 :root {
   --sky: #bfe3f2;
@@ -707,6 +709,45 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 .gate[hidden] { display: none; }
 .gate .btn { font-size: 30px; min-height: 120px; padding: 12px 28px; display: flex; flex-direction: column; gap: 6px; align-items: center; }
 .gate .gl { font-size: 54px; }
+/* ---------- child profiles: who's playing, the face in the corner, the grown-ups' list ---------- */
+.pface { display: block; border-radius: 50%; border: 4px solid var(--ink); box-shadow: 0 5px 0 var(--ink); background: #fff; overflow: hidden; }
+.pface svg { display: block; width: 100%; height: 100%; }
+.ppick { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; max-height: 100%; overflow-y: auto; padding: 16px; }
+.ppick[hidden] { display: none; }
+.ppick h2 { margin: 0; font-family: var(--display); font-size: 34px; color: var(--ink); }
+.pfaces { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px 22px; max-width: 760px; }
+.pkid { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 132px; padding: 0; border: 0; background: none; cursor: pointer; font-family: var(--display); font-weight: 700; font-size: 22px; color: var(--ink); }
+.pkid .pface { width: 120px; height: 120px; }
+.pkid:active .pface { transform: translateY(3px); box-shadow: 0 2px 0 var(--ink); }
+.pkn { max-width: 100%; overflow-wrap: anywhere; text-align: center; line-height: 1.15; }
+.pme { flex: none; width: 46px; height: 46px; padding: 0; border: 0; background: none; cursor: pointer; }
+.pme .pface { width: 46px; height: 46px; border-width: 3px; box-shadow: 0 2px 0 var(--ink); }
+#app.sub .pme { display: none; }
+@media (orientation: landscape) and (max-height: 560px) {
+  .ppick { gap: 8px; padding: 8px; } .ppick h2 { font-size: 26px; }
+  .pfaces { gap: 10px 16px; max-width: 840px; } .pkid { width: 112px; font-size: 19px; gap: 4px; } .pkid .pface { width: 100px; height: 100px; }
+}
+.gkids { width: min(100%, 560px); display: flex; flex-direction: column; gap: 8px; }
+.gkid { display: flex; align-items: center; gap: 10px; padding: 6px 10px; background: #fff; border: 3px solid var(--ink); border-radius: 16px; }
+.gkid .pface { flex: none; width: 56px; height: 56px; border-width: 3px; box-shadow: none; }
+.gkid b { flex: 1; min-width: 0; text-align: left; font-size: 20px; overflow-wrap: anywhere; }
+.gkid b small { display: block; font-size: 13px; font-weight: 600; color: #4f6b3a; }
+.gkid .btn { flex: none; min-height: 52px; padding: 4px 12px; font-size: 17px; }
+.gadd { min-height: 56px; font-size: 20px; padding: 4px 20px; background: #d6f0c2; }
+.gnote { margin: 0; font-size: 15px; color: #4f6b3a; }
+.gname { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; }
+.gname input { width: 13ch; min-width: 0; font: inherit; font-size: 24px; padding: 8px 12px; border: 3px solid var(--ink); border-radius: 12px; background: #fff; }
+.gfaces { display: grid; grid-template-columns: repeat(6, 64px); gap: 12px; justify-content: center; padding: 6px; }
+@media (max-width: 520px) { .gfaces { grid-template-columns: repeat(4, 64px); } }
+.gface { width: 64px; height: 64px; padding: 0; border: 0; border-radius: 50%; background: none; cursor: pointer; }
+.gface .pface { width: 64px; height: 64px; border-width: 3px; box-shadow: none; }
+.gface.on .pface { box-shadow: 0 0 0 4px #ffd640, 0 0 0 7px var(--ink); }
+.gdelface { width: 110px; height: 110px; }
+.gyn { display: flex; gap: 28px; justify-content: center; }
+.gyn .btn { width: 108px; min-height: 96px; padding: 0; display: grid; place-items: center; }
+.gyn svg { width: 56px; height: 56px; display: block; }
+.gyes { background: #3fb04a; }
+.gno { background: #e25544; }
 /* ---------- picture icons, result popup eye, quiz summary ---------- */
 .ic { display: block; width: 36px; height: 36px; }
 /* Write my name: a big green check to say "done", and the eraser to start the letter over */
@@ -866,6 +907,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 <main id="app">
   <header class="bar">
     <button id="topBack" class="btn quiet topback" type="button" hidden>&#9664; Back</button>
+    <button id="pMe" class="pme" type="button" aria-label="Who's playing?"></button>
     <h1>Watson's Writing</h1>
     <span class="grow"></span>
     <button id="mute" class="btn quiet" type="button" aria-pressed="false">Sound: on</button>
@@ -916,8 +958,22 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           </div>
         </div>
         <div id="gHome" class="nscreen gscreen" hidden>
-          <p class="gp">For parents and teachers.</p>
-          <button id="gReset" class="btn greset" type="button">Reset all progress</button>
+          <p class="gp">For parents and teachers. Each child has their own stars, letters, farm and names.</p>
+          <div id="gKids" class="gkids"></div>
+          <button id="gAdd" class="btn gadd" type="button">+ Add a child</button>
+          <p id="gFull" class="gnote" hidden>8 children is the most on one device.</p>
+          <button id="gReset" class="btn greset" type="button">Reset progress for <span id="gResetN"></span></button>
+        </div>
+        <div id="gEdit" class="nscreen gscreen" hidden>
+          <label class="gname">Name <input id="gEName" type="text" maxlength="12" autocomplete="off" autocapitalize="words" spellcheck="false"></label>
+          <div id="gFaces" class="gfaces"></div>
+          <p id="gEMsg" class="gmsg"></p>
+          <div class="gbtns"><button id="gECancel" class="btn" type="button">Cancel</button><button id="gESave" class="btn" type="button">Save</button></div>
+        </div>
+        <div id="gDel" class="nscreen gscreen" hidden>
+          <span id="gDelFace" class="pface gdelface"></span>
+          <p id="gDelTxt" class="gwarn"></p>
+          <div class="gyn"><button id="gDelNo" class="btn gno" type="button" aria-label="No, keep"><svg viewBox="0 0 24 24"><path d="M5 5 L19 19 M19 5 L5 19" stroke="#fff" stroke-width="4.5" stroke-linecap="round"/></svg></button><button id="gDelYes" class="btn gyes" type="button" aria-label="Yes, delete"><svg viewBox="0 0 24 24"><path d="M4 12.5 L10 18 L20 6" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
         </div>
         <div id="gGate" class="nscreen gscreen" hidden>
           <p class="gp">Grown-ups only. Solve this to continue:</p>
@@ -927,8 +983,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           <div id="gPad" class="gpad"><button class="btn" type="button" data-k="1">1</button><button class="btn" type="button" data-k="2">2</button><button class="btn" type="button" data-k="3">3</button><button class="btn" type="button" data-k="4">4</button><button class="btn" type="button" data-k="5">5</button><button class="btn" type="button" data-k="6">6</button><button class="btn" type="button" data-k="7">7</button><button class="btn" type="button" data-k="8">8</button><button class="btn" type="button" data-k="9">9</button><button class="btn quiet" type="button" data-k="del" aria-label="Delete">&#9003;</button><button class="btn" type="button" data-k="0">0</button><button class="btn gok" type="button" data-k="ok">OK</button></div>
         </div>
         <div id="gConfirm" class="nscreen gscreen" hidden>
-          <p class="gwarn">This erases ALL stars, letter scores, and the farm and starts over. This cannot be undone.</p>
-          <label class="gchk"><input id="gNames" type="checkbox"> Also remove saved names</label>
+          <p id="gWarn" class="gwarn">This erases ALL stars, letter scores, and the farm and starts over. This cannot be undone.</p>
+          <label class="gchk"><input id="gNames" type="checkbox"><span id="gNamesT"> Also remove saved names</span></label>
           <div class="gbtns"><button id="gCancel" class="btn" type="button">Cancel</button><button id="gErase" class="btn gdanger" type="button">Erase everything</button></div>
         </div>
         <div id="gDone" class="nscreen gscreen" hidden><p class="gall">&#10003; All reset</p></div>
@@ -1033,7 +1089,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     </div>
   </section>
 </main>
-<div id="gate" class="gate"><button id="startBtn" class="btn" type="button"><span class="gl">&#9999;&#65039;</span> Tap to start writing</button></div>
+<div id="gate" class="gate"><button id="startBtn" class="btn" type="button"><span class="gl">&#9999;&#65039;</span> Tap to start writing</button><div id="pPick" class="ppick" hidden><h2>Who's playing?</h2><div id="pFaces" class="pfaces"></div></div></div>
 <select id="voiceSel" hidden></select>
 
 <script>
@@ -1045,9 +1101,146 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   var COL = { red: '#c4402f', sun: '#ffc533', grass: '#79b84a', grassDark: '#6fae42', soil: '#7a4e32', ink: '#2a2118', paper: '#fff8e6', sky: '#bfe3f2', belt: '#4a4540', hay: '#e8b93a', hayDark: '#a7791c' };
   var FONT = '700 34px Fredoka, "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif';
 
+  /* ---------- child profiles: each child has their own saved progress. Shared by everyone: the voice clips, mute, the device voice (ty_voice), the service worker.
+     Saved: ww_profiles { v, cur, list: [{ id, name, face }] } (up to 8), and each child's keys as ww_p_<id>_<key>, with a name tag ww_p_<id>_meta.
+     The first time, everything saved before profiles is copied to ww_backup_premigrate (kept forever) and becomes Watson's. Nothing leaves the device. ---------- */
+  var PKEY = 'ww_profiles', PBACKUP = 'ww_backup_premigrate', PMAX = 8, PNAME = 12;
+  var PDATA = ['ty_stars', 'ty_name', 'ty_write', 'ww_farm', 'ww_farm_bad', 'ww_reward', 'ww_farm_said', 'ww_names', 'ww_stats'];   /* one child's progress */
+  var PREWARD0 = JSON.stringify({ quiz: {}, names: {}, day: '', bonus: {} });   /* a new child: nothing paid yet */
+  var PFACES = [
+    { k: 'pig', bg: '#ffd6e4', h: '#f9b4cc', e: 'point', ec: '#f598ba', s: 'pig' },
+    { k: 'cow', bg: '#e3f1d4', h: '#ffffff', e: 'side', ec: '#ffffff', s: 'cow', x: 'cow' },
+    { k: 'sheep', bg: '#dcecf8', h: '#f1e3cc', e: 'side', ec: '#e3cfae', s: 'nose', x: 'wool' },
+    { k: 'duck', bg: '#fff1bd', h: '#ffd640', e: '', s: 'duck' },
+    { k: 'chicken', bg: '#ffe6d2', h: '#ffffff', e: '', s: 'chick', x: 'comb' },
+    { k: 'bunny', bg: '#efe6fb', h: '#e6dff0', e: 'long', ec: '#e6dff0', s: 'bunny' },
+    { k: 'cat', bg: '#ffe7c4', h: '#ffb066', e: 'point', ec: '#ffb066', s: 'cat' },
+    { k: 'dog', bg: '#efe2d2', h: '#d9a066', e: 'flop', ec: '#8a5530', s: 'dog' },
+    { k: 'bear', bg: '#eadbcb', h: '#a8754b', e: 'round', ec: '#a8754b', s: 'dog' },
+    { k: 'fox', bg: '#ffe0cc', h: '#f07a2c', e: 'point', ec: '#f07a2c', s: 'fox' },
+    { k: 'lion', bg: '#fff0c2', h: '#f5c051', e: 'round', ec: '#f5c051', s: 'dog', x: 'mane' },
+    { k: 'frog', bg: '#dcf3d2', h: '#6cc04a', e: '', s: 'frog', x: 'frog' }
+  ];
+  var PIDX = null, PID = '';
+  function pkey(k) { return 'ww_p_' + PID + '_' + k; }          /* this child's key */
+  function pKey(id, k) { return 'ww_p_' + id + '_' + k; }
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); return localStorage.getItem(k) === v; } catch (e) { return false; } }
+  function lsDel(k) { try { localStorage.removeItem(k); } catch (e) {} }
+  function lsKeys() { var out = [], i; try { for (i = 0; i < localStorage.length; i++) out.push(localStorage.key(i)); } catch (e) {} return out; }
+  function pCleanName(s) { return String(s || '').replace(/[\u0000-\u001f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, PNAME).trim(); }
+  /* the list of children, keeping only what makes sense */
+  function pValid(d) {
+    if (!d || typeof d !== 'object' || !Array.isArray(d.list)) return null;
+    var out = { v: 1, cur: '', list: [] };
+    d.list.forEach(function (p) {
+      if (!p || typeof p !== 'object' || out.list.length >= PMAX || !/^[a-z0-9]{1,16}$/.test(p.id) || out.list.some(function (q) { return q.id === p.id; })) return;
+      var f = Number(p.face);
+      out.list.push({ id: p.id, name: pCleanName(p.name) || 'Child', face: f >= 0 && f < PFACES.length && f === Math.floor(f) ? f : 0 });
+    });
+    if (!out.list.length) return null;
+    out.cur = out.list.some(function (p) { return p.id === d.cur; }) ? d.cur : out.list[0].id;
+    return out;
+  }
+  function pSaveIdx() {
+    lsSet(PKEY, JSON.stringify(PIDX));
+    PIDX.list.forEach(function (p) { lsSet(pKey(p.id, 'meta'), JSON.stringify({ name: p.name, face: p.face })); });   /* each child's own name tag, to rebuild the list if it is ever damaged */
+  }
+  function pBackupData() { var b = null; try { b = JSON.parse(lsGet(PBACKUP) || 'null'); } catch (e) {} return b && b.data && typeof b.data === 'object' ? b.data : {}; }
+  /* Watson's profile from what was saved before profiles (the live keys first, else the backup copy) */
+  function pFrom(data) {
+    var id = 'p1', had = false;
+    PIDX = { v: 1, cur: id, list: [{ id: id, name: 'Watson', face: 0 }] };
+    PDATA.forEach(function (k) {
+      var v = lsGet(k); if (v === null && typeof data[k] === 'string') v = data[k];
+      if (v !== null) had = true;
+      if (v !== null && lsGet(pKey(id, k)) === null) lsSet(pKey(id, k), v);
+    });
+    if (!had) lsSet(pKey(id, 'ww_reward'), PREWARD0);
+    pSaveIdx();
+    /* the old copies go only once they are safely in his profile and in the backup */
+    PDATA.forEach(function (k) { var v = lsGet(k); if (v !== null && lsGet(pKey(id, k)) === v && data[k] === v) lsDel(k); });
+  }
+  function pMigrate() {
+    if (lsGet(PBACKUP) === null) {   /* a copy of everything saved so far, never deleted */
+      var snap = {}; lsKeys().forEach(function (k) { if (k && k !== PBACKUP) snap[k] = lsGet(k); });
+      lsSet(PBACKUP, JSON.stringify({ at: new Date().toISOString(), data: snap }));
+    }
+    pFrom(pBackupData());
+  }
+  /* the list is damaged: set it aside, rebuild it from the name tags; with none at all, start again from the backup */
+  function pRecover(raw) {
+    lsSet(PKEY + '_bad', raw);
+    var list = [];
+    lsKeys().forEach(function (k) {
+      var m = /^ww_p_([a-z0-9]{1,16})_meta$/.exec(k || ''), d = null; if (!m) return;
+      try { d = JSON.parse(lsGet(k)); } catch (e) {}
+      list.push({ id: m[1], name: d && d.name, face: d && d.face });
+    });
+    list.sort(function (a, b) { return a.id < b.id ? -1 : 1; });
+    PIDX = pValid({ list: list });
+    if (PIDX) pSaveIdx(); else pMigrate();
+  }
+  (function pBoot() {
+    var raw = lsGet(PKEY), d = null;
+    if (raw === null) pMigrate();
+    else { try { d = JSON.parse(raw); } catch (e) {} PIDX = pValid(d); if (!PIDX) pRecover(raw); }
+    PID = PIDX.cur;
+  })();
+  /* a round animal face (100 x 100) */
+  function pFaceSVG(i) {
+    var f = PFACES[i] || PFACES[0], H = f.h, E = f.ec, h = '', a, t;
+    h += '<circle cx="50" cy="50" r="48" fill="' + f.bg + '" stroke="none"/>';
+    if (f.x === 'mane') for (a = 0; a < 12; a++) { t = a * Math.PI / 6; h += '<circle cx="' + (50 + Math.cos(t) * 30).toFixed(1) + '" cy="' + (55 + Math.sin(t) * 30).toFixed(1) + '" r="12" fill="#c9782a"/>'; }
+    if (f.e === 'point') h += '<path d="M22 46 L26 14 L46 32 Z" fill="' + E + '"/><path d="M78 46 L74 14 L54 32 Z" fill="' + E + '"/>';
+    if (f.e === 'round') h += '<circle cx="27" cy="31" r="11" fill="' + E + '"/><circle cx="73" cy="31" r="11" fill="' + E + '"/>';
+    if (f.e === 'long') h += '<ellipse cx="38" cy="22" rx="8" ry="20" fill="' + E + '"/><ellipse cx="62" cy="22" rx="8" ry="20" fill="' + E + '"/><ellipse cx="38" cy="24" rx="3.5" ry="13" fill="#f7b6c8" stroke="none"/><ellipse cx="62" cy="24" rx="3.5" ry="13" fill="#f7b6c8" stroke="none"/>';
+    if (f.e === 'side') h += '<ellipse cx="20" cy="46" rx="13" ry="7" fill="' + E + '" transform="rotate(-15 20 46)"/><ellipse cx="80" cy="46" rx="13" ry="7" fill="' + E + '" transform="rotate(15 80 46)"/>';
+    if (f.x === 'cow') h += '<ellipse cx="37" cy="27" rx="5" ry="8" fill="#f3e3b5"/><ellipse cx="63" cy="27" rx="5" ry="8" fill="#f3e3b5"/>';
+    if (f.x === 'comb') h += '<circle cx="42" cy="27" r="7" fill="#e8413a"/><circle cx="51" cy="23" r="8" fill="#e8413a"/><circle cx="60" cy="27" r="7" fill="#e8413a"/>';
+    h += f.x === 'frog' ? '<ellipse cx="50" cy="60" rx="35" ry="26" fill="' + H + '"/>' : '<circle cx="50" cy="56" r="30" fill="' + H + '"/>';
+    if (f.x === 'wool') h += '<circle cx="36" cy="32" r="10" fill="#fff"/><circle cx="64" cy="32" r="10" fill="#fff"/><circle cx="50" cy="28" r="11" fill="#fff"/>';
+    if (f.x === 'cow') h += '<path d="M62 38 Q74 36 76 48 Q68 52 62 46 Z" fill="#2a2118" stroke="none"/>';
+    if (f.e === 'flop') h += '<ellipse cx="23" cy="54" rx="9" ry="19" fill="' + E + '" transform="rotate(18 23 54)"/><ellipse cx="77" cy="54" rx="9" ry="19" fill="' + E + '" transform="rotate(-18 77 54)"/>';
+    if (f.x === 'frog') h += '<circle cx="33" cy="38" r="12" fill="' + H + '"/><circle cx="67" cy="38" r="12" fill="' + H + '"/><circle cx="33" cy="38" r="7" fill="#fff"/><circle cx="67" cy="38" r="7" fill="#fff"/><circle cx="34" cy="39" r="3.5" fill="#2a2118" stroke="none"/><circle cx="66" cy="39" r="3.5" fill="#2a2118" stroke="none"/>';
+    else h += '<circle cx="40" cy="52" r="4.5" fill="#2a2118" stroke="none"/><circle cx="60" cy="52" r="4.5" fill="#2a2118" stroke="none"/><circle cx="41.5" cy="50.5" r="1.5" fill="#fff" stroke="none"/><circle cx="61.5" cy="50.5" r="1.5" fill="#fff" stroke="none"/>';
+    if (f.s !== 'duck' && f.s !== 'chick') h += '<circle cx="31" cy="65" r="5" fill="#ff8fa3" opacity=".45" stroke="none"/><circle cx="69" cy="65" r="5" fill="#ff8fa3" opacity=".45" stroke="none"/>';
+    if (f.s === 'pig') h += '<ellipse cx="50" cy="66" rx="12" ry="9" fill="#f590b4"/><ellipse cx="46" cy="66" rx="2" ry="3" fill="#2a2118" stroke="none"/><ellipse cx="54" cy="66" rx="2" ry="3" fill="#2a2118" stroke="none"/>';
+    if (f.s === 'cow') h += '<ellipse cx="50" cy="70" rx="17" ry="11" fill="#f7b6c8"/><ellipse cx="44" cy="70" rx="2.5" ry="3.5" fill="#2a2118" stroke="none"/><ellipse cx="56" cy="70" rx="2.5" ry="3.5" fill="#2a2118" stroke="none"/>';
+    if (f.s === 'nose') h += '<path d="M46 64 L54 64 L50 68 Z" fill="#2a2118"/><path d="M50 68 V72 M45 73 Q50 76 55 73" fill="none" stroke-width="2"/>';
+    if (f.s === 'duck') h += '<ellipse cx="50" cy="68" rx="15" ry="7" fill="#ff9b2f"/><path d="M37 68 H63" fill="none" stroke-width="2"/>';
+    if (f.s === 'chick') h += '<path d="M43 62 L57 62 L50 73 Z" fill="#ffb12f"/>';
+    if (f.s === 'bunny' || f.s === 'cat') h += '<path d="M47 63 L53 63 L50 66 Z" fill="#f590b4"/><path d="M50 66 Q46 71 42 69 M50 66 Q54 71 58 69" fill="none" stroke-width="2"/>';
+    if (f.s === 'cat') h += '<path d="M24 62 H38 M25 69 L38 66 M76 62 H62 M75 69 L62 66" fill="none" stroke-width="2"/>';
+    if (f.s === 'dog') h += '<ellipse cx="50" cy="68" rx="12" ry="9" fill="#f3dcc0"/><ellipse cx="50" cy="63" rx="5" ry="3.5" fill="#2a2118"/><path d="M50 66 V70 M45 72 Q50 75 55 72" fill="none" stroke-width="2"/>';
+    if (f.s === 'fox') h += '<path d="M24 58 Q40 58 50 72 Q60 58 76 58 Q68 82 50 85 Q32 82 24 58 Z" fill="#fff"/><ellipse cx="50" cy="71" rx="4.5" ry="3.5" fill="#2a2118"/>';
+    if (f.s === 'frog') h += '<path d="M34 68 Q50 80 66 68" fill="none"/>';
+    return '<svg viewBox="0 0 100 100" stroke="#2a2118" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">' + h + '</svg>';
+  }
+  /* --- what a grown-up's report needs, per child, counted from when profiles began (nothing made up before that):
+     Writing Quiz best score and times played per set, names with the highest level, the days (device date) he finished a lesson, quiz or name,
+     first and last practice day, and stars earned. Letter bests stay in ty_write; lifetime stars in ty_stars. --- */
+  function pDay() { var t = new Date(), z = function (n) { return (n < 10 ? '0' : '') + n; }; return t.getFullYear() + '-' + z(t.getMonth() + 1) + '-' + z(t.getDate()); }
+  function stGet() {
+    var d = null, o = { since: pDay(), quiz: {}, names: {}, days: [], first: '', last: '', earned: 0 }, DAY = /^\d{4}-\d\d-\d\d$/;
+    try { d = JSON.parse(lsGet(pkey('ww_stats')) || 'null'); } catch (e) {}
+    if (d && typeof d === 'object' && !Array.isArray(d)) {
+      if (DAY.test(d.since)) o.since = d.since;
+      ['up', 'lo', 'mix', 'num'].forEach(function (q) { var s = d.quiz && d.quiz[q]; if (s && isFinite(s.best) && isFinite(s.n) && s.n >= 1) o.quiz[q] = { best: Math.max(0, Math.floor(s.best)), n: Math.floor(s.n) }; });
+      if (d.names && typeof d.names === 'object') Object.keys(d.names).forEach(function (k) { var l = d.names[k]; if (l === 1 || l === 2 || l === 3) o.names[k] = l; });
+      if (Array.isArray(d.days)) d.days.forEach(function (x) { if (DAY.test(x) && o.days.indexOf(x) < 0) o.days.push(x); });
+      o.days.sort(); var e = Number(d.earned); if (isFinite(e) && e > 0) o.earned = Math.floor(e);
+    }
+    o.first = o.days[0] || ''; o.last = o.days[o.days.length - 1] || '';
+    return o;
+  }
+  function stSave(o) { lsSet(pkey('ww_stats'), JSON.stringify(o)); }
+  /* he finished a lesson, quiz or name today; f(stats) adds what it was */
+  function stDone(f) { var o = stGet(), d = pDay(); if (f) f(o); if (o.days.indexOf(d) < 0) o.days.push(d); o.days.sort(); o.first = o.days[0]; o.last = o.days[o.days.length - 1]; stSave(o); }
+
   var stars = 0, muted = false, name = '';
-  try { stars = parseInt(localStorage.getItem('ty_stars'), 10) || 0; name = localStorage.getItem('ty_name') || ''; } catch (e) {}
-  function save() { try { localStorage.setItem('ty_stars', String(stars)); localStorage.setItem('ty_name', name); } catch (e) {} }
+  try { stars = parseInt(localStorage.getItem(pkey('ty_stars')), 10) || 0; name = localStorage.getItem(pkey('ty_name')) || ''; } catch (e) {}
+  function save() { try { localStorage.setItem(pkey('ty_stars'), String(stars)); localStorage.setItem(pkey('ty_name'), name); } catch (e) {} }
   function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
   function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
   function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
@@ -1066,11 +1259,11 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   };
   /* what has been paid: { quiz: { set: best }, names: { name: [levels] }, day: 'y-m-d', bonus: { set: true } }. Letter bests stay in ty_write. */
   var RKEY = 'ww_reward', RW = null;
-  function rSave() { try { localStorage.setItem(RKEY, JSON.stringify(RW)); } catch (e) {} }
+  function rSave() { try { localStorage.setItem(pkey(RKEY), JSON.stringify(RW)); } catch (e) {} }
   function rLevels(a) { return Array.isArray(a) ? a.filter(function (l, i) { return (l === 1 || l === 2 || l === 3) && a.indexOf(l) === i; }) : []; }
   function rGet() {
     if (RW) return RW;
-    var d = null; try { d = JSON.parse(localStorage.getItem(RKEY) || 'null'); } catch (e) {}
+    var d = null; try { d = JSON.parse(localStorage.getItem(pkey(RKEY)) || 'null'); } catch (e) {}
     RW = { quiz: {}, names: {}, day: '', bonus: {} };
     if (d && typeof d === 'object' && !Array.isArray(d)) {
       STARS.quizSets.forEach(function (q) { var n = d.quiz ? Number(d.quiz[q]) : 0; if (n >= 1 && n <= STARS.quiz) RW.quiz[q] = Math.floor(n); });
@@ -1079,7 +1272,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       Object.keys(STARS.bonus).forEach(function (q) { if (d.bonus && d.bonus[q] === true) RW.bonus[q] = true; });
     } else {
       /* the first time: names he already wrote count as paid at the level saved with them, so nothing is paid twice */
-      var old = null; try { old = JSON.parse(localStorage.getItem('ww_names') || '[]'); } catch (e) {}
+      var old = null; try { old = JSON.parse(localStorage.getItem(pkey('ww_names')) || '[]'); } catch (e) {}
       if (Array.isArray(old)) old.forEach(function (o) { if (o && typeof o.n === 'string' && rLevels([o.l]).length) { var k = o.n.toLowerCase(); RW.names[k] = rLevels((RW.names[k] || []).concat([o.l])); } });
       rSave();
     }
@@ -1096,6 +1289,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     });
     rSave();
     out.total = out.gain + out.daily + out.bonus;
+    if (out.total) { var so = stGet(); so.earned += out.total; stSave(so); }   /* stars earned, for reports */
     if (out.total) { stars += out.total; save(); renderStars(); var el = $('#stars'); el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
     if (out.why.length) setTimeout(function () { toast(out.why.join('  ') + ' \u2605'); }, 900);
     return out;
@@ -1724,10 +1918,10 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   var vSpeaking = false, wLastAct = Date.now();
   var wr = { idleMs: 10000, idleN: 0, tab: 'up', mode: '', letter: 'A', cur: 0, strokes: [], ink: null, ghost: {}, demo: null, locked: false, miss: 0, pts: 0, hintUsed: {}, setOf: 'up', qList: [], qi: 0, qScore: 0, qTry: 0, hintLvl: 0, qBusy: false, qTok: 0, liveAcc: false, idleDone: false, moves: 0, pickKind: '', free: [], lesson: 0, raf: 0, last: 0 };
   var wcv = $('#wcv'), wctx = wcv.getContext('2d'), wsc = 3, wdpr = 1, wPlayEl = $('#wPlay');
-  function wBest() { var o = {}; try { o = JSON.parse(localStorage.getItem('ty_write') || '{}') || {}; } catch (e) {} return o; }
-  function wSaveBest(ch, st) { var o = wBest(); if (!o[ch] || o[ch] < st) { o[ch] = st; try { localStorage.setItem('ty_write', JSON.stringify(o)); } catch (e) {} } }
+  function wBest() { var o = {}; try { o = JSON.parse(localStorage.getItem(pkey('ty_write')) || '{}') || {}; } catch (e) {} return o; }
+  function wSaveBest(ch, st) { var o = wBest(); if (!o[ch] || o[ch] < st) { o[ch] = st; try { localStorage.setItem(pkey('ty_write'), JSON.stringify(o)); } catch (e) {} } }
   function wShow(id) {
-    ['wMenu', 'wPick', 'wPlay', 'nEntry', 'nLevel', 'nDone', 'gHome', 'gGate', 'gConfirm', 'gDone', 'dPlay'].forEach(function (x) { $('#' + x).hidden = x !== id; }); $('#wOver').hidden = true;
+    ['wMenu', 'wPick', 'wPlay', 'nEntry', 'nLevel', 'nDone', 'gHome', 'gGate', 'gConfirm', 'gDone', 'gEdit', 'gDel', 'dPlay'].forEach(function (x) { $('#' + x).hidden = x !== id; }); $('#wOver').hidden = true;
     $('#nCardBox').hidden = !nm.on; $('#nCheck').hidden = $('#nErase').hidden = !nm.on; $('#wPlay').classList.toggle('nlv3', nm.on && nm.level === 3); $('#app').classList.toggle('drawing', id === 'dPlay');
     syncBack();
   }
@@ -1940,7 +2134,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   }
   function wGuidedFinish() {
     var L = WL[wr.letter], max = 10 * L.strokes.length, frac = wr.pts / max, stars = frac >= 0.8 ? 3 : frac >= 0.5 ? 2 : 1;
-    var prev = wBest()[wr.letter] || 0; wSaveBest(wr.letter, stars);
+    var prev = wBest()[wr.letter] || 0; wSaveBest(wr.letter, stars); stDone();
     var pay = rPay(Math.max(0, stars - prev));   /* only what beats his best for this letter */
     sfx.win(); banner(pick(CHEERS)); domConfetti();
     wr.mode = 'result';
@@ -2035,6 +2229,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     clearTimeout(wAutoT); wr.qBusy = false;
     var correct = Math.round(wr.qScore / 10), stars = wr.qScore >= 40 ? 3 : wr.qScore >= 25 ? 2 : 1;
     var R = rGet(), prev = R.quiz[wr.setOf] || 0; if (stars > prev) R.quiz[wr.setOf] = stars;
+    stDone(function (o) { var q = o.quiz[wr.setOf] || { best: 0, n: 0 }; q.n++; q.best = Math.max(q.best, wr.qScore); o.quiz[wr.setOf] = q; });
     var pay = rPay(Math.max(0, stars - prev));   /* only what beats his best for this set */
     wr.mode = 'result'; sfx.win(); banner(pick(CHEERS)); domConfetti();
     $('#wOverTitle').textContent = 'All done!'; $('#wOverStars').textContent = '★★★'.slice(0, stars) + '☆☆☆'.slice(0, 3 - stars);
@@ -2089,6 +2284,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       else if (wr.pickKind === 'quiz') wPickScreen('quiz');
       else wMenu();
     } else if (!$('#wPick').hidden) wMenu();
+    else if (!$('#gEdit').hidden || !$('#gDel').hidden || !$('#gConfirm').hidden) gHome();   /* still inside Grown-ups */
     else { wReset(); closeGame(); }
   }
   function wFillGrid(which) {
@@ -2192,7 +2388,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   /* --- saved names: [{ n: name, l: last level }], newest first; kept in memory too, so it works without storage --- */
   function nLoad() {
     var out = [], d = null;
-    try { d = JSON.parse(localStorage.getItem(NKEY) || 'null'); } catch (e) {}
+    try { d = JSON.parse(localStorage.getItem(pkey(NKEY)) || 'null'); } catch (e) {}
     if (Array.isArray(d)) d.forEach(function (o) {
       if (!o || typeof o !== 'object' || typeof o.n !== 'string' || out.length >= NSAVED) return;
       var w = nFormat(o.n), l = Number(o.l);
@@ -2200,7 +2396,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     });
     return out;
   }
-  function nStore() { try { localStorage.setItem(NKEY, JSON.stringify(nm.list)); } catch (e) {} }
+  function nStore() { try { localStorage.setItem(pkey(NKEY), JSON.stringify(nm.list)); } catch (e) {} }
   function nRemember(w, l) { nm.list = [{ n: w, l: l }].concat(nm.list.filter(function (x) { return x.n !== w; })).slice(0, NSAVED); nStore(); }
   function nLevelOf(w) { for (var i = 0; i < nm.list.length; i++) if (nm.list[i].n === w) return nm.list[i].l; return 0; }
 
@@ -2417,6 +2613,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     wr.mode = 'result'; wShow('nDone'); $('#prompt').textContent = 'You wrote ' + w + '!';
     /* paid once per name and level, for the first few names on this device */
     var R = rGet(), key = w.toLowerCase(), had = R.names[key], gain = 0;
+    stDone(function (o) { o.names[key] = Math.max(o.names[key] || 0, nm.level); });
     if ((had || Object.keys(R.names).length < STARS.nameNames) && !(had && had.indexOf(nm.level) >= 0)) {
       gain = nm.got * STARS.namePerLetter + STARS.nameDone; R.names[key] = rLevels((had || []).concat([nm.level]));
     }
@@ -2457,9 +2654,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   });
 
   /* ---------- Grown-ups: reset all progress, behind a math problem (reachable only from the main menu) ---------- */
-  var GKEYS = ['ty_stars', 'ty_name', 'ty_voice', 'ty_write', 'ww_farm', 'ww_farm_bad', 'ww_reward', 'ww_farm_said'];   /* everything the app saves; saved names (ww_names) only when ticked */
   var gAnswer = -1, gLast = '', gTyped = '';
-  function gHome() { wReset(); wShow('gHome'); $('#prompt').textContent = 'Grown-ups'; }
+  function gHome() { wReset(); wShow('gHome'); $('#prompt').textContent = 'Grown-ups'; gKids(); }
   function gRand(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
   /* a new problem every time: two-digit plus one-digit (answer 20 to 60), or 6-9 times 6-9 */
   function gProblem() {
@@ -2475,23 +2671,125 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function gKey(k) {
     if (k === 'del') gTyped = gTyped.slice(0, -1);
     else if (k === 'ok') {
-      if (gTyped && +gTyped === gAnswer) { gConfirm(); return; }
+      if (gTyped && +gTyped === gAnswer) { gHome(); return; }
       gShake(); if (gTyped) { $('#gMsg').textContent = 'Not quite. Try this one.'; gProblem(); }   /* wrong: a new problem, never the answer */
       return;
     } else if (gTyped.length < 3) gTyped += k;
     $('#gAns').textContent = gTyped;
   }
-  function gConfirm() { wShow('gConfirm'); $('#prompt').textContent = 'Reset all progress?'; $('#gNames').checked = false; try { $('#gCancel').focus(); } catch (e) {} }
+  function gConfirm() {
+    var n = pCur().name; wShow('gConfirm'); $('#prompt').textContent = 'Reset ' + n + "'s progress?"; $('#gNames').checked = false;
+    $('#gWarn').textContent = 'This erases ALL of ' + n + "'s stars, letter scores and farm, and starts over. Other children are not changed. This cannot be undone.";
+    $('#gNamesT').textContent = ' Also remove ' + n + "'s saved names"; try { $('#gCancel').focus(); } catch (e) {}
+  }
+  /* only the child who is playing; the device voice and the other children stay */
   function gErase() {
-    GKEYS.concat($('#gNames').checked ? [NKEY] : []).forEach(function (k) { try { localStorage.removeItem(k); } catch (e) {} });
+    var names = $('#gNames').checked;
+    PDATA.forEach(function (k) { if (names || k !== NKEY) lsDel(pkey(k)); });
+    if (names) lsSet(pkey(RKEY), PREWARD0);   /* nothing paid yet (with names kept, they count as paid, as before) */
     wShow('gDone'); $('#prompt').textContent = 'All reset'; sfx.pop();
     setTimeout(function () { try { location.reload(); } catch (e) {} }, 1200);   /* start again exactly like a first visit */
   }
-  $('#gBtn').addEventListener('click', function () { if (current === write && !$('#wMenu').hidden) { audio(); sfx.pop(); gHome(); } });
-  $('#gReset').addEventListener('click', function () { if (current === write) { audio(); sfx.pop(); gGate(); } });
+  $('#gBtn').addEventListener('click', function () { if (current === write && !$('#wMenu').hidden) { audio(); sfx.pop(); wReset(); gGate(); } });
+  $('#gReset').addEventListener('click', function () { if (current === write) { audio(); sfx.pop(); gConfirm(); } });
   $('#gPad').addEventListener('click', function (e) { var b = e.target.closest ? e.target.closest('button[data-k]') : null; if (b && current === write) { audio(); sfx.pop(); gKey(b.getAttribute('data-k')); } });
   $('#gCancel').addEventListener('click', function () { if (current === write) { audio(); sfx.pop(); gHome(); } });
   $('#gErase').addEventListener('click', function () { if (current === write && !$('#gConfirm').hidden) { audio(); gErase(); } });
+
+  /* ---------- profiles on screen: "Who's playing?", the face in the menu corner, and the grown-ups' list of children ---------- */
+  function pGet(id) { return PIDX.list.filter(function (p) { return p.id === id; })[0]; }
+  function pCur() { return pGet(PID) || PIDX.list[0]; }
+  function pEsc(s) { return String(s).replace(/[&<>"']/g, function (c) { return '&#' + c.charCodeAt(0) + ';'; }); }
+  function pFaceEl(i) { return '<span class="pface">' + pFaceSVG(i) + '</span>'; }
+  function pMeDraw() { var p = pCur(); $('#pMe').innerHTML = pFaceEl(p.face); $('#pMe').setAttribute('aria-label', p.name + " is playing. Tap to change who's playing"); }
+  /* another child: read their saved progress into everything that keeps it in memory */
+  function pReload() {
+    stars = parseInt(lsGet(pkey('ty_stars')), 10) || 0; name = lsGet(pkey('ty_name')) || '';
+    RW = null; nm.list = nLoad(); FST = fLoad(); FSD = null; fEarnSaid = false; FA = {}; FI = {}; FLAST = {}; fSel = '';
+    renderStars(); pMeDraw();
+  }
+  function pUse(id) {
+    if (!pGet(id)) return;
+    PIDX.cur = id; pSaveIdx();
+    if (id !== PID) { PID = id; pReload(); }
+  }
+  function pPickShow(fromMenu) {
+    var h = '';
+    PIDX.list.forEach(function (p) { h += '<button class="pkid" type="button" data-id="' + p.id + '" aria-label="' + pEsc(p.name) + '">' + pFaceEl(p.face) + '<span class="pkn">' + pEsc(p.name) + '</span></button>'; });
+    $('#pFaces').innerHTML = h; $('#startBtn').hidden = true; $('#pPick').hidden = false; $('#gate').hidden = false;
+    if (fromMenu) write.stop();
+  }
+  $('#pFaces').addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.pkid') : null; if (!b) return;
+    audio(); pUse(b.getAttribute('data-id')); $('#gate').hidden = true; write.start();
+  });
+  $('#pMe').addEventListener('click', function () { if (current !== write || $('#wMenu').hidden) return; audio(); sfx.pop(); pPickShow(true); });
+
+  /* --- grown-ups: add, edit (name and face), delete (asked twice), and reset the child who is playing --- */
+  var gEditId = '', gEditFace = 0, gDelId = '', gDelStep = 0;
+  function gKids() {
+    var h = '', one = PIDX.list.length < 2;
+    PIDX.list.forEach(function (p) {
+      h += '<div class="gkid">' + pFaceEl(p.face) + '<b>' + pEsc(p.name) + (p.id === PID ? '<small>Playing now</small>' : '') + '</b>' +
+        '<button class="btn quiet" type="button" data-act="edit" data-id="' + p.id + '">Edit</button>' +
+        (one ? '' : '<button class="btn quiet gdanger" type="button" data-act="del" data-id="' + p.id + '">Delete</button>') + '</div>';
+    });
+    $('#gKids').innerHTML = h + (one ? '<p class="gnote">The only child here can\'t be deleted.</p>' : '');
+    $('#gAdd').hidden = PIDX.list.length >= PMAX; $('#gFull').hidden = PIDX.list.length < PMAX;
+    $('#gResetN').textContent = pCur().name;
+  }
+  function pFreeFace() { for (var i = 0; i < PFACES.length; i++) if (!PIDX.list.some(function (p) { return p.face === i; })) return i; return 0; }
+  function gFacesDraw() { var h = ''; PFACES.forEach(function (f, i) { h += '<button class="gface' + (i === gEditFace ? ' on' : '') + '" type="button" data-f="' + i + '" aria-label="' + f.k + '">' + pFaceEl(i) + '</button>'; }); $('#gFaces').innerHTML = h; }
+  function gEdit(id) {
+    var p = id ? pGet(id) : null; gEditId = p ? p.id : ''; gEditFace = p ? p.face : pFreeFace();
+    wShow('gEdit'); $('#prompt').textContent = p ? 'Edit ' + p.name : 'Add a child';
+    $('#gEName').value = p ? p.name : ''; $('#gEMsg').textContent = ''; gFacesDraw();
+  }
+  function pNewId() { var id; do { id = 'p' + Date.now().toString(36) + Math.floor(Math.random() * 36).toString(36); } while (pGet(id)); return id; }
+  function gEditSave() {
+    var n = pCleanName($('#gEName').value), p;
+    if (!n) { $('#gEMsg').textContent = 'Type a name first.'; return; }
+    if (PIDX.list.some(function (q) { return q.id !== gEditId && q.name.toLowerCase() === n.toLowerCase(); })) { $('#gEMsg').textContent = 'There is already a child called ' + n + '.'; return; }
+    if (gEditId) { p = pGet(gEditId); p.name = n; p.face = gEditFace; }
+    else {
+      if (PIDX.list.length >= PMAX) return;
+      p = { id: pNewId(), name: n, face: gEditFace }; PIDX.list.push(p);
+      lsSet(pKey(p.id, 'ww_reward'), PREWARD0);   /* a fresh start: nothing paid yet */
+    }
+    pSaveIdx(); pMeDraw(); sfx.good(); toast(gEditId ? 'Saved' : 'Added ' + n); gHome();
+  }
+  function gDel(id, step) {
+    var p = pGet(id); if (!p || PIDX.list.length < 2) { gHome(); return; }
+    gDelId = id; gDelStep = step; wShow('gDel'); $('#prompt').textContent = 'Delete ' + p.name + '?';
+    $('#gDelFace').innerHTML = pFaceSVG(p.face);
+    $('#gDelTxt').textContent = step === 1 ? 'Delete ' + p.name + '? All of ' + p.name + "'s stars, letters, farm and names will be lost."
+      : 'Are you sure? ' + p.name + "'s progress will be lost for good. This cannot be undone.";
+  }
+  function pDelete(id) {
+    if (!pGet(id) || PIDX.list.length < 2) return;
+    var pre = 'ww_p_' + id + '_';
+    lsKeys().filter(function (k) { return k && k.indexOf(pre) === 0; }).forEach(lsDel);
+    PIDX.list = PIDX.list.filter(function (p) { return p.id !== id; });
+    if (PIDX.cur === id) PIDX.cur = PIDX.list[0].id;
+    pSaveIdx();
+    if (PID !== PIDX.cur) { PID = PIDX.cur; pReload(); }
+    pMeDraw();
+  }
+  $('#gKids').addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('button[data-act]') : null; if (!b || current !== write) return;
+    audio(); sfx.pop(); if (b.getAttribute('data-act') === 'edit') gEdit(b.getAttribute('data-id')); else gDel(b.getAttribute('data-id'), 1);
+  });
+  $('#gAdd').addEventListener('click', function () { if (current !== write) return; audio(); sfx.pop(); gEdit(''); });
+  $('#gFaces').addEventListener('click', function (e) { var b = e.target.closest ? e.target.closest('.gface') : null; if (!b) return; audio(); sfx.pop(); gEditFace = +b.getAttribute('data-f'); gFacesDraw(); });
+  $('#gESave').addEventListener('click', function () { if (current === write) { audio(); gEditSave(); } });
+  $('#gEName').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); gEditSave(); } });
+  $('#gECancel').addEventListener('click', function () { if (current === write) { audio(); sfx.pop(); gHome(); } });
+  $('#gDelNo').addEventListener('click', function () { if (current === write) { audio(); sfx.pop(); gHome(); } });
+  $('#gDelYes').addEventListener('click', function () {
+    if (current !== write) return; audio();
+    if (gDelStep === 1) { sfx.pop(); gDel(gDelId, 2); return; }
+    var n = (pGet(gDelId) || {}).name; pDelete(gDelId); sfx.pop(); toast('Deleted ' + n); gHome();
+  });
 
   /* ---------- My Farm: stars earned from writing build a farm ---------- */
   /* Every farm number lives here so it is easy to tune. */
@@ -2572,10 +2870,10 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   /* read the saved farm, keeping only the pieces that make sense; a broken save is set aside, never trusted */
   function fLoad() {
     var st = fBlank(), raw = null, d = null;
-    try { raw = localStorage.getItem(FKEY); } catch (e) {}
+    try { raw = localStorage.getItem(pkey(FKEY)); } catch (e) {}
     if (!raw) return st;
     try { d = JSON.parse(raw); } catch (e) {}
-    if (!d || typeof d !== 'object' || Array.isArray(d)) { try { localStorage.setItem(FKEY + '_bad', raw); } catch (e) {} return st; }
+    if (!d || typeof d !== 'object' || Array.isArray(d)) { try { localStorage.setItem(pkey(FKEY + '_bad'), raw); } catch (e) {} return st; }
     var n = Number(d.spent); if (isFinite(n) && n > 0) st.spent = Math.floor(n);
     if (Array.isArray(d.animals)) d.animals.forEach(function (a) { if (FARM.animals.hasOwnProperty(a) && st.animals.indexOf(a) < 0) st.animals.push(a); });
     var own = function (a, k) { var L = st.looks[a]; if (fSlotOf(a, k) && L.own.indexOf(k) < 0) L.own.push(k); };
@@ -2622,7 +2920,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     });
     return st;
   }
-  function fSave() { try { localStorage.setItem(FKEY, JSON.stringify({ v: 4, spent: FST.spent, animals: FST.animals.concat(FST.away.filter(fIsAnimal)), looks: FST.looks, items: FST.items.concat(FST.away.filter(function (k) { return !fIsAnimal(k); })), away: FST.away, pos: FST.pos, areas: FST.areas, shed: FST.shed, house: FST.house, garden: FST.garden })); } catch (e) {} }
+  function fSave() { try { localStorage.setItem(pkey(FKEY), JSON.stringify({ v: 4, spent: FST.spent, animals: FST.animals.concat(FST.away.filter(fIsAnimal)), looks: FST.looks, items: FST.items.concat(FST.away.filter(function (k) { return !fIsAnimal(k); })), away: FST.away, pos: FST.pos, areas: FST.areas, shed: FST.shed, house: FST.house, garden: FST.garden })); } catch (e) {} }
   /* what an animal is wearing: { slot: option } */
   function fLook(id) { return FST && FST.looks[id] ? FST.looks[id].wear : {}; }
   function fSpendable() { return Math.max(0, stars - (FST ? FST.spent : 0)); }
@@ -3427,12 +3725,12 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   /* what has been announced: the gift slots, the growth stage, the next-gift milestone */
   function fSaid() {
     if (FSD) return FSD;
-    var d = null; try { d = JSON.parse(localStorage.getItem(FSKEY) || 'null'); } catch (e) {}
+    var d = null; try { d = JSON.parse(localStorage.getItem(pkey(FSKEY)) || 'null'); } catch (e) {}
     if (d && typeof d === 'object' && isFinite(d.gift) && isFinite(d.grow) && isFinite(d.almost)) FSD = { gift: +d.gift, grow: +d.grow, almost: +d.almost };
     else FSD = { gift: fOwnedN(), grow: fStageI(), almost: 0 };   /* the first time: only what happens from now on */
     return FSD;
   }
-  function fSaidSave() { try { localStorage.setItem(FSKEY, JSON.stringify(FSD)); } catch (e) {} }
+  function fSaidSave() { try { localStorage.setItem(pkey(FSKEY), JSON.stringify(FSD)); } catch (e) {} }
   function fStageI() { return FARM.growthStages.indexOf(fStage()); }
   /* opening the farm: hello, then whatever is new since last time, all in one go */
   function fHello() {
@@ -4399,6 +4697,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   $('#startBtn').addEventListener('click', function () {
     audio(); $('#gate').hidden = true; write.start();
   });
+  pMeDraw(); if (PIDX.list.length >= 2) pPickShow(false);
   if ('serviceWorker' in navigator) window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js').catch(function () {}); });
 })();
 </script>

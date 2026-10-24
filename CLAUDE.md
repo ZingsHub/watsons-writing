@@ -7,6 +7,7 @@ Letter and number writing PWA for a 4-year-old (Print Rhythm Leader method). Dep
 - `public/audio/`: her recorded voice clips (`001.mp3` ...) plus `manifest.json`, which maps each exact script line to its clip.
 - `public/sw.js`: service worker for offline use; it also caches every clip in the audio manifest. Bump `VERSION` (ww-v11 -> ww-v12 ...) in the same commit whenever index.html or audio changes, or devices keep the old copy.
 - `public/manifest.webmanifest`, `public/icons/`: install (PWA) files.
+- `public/fonts/`: Fredoka and Nunito (woff2, SIL OFL in LICENSE.txt), served by the app itself so nothing is fetched from elsewhere.
 - `server.js`: dependency-free static server for Railway (`npm start`).
 - `voice-needed.txt`: spoken lines that still need a recording from Zach.
 
@@ -18,7 +19,8 @@ Sections are marked with `/* ---------- name ---------- */` comments; grep for t
 - Grading: `evalStroke` scores each stroke on pointer release; the "whole-letter shape check" judges the finished letter in Writing Quiz and Write my name levels 2-3.
 - Writing game sections: state, pointer input, guided practice, quiz, hints, menus, idle reminders.
 - Write my name: a grown-up types a word; levels 1 trace, 2 dots only, 3 just the lines. Names are saved in localStorage (`ww_names`). Each letter waits for the big green check (`#nCheck`): nothing is judged until he taps it; a miss keeps his ink with a gentle line (no penalty); the eraser (`#nErase`) starts the letter over; idle with ink makes the check glow. Level 1 still traces stroke by stroke.
-- Back button and Grown-ups (reset all progress behind a math problem).
+- Back button and Grown-ups: a math problem first, then the list of children (add, edit name and face, delete asked twice) and Reset progress for the child playing.
+- Child profiles ("child profiles" section, first in the script): every progress key is saved per child as `ww_p_<id>_<key>` via `pkey(k)`; the list is `ww_profiles` (max 8, 12 faces in `PFACES`), each child also has a name tag `ww_p_<id>_meta` used to rebuild a damaged list. The first run copies everything to `ww_backup_premigrate` (never deleted) and makes it Watson's. Shared: voice clips, mute, `ty_voice`. With 2+ children the start screen is "Who's playing?"; the face in the menu corner (`#pMe`) goes back to it. Switching reloads that child's data in memory (`pReload`). Report tracking per child in `ww_stats` (`stDone`): quiz best and plays per set, names and highest level, practice days, stars earned.
 - My Farm: stars earned from writing build a farm. Settings live in the `FARM` object; inline SVG pictures, Web Audio animal sounds, and dragging (animals any time, items only in build mode).
 
 ## How the app works
