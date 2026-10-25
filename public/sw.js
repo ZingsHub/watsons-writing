@@ -1,6 +1,6 @@
 /* Watson's Writing service worker: works offline after the first visit.
    Bump VERSION whenever index.html changes so devices pick up the new copy. */
-const VERSION = 'ww-v23';
+const VERSION = 'ww-v24';
 const SHELL = ['/', '/manifest.webmanifest', '/fonts/fredoka-latin.woff2', '/fonts/fredoka-latin-ext.woff2', '/fonts/nunito-latin.woff2', '/fonts/nunito-latin-ext.woff2', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png', '/audio/manifest.json'];
 
 self.addEventListener('install', (e) => {

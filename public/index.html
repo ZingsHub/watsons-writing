@@ -736,9 +736,16 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 .gadd { min-height: 56px; font-size: 20px; padding: 4px 20px; background: #d6f0c2; }
 .grow2 { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 .grow2 .btn { min-height: 56px; }
+.gsug { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; color: inherit; background: #e3ecff; }
 @media (orientation: landscape) and (max-height: 560px) {   /* a sideways phone: Grown-ups fits without scrolling */
   #gHome > .gp { display: none; }
   #gHome .grow2 { gap: 8px; } #gHome .grow2 .btn { font-size: 16px; padding: 4px 12px; }
+  #gHome .gkid { padding: 3px 10px; } #gHome .gkid .pface { width: 48px; height: 48px; } #gHome .gkid .btn { min-height: 48px; }
+  #gHome .gfoot .btn { min-height: 52px; font-size: 17px; }
+}
+@media (max-width: 520px) {   /* a phone held upright: buttons two by two */
+  #gHome .grow2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
+  #gHome .grow2 .btn { font-size: 17px; padding: 4px 10px; min-height: 60px; }
 }
 .gfile { position: relative; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
 .gfile input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
@@ -1053,7 +1060,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           <div id="gKids" class="gkids"></div>
           <div class="grow2"><button id="gRepBtn" class="btn gadd" type="button">Progress report</button><button id="gShareBtn" class="btn gadd" type="button">Share progress file</button><button id="gClassBtn" class="btn gadd" type="button">Class view (for teachers)</button><button id="gAdd" class="btn gadd" type="button">+ Add a child</button></div>
           <p id="gFull" class="gnote" hidden>8 children is the most on one device.</p>
-          <button id="gReset" class="btn greset" type="button">Reset progress for <span id="gResetN"></span></button>
+          <div class="grow2 gfoot"><button id="gReset" class="btn greset" type="button">Reset progress for <span id="gResetN"></span></button><a id="gSuggest" class="btn gadd gsug" href="https://forms.gle/wcdwUucaTzTa3EdS9" target="_blank" rel="noopener noreferrer">Send a suggestion or report a problem</a></div>
         </div>
         <div id="gRepList" class="nscreen gscreen" hidden>
           <p class="gp">Pick a child to see their progress report.</p>
@@ -3073,6 +3080,10 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     shMsg('The file opened in a new tab, with how to save it.');
   }
   function gShare() { wShow('gShare'); $('#prompt').textContent = 'Share progress file'; shMsg(''); gKidButtons($('#gShareKids'), PIDX.list); $('#gShareAll').hidden = PIDX.list.length < 2; }
+  /* the suggestion form is only a link to a Google Form; the app itself sends nothing */
+  $('#gSuggest').addEventListener('click', function (e) {
+    if (navigator.onLine === false) { e.preventDefault(); toast('You need internet to send a suggestion'); }
+  });
   $('#gShareBtn').addEventListener('click', function () { if (current === write) { audio(); sfx.pop(); gShare(); } });
   $('#gShareKids').addEventListener('click', function (e) { var b = e.target.closest ? e.target.closest('.pkid') : null; if (b && current === write) { audio(); shExport([b.getAttribute('data-id')]); } });
   $('#gShareAll').addEventListener('click', function () { if (current === write) { audio(); shExport(PIDX.list.map(function (p) { return p.id; })); } });
