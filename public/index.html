@@ -1748,13 +1748,16 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     grid: 48,                  /* the ink and each letter are drawn into a grid this many cells across */
     pad: 3,                    /* empty cells around each drawing */
     near: 2,                   /* a cell this close (in cells) to the other drawing fully matches; credit fades to 0 at twice this */
+    nearU: 6,                  /* ...or this close in letter units of his own ink, so a small letter gets the same room for a wobbly finger as a big one */
+    nearMax: 4,                /* (never more than this many cells) */
+    tap: 4,                    /* a stroke that never goes this far (letter units) from where it began is a tap: a dot */
     stretch: [0.75, 1, 1.33],  /* also try his ink a little narrower and wider: children's proportions vary */
     minLen: 14,                /* less ink than this (letter units) is a speck, never a letter */
     dot: 0.15,                 /* a stroke shorter than this share of the letter's size is a dot... */
     dotGap: 0.08,              /* ...if it stands at least this share of the size away from the rest */
     dotShare: 0.25,            /* a dot weighs as much as this share of the lines (so the dot on i and j matters) */
-    pass: 0.9,                 /* the target letter must score at least this overall (0 to 1) */
-    cover: 0.93,               /* his ink must cover at least this share of the letter (half a letter fails) */
+    pass: 0.86,                /* the target letter must score at least this overall (0 to 1); tuned for a finger on tablets that report few touch points */
+    cover: 0.88,               /* his ink must cover at least this share of the letter (half a letter fails) */
     onLetter: 0.88,            /* and at least this share of his ink must lie on the letter (extra junk fails) */
     margin: 0,                 /* and score at least as well as every other letter (twins aside), so look-alikes do not pass */
     waitMs: 1200,              /* after he lifts his finger, wait this long for another stroke before judging */
@@ -1787,7 +1790,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     var cells = [], w = [], nl = 0, nd = 0;
     for (i = 0; i < G * G; i++) if (g[i]) { cells.push(i); if (g[i] === 2) nd++; else nl++; }
     for (i = 0; i < cells.length; i++) w.push(g[cells[i]] === 2 ? SHAPE.dotShare * Math.max(nl, 1) / nd : 1);
-    return { cells: cells, w: w, d: shDist(g) };
+    return { cells: cells, w: w, d: shDist(g), span: span };
   }
   /* distance (in cells) from every cell to the nearest inked cell */
   function shDist(g) {
@@ -1807,12 +1810,12 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     }
     return d;
   }
-  function shNear(dist) { var n = SHAPE.near; return dist <= n ? 1 : dist >= 2 * n ? 0 : (2 * n - dist) / n; }
+  function shNear(dist, n) { return dist <= n ? 1 : dist >= 2 * n ? 0 : (2 * n - dist) / n; }
   /* how alike two pictures are. c: how much of the letter his ink covers; p: how much of his ink lies on the letter; f: both together */
-  function shScore(a, b) {
-    var cov = 0, cw = 0, pre = 0, pw = 0, i;
-    for (i = 0; i < b.cells.length; i++) { cw += b.w[i]; cov += b.w[i] * shNear(a.d[b.cells[i]]); }
-    for (i = 0; i < a.cells.length; i++) { pw += a.w[i]; pre += a.w[i] * shNear(b.d[a.cells[i]]); }
+  function shScore(a, b, n) {
+    var cov = 0, cw = 0, pre = 0, pw = 0, i; n = n || SHAPE.near;
+    for (i = 0; i < b.cells.length; i++) { cw += b.w[i]; cov += b.w[i] * shNear(a.d[b.cells[i]], n); }
+    for (i = 0; i < a.cells.length; i++) { pw += a.w[i]; pre += a.w[i] * shNear(b.d[a.cells[i]], n); }
     cov /= cw || 1; pre /= pw || 1;
     return { f: cov + pre ? 2 * cov * pre / (cov + pre) : 0, c: cov, p: pre };
   }
@@ -1834,6 +1837,14 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     }
     return SH_T;
   }
+  /* one finger stroke as the shape check keeps it. The point where the finger lifted is added (tablets that report few
+     touch points would otherwise lose the end of every line), and only a stroke that stays in one small spot is a dot */
+  function shInk(pts, up) {
+    var s = pts.slice(), l = s[s.length - 1], far = 0, i;
+    if (up && Math.abs(up[0] - l[0]) + Math.abs(up[1] - l[1]) > 0.5) s.push(up);
+    for (i = 1; i < s.length; i++) far = Math.max(far, Math.sqrt((s[i][0] - s[0][0]) * (s[i][0] - s[0][0]) + (s[i][1] - s[0][1]) * (s[i][1] - s[0][1])));
+    return far < SHAPE.tap ? [s[0]] : s;
+  }
   /* which strokes are dots: a tap or a tiny mark that stands apart from the rest (a short piece of a line touches it) */
   function shDots(strokes) {
     var x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
@@ -1850,8 +1861,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (!strokes.length || total < SHAPE.minLen) return null;
     var dots = shDots(strokes);
     SHAPE.stretch.forEach(function (sx) {
-      var a = shDraw(strokes, sx, dots);
-      for (var c in T) { var sc = shScore(a, T[c]); if (!best[c] || sc.f > best[c].f) best[c] = sc; }
+      var a = shDraw(strokes, sx, dots), n = clamp(SHAPE.nearU * (SHAPE.grid - 1 - 2 * SHAPE.pad) / a.span, SHAPE.near, SHAPE.nearMax);
+      for (var c in T) { var sc = shScore(a, T[c], n); if (!best[c] || sc.f > best[c].f) best[c] = sc; }
     });
     best._dot = dots.indexOf(true) >= 0;
     return best;
@@ -2185,16 +2196,18 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   });
   wcv.addEventListener('pointermove', function (e) {
     if (!wr.ink) return;
-    wr.ink.push(wPos(e)); wLastAct = Date.now();
+    var ev = wr.mode !== 'guided' && e.getCoalescedEvents ? e.getCoalescedEvents() : null;   /* points the browser bundled together (whole-letter modes) */
+    if (ev && ev.length) ev.forEach(function (c) { wr.ink.push(wPos(c)); }); else wr.ink.push(wPos(e));
+    wLastAct = Date.now();
   });
   /* grading happens only when the finger / mouse button is released */
-  function wUp() {
+  function wUp(e) {
     if (!wr.ink) return;
     var ink = wr.ink; wr.ink = null;
     if (wr.mode === 'guided') {
       if (wr.locked) return;
       wGuidedStroke(ink, false);
-    } else if (wr.mode === 'quiz' || wr.mode === 'quizhint' || wr.mode === 'nshape') { wr.free.push(ink.length < 3 ? [ink[0]] : ink); wQuizCheckAuto(); }
+    } else if (wr.mode === 'quiz' || wr.mode === 'quizhint' || wr.mode === 'nshape') { wr.free.push(shInk(ink, e && e.type === 'pointerup' ? wPos(e) : null)); wQuizCheckAuto(); }
   }
   wcv.addEventListener('pointerup', wUp); wcv.addEventListener('pointercancel', wUp);
 
@@ -2620,7 +2633,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   /* levels 2 and 3: he writes the whole letter his own way, and its shape is checked when he pauses or presses Done */
   function nShapeStart(ch) {
     clearTimeout(wAutoT);
-    wr.mode = 'nshape'; wr.letter = ch; wr.cur = 0; wr.strokes = []; wr.free = []; wr.ink = null; wr.ghost = {}; wr.demo = null; wr.locked = false; wr.qTry = 0; wr.hintLvl = 0; wr.qBusy = false;
+    wr.mode = 'nshape'; wr.letter = ch; wr.cur = 0; wr.strokes = []; wr.free = []; wr.ink = null; wr.ghost = {}; wr.demo = null; wr.locked = false; wr.qTry = 0; wr.hintLvl = 0; wr.qBusy = false; wr.nMiss = 0;
     wShow('wPlay'); $('#wHint').hidden = false; $('#wClear').hidden = true; $('#wDone').hidden = true;
     $('#prompt').textContent = wTitle(ch); wCaption(''); $('#wPts').textContent = ''; wFit();
     vsay(lessonIntro(ch).concat([Pc('Your turn!')]));
@@ -2629,7 +2642,9 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     clearTimeout(wAutoT);
     if (wr.mode !== 'nshape' || wr.locked || wr.ink || !wr.free.length) return;
     var tok = nm.tok;
-    if (shMatch(wr.free, wr.letter).ok) { nm.busy = true; wr.locked = true; vstop(); sfx.good(); setTimeout(function () { if (tok === nm.tok) nLetterDone(); }, 350); return; }
+    var f = wr.free, ok = shMatch(f, wr.letter).ok || (wr.nMiss > 0 && f.length > wr.nMiss && shMatch(f.slice(wr.nMiss), wr.letter).ok);   /* all his ink, or the strokes since the last miss (a new try written on top) */
+    if (ok) { nm.busy = true; wr.locked = true; vstop(); sfx.good(); setTimeout(function () { if (tok === nm.tok) nLetterDone(); }, 350); return; }
+    wr.nMiss = f.length;
     var t = pick(W_TRY); toast(t); vsay([Pc(t)]);   /* not yet: his writing stays, to add to or erase; no penalty, try the check as often as he likes */
   }
   /* --- the check and the eraser (Write my name, every level) --- */
@@ -2647,7 +2662,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (current !== write || !nm.on || nm.busy || wr.demo || wr.qBusy) return;
     audio(); sfx.pop(); clearTimeout(wAutoT); vstop(); wr.lesson++; wr.ink = null;
     if (wr.mode === 'guided') { wr.cur = 0; wr.strokes = []; wr.miss = 0; wr.pts = 0; wr.locked = false; wCaption(wSteps(wr.letter, 0)); wPts(); vsay([stepItems(wr.letter, 0)]); }
-    else if (wr.mode === 'nshape') { wr.free = []; wr.ghost = {}; wr.locked = false; }
+    else if (wr.mode === 'nshape') { wr.free = []; wr.ghost = {}; wr.locked = false; wr.nMiss = 0; }
   });
   /* letter widths come from the template, so "m" gets more room than "l" */
   var NB = {};
