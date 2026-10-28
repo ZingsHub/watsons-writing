@@ -759,6 +759,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 .gcopen b { flex: 1; min-width: 0; font-size: 20px; overflow-wrap: anywhere; }
 .gcopen b small { display: block; font-size: 14px; font-weight: 600; color: #4f6b3a; }
 .gnote { margin: 0; font-size: 15px; color: #4f6b3a; }
+.gver { margin: auto 0 0; padding-top: 4px; font-size: 14px; font-weight: 600; color: #fff; }   /* same as VERSION in sw.js: bump both together */
 .gname { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; }
 .gname input { width: 13ch; min-width: 0; font: inherit; font-size: 24px; padding: 8px 12px; border: 3px solid var(--ink); border-radius: 12px; background: #fff; }
 .gfaces { display: grid; grid-template-columns: repeat(6, 64px); gap: 12px; justify-content: center; padding: 6px; }
@@ -1061,6 +1062,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           <div class="grow2"><button id="gRepBtn" class="btn gadd" type="button">Progress report</button><button id="gShareBtn" class="btn gadd" type="button">Share progress file</button><button id="gClassBtn" class="btn gadd" type="button">Class view (for teachers)</button><button id="gAdd" class="btn gadd" type="button">+ Add a child</button></div>
           <p id="gFull" class="gnote" hidden>8 children is the most on one device.</p>
           <div class="grow2 gfoot"><button id="gReset" class="btn greset" type="button">Reset progress for <span id="gResetN"></span></button><a id="gSuggest" class="btn gadd gsug" href="https://forms.gle/wcdwUucaTzTa3EdS9" target="_blank" rel="noopener noreferrer">Send a suggestion or report a problem</a></div>
+          <p id="gVer" class="gver">App version ww-v26</p>
         </div>
         <div id="gRepList" class="nscreen gscreen" hidden>
           <p class="gp">Pick a child to see their progress report.</p>

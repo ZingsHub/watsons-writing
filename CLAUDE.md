@@ -5,7 +5,7 @@ Letter and number writing PWA for a 4-year-old (Print Rhythm Leader method). Dep
 ## Layout
 - `public/index.html`: the entire app (HTML, CSS, JS in one file, about 2,700 lines). Read and edit small sections; don't print the whole file.
 - `public/audio/`: her recorded voice clips (`001.mp3` ...) plus `manifest.json`, which maps each exact script line to its clip.
-- `public/sw.js`: service worker for offline use; it also caches every clip in the audio manifest. Bump `VERSION` (ww-v11 -> ww-v12 ...) in the same commit whenever index.html or audio changes, or devices keep the old copy.
+- `public/sw.js`: service worker for offline use; it also caches every clip in the audio manifest. Bump `VERSION` (ww-v11 -> ww-v12 ...) in the same commit whenever index.html or audio changes, or devices keep the old copy. Change the "App version" line at the bottom of Grown-ups (`#gVer` in index.html) to the same text, so grown-ups can tell which version they have.
 - `public/manifest.webmanifest`, `public/icons/`: install (PWA) files.
 - `public/fonts/`: Fredoka and Nunito (woff2, SIL OFL in LICENSE.txt), served by the app itself so nothing is fetched from elsewhere.
 - `server.js`: dependency-free static server for Railway (`npm start`).
@@ -40,6 +40,6 @@ Sections are marked with `/* ---------- name ---------- */` comments; grep for t
 
 ## Workflow
 - Zach is non-technical: explain changes plainly, keep them small, test before committing.
-- After a change: bump sw.js VERSION, `git add .`, `git commit -m "..."`, `git push`. Railway deploys in about a minute.
+- After a change: bump sw.js VERSION (and #gVer to match), `git add .`, `git commit -m "..."`, `git push`. Railway deploys in about a minute.
 - Run locally: `node server.js` then open http://localhost:3000.
 - Only commit files inside this folder. Do not add personal files.
