@@ -19,10 +19,10 @@
 - The server answers only GET and HEAD (others: 405) and serves only files inside `public/`.
 - `/.well-known/security.txt` gives a security contact.
 
-**Dependencies.** None. The server uses only Node's built-in modules, and the app is one HTML file with no libraries. `npm audit`: 0 vulnerabilities. `npm outdated`: nothing to update. Recommendation: run it on a supported Node.js version (22 LTS or newer); Node 18 no longer gets security fixes.
+**Dependencies.** None. The server uses only Node's built-in modules, and the app is one HTML file with no libraries. `npm audit`: 0 vulnerabilities. `npm outdated`: nothing to update. It runs on Node.js 22 LTS (`engines` in package.json is `22.x`, so the host always uses the newest Node 22 with its security fixes).
 
 **Repository check.** No passwords, keys, tokens or `.env` files in the repository or its history.
 
-**How updates are published.** Changes are pushed to the `main` branch on GitHub; Railway rebuilds and redeploys automatically in about a minute. Every change bumps a version number shown at the bottom of Grown-ups (for example `ww-v32`), so staff can confirm which version a device has. Installed copies pick up the new version the next time the app is opened online. Automated browser tests (Playwright, in `tests/`) are run before each change is published.
+**How updates are published.** Changes are pushed to the `main` branch on GitHub; Railway rebuilds and redeploys automatically in about a minute. Every change bumps a version number shown at the bottom of Grown-ups (for example `ww-v33`), so staff can confirm which version a device has. Installed copies pick up the new version the next time the app is opened online. Automated browser tests (Playwright, in `tests/`) are run before each change is published.
 
-**Contact.** CONTACT EMAIL (to be filled in)
+**Contact.** watsonswriting@gmail.com

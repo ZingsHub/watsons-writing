@@ -48,7 +48,7 @@ test('security headers on the page, files, errors and security.txt', async ({ re
   const st = await request.get('/.well-known/security.txt');
   expect(st.status()).toBe(200);
   expect(st.headers()['content-type']).toContain('text/plain');
-  expect(await st.text()).toMatch(/^Contact: /m);
+  expect(await st.text()).toMatch(/^Contact: mailto:watsonswriting@gmail\.com$/m);
   expect(await st.text()).toMatch(/^Expires: /m);
 });
 
@@ -202,8 +202,9 @@ test('Privacy page: reachable from Grown-ups, says what it should, Back returns,
   const p = page.locator('#gPriv');
   await expect(p).toBeVisible();
   await expect(page.locator('#prompt')).toHaveText('Privacy');
-  for (const t of ['No accounts', 'No ads, no analytics, no trackers', 'Progress stays on this device', 'Google Form', 'outside service', 'CONTACT EMAIL'])
+  for (const t of ['No accounts', 'No ads, no analytics, no trackers', 'Progress stays on this device', 'Google Form', 'outside service', 'watsonswriting@gmail.com'])
     await expect(p).toContainText(t);
+  await expect(page.locator('#gPrivContact a')).toHaveAttribute('href', 'mailto:watsonswriting@gmail.com');
   const n = await page.evaluate(() => window.__play);
   await page.waitForTimeout(12000);   // longer than the 10 s idle reminder: nothing is said here
   expect(await page.evaluate(() => window.__play)).toBe(n);

@@ -1160,7 +1160,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           <div class="grow2"><button id="gRepBtn" class="btn gadd" type="button">Progress report</button><button id="gShareBtn" class="btn gadd" type="button">Share progress file</button><button id="gClassBtn" class="btn gadd" type="button">Class view (for teachers)</button><button id="gAdd" class="btn gadd" type="button">+ Add a child</button></div>
           <p id="gFull" class="gnote" hidden>8 children is the most on one device.</p>
           <div class="grow2 gfoot"><button id="gReset" class="btn greset" type="button">Reset progress for <span id="gResetN"></span></button><a id="gSuggest" class="btn gadd gsug" href="https://forms.gle/wcdwUucaTzTa3EdS9" target="_blank" rel="noopener noreferrer">Send a suggestion or report a problem</a><button id="gPrivBtn" class="btn gadd" type="button">Privacy</button></div>
-          <p id="gVer" class="gver">App version ww-v32</p>
+          <p id="gVer" class="gver">App version ww-v33</p>
         </div>
         <div id="gPriv" class="nscreen gscreen" hidden>
           <div class="gp gpriv">
@@ -1172,7 +1172,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
               <li><b>Progress files</b> leave the device only when a grown-up chooses "Share progress file" and sends the file themselves.</li>
               <li><b>The suggestion form is an outside service.</b> "Send a suggestion or report a problem" opens a Google Form in a new tab. What you type there goes to Google Forms, under Google's privacy policy.</li>
               <li><b>Removing data:</b> "Reset progress" or deleting a child in Grown-ups, or clearing this site's data in the browser, removes it from this device.</li>
-              <li><b>Questions:</b> <span id="gPrivContact">CONTACT EMAIL (to be filled in)</span></li>
+              <li><b>Questions:</b> <span id="gPrivContact"><a href="mailto:watsonswriting@gmail.com">watsonswriting@gmail.com</a></span></li>
             </ul>
           </div>
         </div>
@@ -2580,6 +2580,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   }
   /* --- idle reminders: after 10 s of quiet, repeat the instructions; after two repeats, point at Hint --- */
   var wIdleI = 0;
+  function wGrownUps() { return !$('#gRep').hidden || Array.prototype.some.call(document.querySelectorAll('.gscreen'), function (e) { return !e.hidden; }); }
   function wIdleCheck() {
     if (current === write && nm.on && !$('#wPlay').hidden && $('#wOver').hidden && !vSpeaking && !wr.ink && !wr.demo && !nm.busy && nHasInk()) {
       if (Date.now() - wLastAct >= wr.idleMs) { wLastAct = Date.now(); $('#nCheck').classList.add('glow'); }
@@ -2588,7 +2589,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (current !== write || vSpeaking || wr.ink || wr.demo || wr.locked || wr.qBusy || wr.mode === 'result') return;
     if (!$('#wOver').hidden || !$('#dPlay').hidden) return;   /* drawing never talks */
     if (!$('#nEntry').hidden || !$('#nLevel').hidden || !$('#nDone').hidden) return;   /* a grown-up is typing, or he is done */
-    if (!$('#gHome').hidden || !$('#gGate').hidden || !$('#gConfirm').hidden || !$('#gDone').hidden || !$('#gPriv').hidden) return;
+    if (wGrownUps()) return;   /* every Grown-ups screen is quiet */
     if (Date.now() - wLastAct < wr.idleMs) return;
     var inPlay = !$('#wPlay').hidden, items = null, m = wr.mode;
     if (wr.idleN >= 2) {

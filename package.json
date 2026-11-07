@@ -4,5 +4,5 @@
   "description": "Watson's Writing: a letter and number writing PWA",
   "private": true,
   "scripts": { "start": "node server.js" },
-  "engines": { "node": ">=18" }
+  "engines": { "node": "22.x" }
 }
