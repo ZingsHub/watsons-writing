@@ -549,13 +549,6 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 @keyframes fwob { to { transform: scale(1.06, 0.94); } }
 .fdk { position: absolute; left: 0; bottom: 0; pointer-events: none; will-change: transform; }
 .fdk svg { display: block; width: 100%; height: auto; overflow: visible; }
-.ftiles.rows { display: flex; flex-direction: column; gap: 10px; }
-.fslot { display: flex; align-items: center; gap: 8px; }
-.fslot-ic { flex: none; width: 34px; }
-.fslot-t { flex: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 8px; }
-.fslot-ic svg { display: block; width: 32px; height: 32px; overflow: visible; }
-.ftiles.rows .ft { padding: 6px 4px; }
-.ftiles.rows .ft-pic { width: 58px; height: 50px; }
 .fa.flap .fwing { animation: fflap 0.13s ease-in-out infinite alternate; }
 @keyframes fflap { to { transform: rotate(-38deg); } }
 .ffl { transform-box: view-box; transition: transform 1.3s cubic-bezier(0.3, 1.6, 0.5, 1); }
@@ -578,8 +571,76 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 .fcard { position: relative; width: min(100%, 560px); max-height: 100%; overflow-y: auto; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 16px 12px 14px; background: var(--paper); border: 4px solid var(--ink); border-radius: 22px; box-shadow: 0 8px 0 var(--ink); }
 .fx-close { position: absolute; top: 8px; right: 8px; z-index: 2; width: 52px; min-height: 52px; padding: 0; display: grid; place-items: center; }
 .fx-close svg { width: 24px; height: 24px; display: block; }
-.fprev { width: min(55%, 220px); padding-top: 18px; }
-.fprev svg { display: block; width: 100%; height: auto; overflow: visible; }
+/* ---------- the shop: picture tabs (animals | places), rows of tiles, and the preview ---------- */
+.fshop { width: min(100%, 800px); height: 100%; overflow: hidden; gap: 6px; padding: 10px; align-items: stretch; }
+.fsh-top { flex: none; text-align: center; line-height: 0; }
+.fsh-top .fx-close { position: static; float: right; margin: 0 0 4px 6px; }
+.fsh-tabs { display: contents; }
+.fstab { position: relative; display: inline-block; vertical-align: middle; width: 60px; height: 60px; margin: 0 3px 6px; padding: 3px; border: 3px solid var(--ink); border-radius: 14px; background: #fff; box-shadow: 0 3px 0 var(--ink); cursor: pointer; }
+.fstab.on { background: #fff4b8; box-shadow: 0 1px 0 var(--ink), 0 0 0 4px #ffd640; transform: translateY(2px); }
+.fstab-pic { display: grid; place-items: center; width: 100%; height: 100%; }
+.fstab-pic svg { display: block; max-width: 100%; max-height: 100%; overflow: visible; }
+.fstab.locked .fstab-pic, .fsrow-ic.dim svg, .fstile.locked .ft-pic { filter: grayscale(1) contrast(0.5) brightness(1.3); opacity: 0.7; }
+.fstab.locked .fstab-pic *, .fstile.locked .ft-pic *, .fsh-need * { animation: none !important; }
+.fstab-lock { position: absolute; right: -7px; bottom: -7px; width: 24px; }
+.fstab-lock svg, .fst-lock svg, .fsh-lk svg { display: block; width: 100%; height: auto; }
+.fsh-div { display: inline-block; vertical-align: middle; width: 4px; height: 48px; margin: 0 8px 6px; border-radius: 2px; background: var(--ink); opacity: 0.35; }
+.fsh-body { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 4px 2px 8px; border-top: 3px dashed rgba(42, 33, 24, 0.25); }
+.fsh-name { margin: 0; text-align: center; font-family: var(--display); font-size: 22px; color: var(--ink); }
+.fsh-lock { margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; font-size: 17px; color: var(--ink); }
+.fsh-lk { flex: none; width: 26px; }
+.fsh-need { flex: none; width: 44px; height: 36px; display: grid; place-items: center; }
+.fsh-need svg { display: block; max-width: 100%; max-height: 100%; overflow: visible; }
+.fsrow { display: flex; align-items: center; gap: 8px; }
+.fsrow-ic { flex: none; width: 58px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 12px; font-weight: 700; line-height: 1.1; text-align: center; color: var(--ink); }
+.fsrow-ic svg { display: block; width: 44px; height: 38px; overflow: visible; }
+.fsrow-t { flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
+.fsrow-t.solo { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); }
+.fstile { padding: 6px 4px; min-height: 96px; }
+.fstile .ft-pic { width: 62px; height: 50px; }
+.fstile .ft-price { font-size: 20px; min-height: 28px; }
+.fstile.short .ft-price { opacity: 0.6; }
+.fstile.on { background: #fff4b8; }
+.fstile.locked { background: #ece6da; }
+.fst-need { width: 38px; height: 28px; display: grid; place-items: center; }
+.fst-need svg { display: block; max-width: 100%; max-height: 100%; overflow: visible; filter: grayscale(0.2); }
+.fst-lock { position: absolute; top: -8px; right: -6px; width: 24px; }
+.fpvsheet { z-index: 32; }
+.fpv { width: min(100%, 520px); gap: 8px; padding: 14px 14px 16px; }
+.fpv-txt { text-align: center; }
+.fpv-t { margin: 0; font-family: var(--display); font-size: 26px; line-height: 1.15; color: var(--ink); }
+.fpv-s { margin: 2px 0 0; font-size: 18px; font-weight: 700; color: #3f7a2a; }
+.fpv-s[hidden] { display: none; }
+.fpv-pic { width: min(100%, 340px); flex: none; }
+.fpv-pic.look { width: min(78%, 300px); }
+.fpv-pic svg { display: block; width: 100%; height: auto; max-height: 34vh; overflow: visible; border-radius: 12px; }
+.fpv-pic:not(.look) svg { border: 3px solid var(--ink); }
+.fpv-side { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
+.fpv-note { margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; font-size: 18px; text-align: center; color: var(--ink); }
+.fpv-note[hidden] { display: none; }
+.fpv-ic { flex: none; display: flex; align-items: center; gap: 6px; }
+.fpv-ic > svg { width: 30px; height: 30px; display: block; }
+.fpv-note .s { color: #e0a000; font-size: 26px; }
+.fpv-btns { display: flex; justify-content: center; gap: 12px; width: 100%; }
+.fpv-back { min-height: 72px; min-width: 120px; padding: 6px 18px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 24px; font-weight: 700; }
+.fpv-back svg { width: 26px; height: 26px; }
+.fpv-buy { min-height: 72px; min-width: 150px; padding: 6px 22px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 32px; font-weight: 700; background: #9fd46a; }
+.fpv-buy .s { color: #e0a000; }
+.fpv-bw { margin-left: 6px; font-size: 24px; }
+.fpv-buy[hidden] { display: none; }
+.fpv-buy:disabled { background: #e3ddd2; color: #7a7066; box-shadow: 0 2px 0 var(--ink); cursor: not-allowed; opacity: 0.8; }
+.fpv-buy:disabled .s { color: #a8a096; }
+@media (max-width: 520px) { .fsh-div { display: none; } }   /* on a phone the tabs wrap; the gap between animals and places is enough */
+.fshopbtn { position: absolute; left: 8px; top: 8px; z-index: 3; min-height: 64px; background: #ffe58a; }
+@media (orientation: landscape) and (max-height: 560px) {
+  .fstab { width: 52px; height: 52px; margin-bottom: 4px; }
+  .fsh-div { height: 40px; }
+  .fpv { width: min(100%, 720px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "txt txt" "pic side"; align-items: center; gap: 6px 14px; padding: 10px 14px; }
+  .fpv-txt { grid-area: txt; } .fpv-pic { grid-area: pic; justify-self: center; width: 100%; } .fpv-pic.look { width: 90%; } .fpv-side { grid-area: side; }
+  .fpv-pic svg { max-height: 52vh; }
+  .fpv-t { font-size: 22px; }
+  .fpv-back, .fpv-buy { min-height: 64px; }
+}
 .ftiles { width: 100%; display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; padding-top: 8px; }
 .ft { font: inherit; position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 6px; color: var(--ink); background: #fff; border: 3px solid var(--ink); border-radius: 16px; box-shadow: 0 4px 0 var(--ink); cursor: pointer; }
 .ft:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
@@ -1077,7 +1138,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           <div class="grow2"><button id="gRepBtn" class="btn gadd" type="button">Progress report</button><button id="gShareBtn" class="btn gadd" type="button">Share progress file</button><button id="gClassBtn" class="btn gadd" type="button">Class view (for teachers)</button><button id="gAdd" class="btn gadd" type="button">+ Add a child</button></div>
           <p id="gFull" class="gnote" hidden>8 children is the most on one device.</p>
           <div class="grow2 gfoot"><button id="gReset" class="btn greset" type="button">Reset progress for <span id="gResetN"></span></button><a id="gSuggest" class="btn gadd gsug" href="https://forms.gle/wcdwUucaTzTa3EdS9" target="_blank" rel="noopener noreferrer">Send a suggestion or report a problem</a></div>
-          <p id="gVer" class="gver">App version ww-v27</p>
+          <p id="gVer" class="gver">App version ww-v28</p>
         </div>
         <div id="gRepList" class="nscreen gscreen" hidden>
           <p class="gp">Pick a child to see their progress report.</p>
@@ -1209,6 +1270,25 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
             </div>
           </div>
         </div>
+        <div id="fShop" class="fsheet" hidden>
+          <div class="fcard fshop">
+            <div id="fShopTop" class="fsh-top"><button class="btn quiet fx-close" type="button" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M4 4 L20 20 M20 4 L4 20" stroke="#2a2118" stroke-width="4" stroke-linecap="round"/></svg></button><div id="fShopTabs" class="fsh-tabs"></div></div>
+            <div id="fShopBody" class="fsh-body"></div>
+          </div>
+        </div>
+        <div id="fPv" class="fsheet fpvsheet" hidden>
+          <div class="fcard fpv" role="dialog" aria-labelledby="fPvT">
+            <div class="fpv-txt"><h3 id="fPvT" class="fpv-t"></h3><p id="fPvS" class="fpv-s"></p></div>
+            <div id="fPvPic" class="fpv-pic"></div>
+            <div class="fpv-side">
+              <p id="fPvNote" class="fpv-note" hidden></p>
+              <div class="fpv-btns">
+                <button id="fPvBack" class="btn quiet fpv-back" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4 L7 12 L15 20" fill="none" stroke="#2a2118" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</button>
+                <button id="fPvBuy" class="btn fpv-buy" type="button"><b class="s">&#9733;</b><span id="fPvN"></span><span class="fpv-bw">Buy</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
         <div id="fUnlock" class="fsheet" hidden>
           <div class="fcard funl">
             <button class="btn quiet fx-close" type="button" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M4 4 L20 20 M20 4 L4 20" stroke="#2a2118" stroke-width="4" stroke-linecap="round"/></svg></button>
@@ -1219,7 +1299,6 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
         <div id="fSheet" class="fsheet" hidden>
           <div class="fcard">
             <button class="btn quiet fx-close" type="button" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M4 4 L20 20 M20 4 L4 20" stroke="#2a2118" stroke-width="4" stroke-linecap="round"/></svg></button>
-            <div id="fPrev" class="fprev" hidden></div>
             <div id="fTiles" class="ftiles"></div>
           </div>
         </div>
@@ -2874,7 +2953,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   /* another child: read their saved progress into everything that keeps it in memory */
   function pReload() {
     stars = parseInt(lsGet(pkey('ty_stars')), 10) || 0; name = lsGet(pkey('ty_name')) || '';
-    RW = null; nm.list = nLoad(); FST = fLoad(); FSD = null; fEarnSaid = false; FA = {}; FI = {}; FLAST = {}; fSel = '';
+    RW = null; nm.list = nLoad(); FST = fLoad(); fPend = []; FSD = null; fEarnSaid = false; FA = {}; FI = {}; FLAST = {}; fSel = '';
     renderStars(); pMeDraw();
   }
   function pUse(id) {
@@ -4248,36 +4327,19 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     fFx('spark', FARM.spots.gift[0], FARM.spots.gift[1] + 8, 6);
     clearTimeout(fTimer); fTimer = setTimeout(function () { if (fOn) fSheet('pick'); }, 650);
   }
-  function fTile(k, pic, price, on) {
-    var tag = price ? '<span class="ft-price"><b class="s">&#9733;</b>' + price + '</span>' : '<span class="ft-ok">' + (on ? CHECK : CIRCLE) + '</span>';
-    return '<button class="ft' + (price ? ' lock' : on ? ' on' : '') + '" type="button" data-k="' + k + '" aria-label="' + k + '"><span class="ft-pic">' + pic + '</span>' + tag + '</button>';
-  }
+  /* the gift (pick an animal) and "at home" lists; buying is in the shop below */
   function fSheet(kind) {
     var h = '', st = fStage();
-    fSheetKind = kind; $('#fPrev').hidden = kind !== 'decor';
+    fSheetKind = kind;
     if (kind === 'pick') {
       FIDS.forEach(function (id) { if (!fOwns(id)) h += '<button class="ft big" type="button" data-k="' + id + '" aria-label="' + id + '"><span class="ft-pic">' + fAnimalSVG(id, null, st) + '</span></button>'; });
       vsay([Pc('Pick a friend for your farm!')]);
-    } else if (kind === 'decor') {
-      /* one row per slot: a small picture of the slot, then its options (price, or a check when worn, a circle when owned) */
-      var L = FST.looks[fSel], cat = FLOOKS[fSel];
-      $('#fPrev').innerHTML = fAnimalSVG(fSel, L.wear, st);
-      Object.keys(cat).forEach(function (sl) {
-        h += '<div class="fslot" data-slot="' + sl + '"><span class="fslot-ic" aria-hidden="true">' + fDecorIcon(fSel, FSLOTPIC[sl]) + '</span><div class="fslot-t">';
-        Object.keys(cat[sl]).forEach(function (k) { var own = L.own.indexOf(k) >= 0; h += fTile(k, fDecorIcon(fSel, k), own ? 0 : cat[sl][k], own && L.wear[sl] === k); });
-        h += '</div></div>';
-      });
     } else if (kind === 'home') {
       FST.away.forEach(function (k) { h += '<button class="ft big" type="button" data-k="' + k + '" aria-label="' + k + '"><span class="ft-pic">' + fPicOf(k) + '</span></button>'; });
-    } else {
-      Object.keys(FARM.items).forEach(function (k) { var own = fOwns(k); if (fItemFor(k)) h += fTile(k, fItemSVG(k), own ? 0 : FARM.items[k], own); });
     }
-    $('#fTiles').innerHTML = h; $('#fTiles').classList.toggle('rows', kind === 'decor'); $('#fSheet').hidden = false;
+    $('#fTiles').innerHTML = h; $('#fSheet').hidden = false;
   }
   function fCloseSheet() { $('#fSheet').hidden = true; fSheetKind = ''; fBuild(); }
-  /* not enough stars: a wiggle and an encouraging line; nothing negative, nothing bought, no numbers change */
-  function fNo(b, k) { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); fBump(); var l = fNoLine(); if (l) fRespond([fName(fSel, k), l]); else fAmbient([fName(fSel, k)]); }
-  function fYay(k) { var b = $('#fTiles').querySelector('[data-k="' + k + '"]'); if (b) b.classList.add('yay'); }
   function fAdopt(id) {
     if (fOwns(id) || fGifts() <= 0) return;
     FST.animals.push(id); fSave(); fBadge();
@@ -4285,30 +4347,179 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     var a = FA[id]; a.el.querySelector('.fa-hop').classList.add('fnew');
     fFx('heart', a.x, a.y + 8, 4); fAnimalSound(id, function () { fRespond([FSAY.names[id], 'A new friend!']); });   /* its sound first, then her words */
   }
-  /* a customization: buy it (it is worn at once), or switch it on and off for free; one worn per slot */
-  function fDecor(b, k) {
-    var id = fSel, L = FST.looks[id], sl = fSlotOf(id, k), nm = fName(id, k);
-    if (!sl) return;
-    if (L.own.indexOf(k) < 0) {
-      if (!fPay(FLOOKS[id][sl][k])) { fNo(b, k); return; }
-      L.own.push(k); L.wear[sl] = k; sfx.good(); fBump(); fRespond([nm, FSAY.thanks[id] || FSAY.got].concat(fEarnLine()));
-    } else { if (L.wear[sl] === k) delete L.wear[sl]; else L.wear[sl] = k; sfx.pop(); fAmbient([nm]); }
-    fSave(); renderStars(); fRedress(id);
-    fSheet('decor'); fYay(k);
-  }
   function fRedress(id) { var a = FA[id]; if (!a || !a.el) return; a.el.querySelector('.fa-hop').innerHTML = fAnimalSVG(id, fLook(id)); a.hdEl = a.el.querySelector('.fhd'); a.headK = null; if (id === 'duck') fBuild(); }
-  function fBuyItem(b, k) {
-    if (FST.away.indexOf(k) >= 0) { fBringBack(k); return; }   /* it is at home: back to the field, free */
-    if (FST.items.indexOf(k) >= 0) { fAmbient([fName('', k)]); fCloseSheet(); fSendFan(k); return; }
-    if (!fPay(FARM.items[k])) { fNo(b, k); return; }
-    FST.items.push(k); fSave(); renderStars(); fBump(); sfx.good(); fRespond([fName('', k), FSAY.got].concat(fEarnLine()));
-    fCloseSheet();
-    /* a new item goes to its usual place, or the nearest place where it does not sit on top of another one */
+  /* a new item goes to its usual place, or the nearest place where it does not sit on top of another one */
+  function fSettle(k) {
     var f = FI[k], p = f && !FST.pos[k] && fNearFree(k, f.x, f.y);
     if (p && (p[0] !== f.x || p[1] !== f.y)) { FST.pos[k] = fRound(p); fSave(); fPlaceItem($('#fLayer [data-i="' + k + '"]'), k, p[0], p[1]); }
+  }
+  /* an item just bought in the Barnyard: it lands with a sparkle and an animal comes over to it */
+  function fItemArrive(k) {
+    fBuild(); fSettle(k);
     var el = $('#fLayer').querySelector('[data-i="' + k + '"] .fi-in'); if (el) el.classList.add('fnew');
     fFx('spark', fItemAt(k)[0], fItemAt(k)[1] + 4, 6);
     clearTimeout(fTimer); fTimer = setTimeout(function () { if (fOn) fSendFan(k); }, 700);
+  }
+
+  /* ---------- the shop: everything to buy, in picture tabs. Each animal's tab has a row for each thing an outfit changes (hats, glasses, clothes,
+     colors, sparkle, the horse's hair); each place's tab has what goes there (the Barnyard's items in a row for each animal they are for).
+     Tapping a thing opens its preview: the animal wearing it, or the thing in a small picture of its place. Only the preview's Buy buys.
+     Locked things (their animal or place is not on the farm yet) and things he cannot afford yet can be looked at, never bought.
+     Prices, the stars and the save are the same as before; a thing already bought stays his (an outfit for an animal still to come is worn when it arrives). ---------- */
+  var FSHOPPL = ['barnyard', 'shed', 'house'];
+  var FSLOTN = { hair: 'Hair', head: 'Hats', face: 'Glasses', body: 'Clothes', color: 'Colors', fx: 'Sparkle' };   /* small words under each row's picture, for grown-ups */
+  var SHOPPIC = '<svg viewBox="0 0 48 48" ' + INK + '><rect x="8" y="22" width="32" height="22" fill="#fff8e6"/><rect x="19" y="30" width="10" height="14" fill="#c98a52"/>' +
+    '<path d="M4 12 H44 L42 22 H6 Z" fill="#fff"/><path d="M12 12 L10 22 M28 12 L28 22" fill="none"/><path d="M4 12 H12 L10 22 H6 Z M20 12 H28 V22 H19 Z M36 12 H44 L42 22 H37 Z" fill="#e8413a" stroke-width="2"/>' +
+    '<path d="M24 3 L26.5 8 L32 8.6 L28 12" fill="#ffc533" stroke-width="2"/></svg>';
+  var fShopTab = '', fPvE = null, fPend = [];   /* fPend: items bought away from the Barnyard, placed next time it opens */
+  function fCap(s) { s = String(s || ''); return s.charAt(0).toUpperCase() + s.slice(1); }
+  function fAnimalN(id) { return fCap(FSAY.names[id] || id); }
+  function fGrown() { return FARM.growthStages[2]; }   /* shop pictures: grown-up proportions, the same for everyone */
+  /* one thing in the shop: t = look (an outfit), item (Barnyard), veh (Tractor Shed) or extra (Farmhouse); a = the animal an outfit is for */
+  function fEnt(t, k, a) {
+    var e = { t: t, k: k, a: a || '' };
+    if (t === 'look') { e.sl = fSlotOf(a, k); e.price = FLOOKS[a][e.sl][k]; e.own = FST.looks[a].own.indexOf(k) >= 0; e.need = fOwns(a) ? [] : [a]; e.pl = 'barnyard'; }
+    else if (t === 'item') { e.price = FARM.items[k]; e.own = fOwns(k); e.need = FARM.itemOf[k].split(' '); if (e.need.some(fOwns)) e.need = []; e.pl = 'barnyard'; }
+    else if (t === 'veh') { e.price = SHED.vehicles[k]; e.own = FST.shed.own.indexOf(k) >= 0 && fHasArea('shed'); e.need = fHasArea('shed') ? [] : ['shed']; e.pl = 'shed'; }
+    else { e.price = HOUSE.extras[k]; e.own = FST.house.own.indexOf(k) >= 0; e.need = fHasArea('house') ? [] : ['house']; e.pl = 'house'; }
+    e.locked = e.need.length > 0; e.short = Math.max(0, e.price - fSpendable());
+    return e;
+  }
+  function fEntKey(e) { return e.t + ':' + e.k + ':' + e.a; }
+  function fEntOf(s) { var p = String(s || '').split(':'); return p.length === 3 ? fEnt(p[0], p[1], p[2]) : null; }
+  function fEntName(e) {
+    if (e.t === 'look') return fName(e.a, e.k) + (e.sl === 'color' && /^c\d$/.test(e.k) ? ' color' : '');
+    return e.t === 'item' ? fCap(FSAY.names[e.k]) : e.t === 'veh' ? SHED.names[e.k] : HOUSE.names[e.k];
+  }
+  function fSayName(e) { return e.t === 'look' ? fName(e.a, e.k) : e.t === 'item' ? fName('', e.k) : e.t === 'veh' ? SHED.names[e.k] : HOUSE.names[e.k]; }   /* her clip's line */
+  function fNeedN(n) { return 'the ' + (fIsAnimal(n) ? fAnimalN(n) : fAreaOf(n).name); }
+  function fNeedText(e) { return 'Unlock ' + e.need.map(fNeedN).join(' or ') + ' first'; }
+  function fNeedPic(n) { return fIsAnimal(n) ? fAnimalSVG(n, {}, fGrown()) : fAreaOf(n).pic(); }
+  function fEntIcon(e) { return e.t === 'look' ? fDecorIcon(e.a, e.k) : e.t === 'item' ? fItemSVG(e.k) : e.t === 'veh' ? fVehicleSVG(e.k, fVLook(e.k)) : HOUSEPIC[e.k]; }
+  /* the preview picture: the animal wearing it, or the thing in a small picture of its place */
+  function fEntScene(e) {
+    if (e.t === 'look') {   /* with room around the animal for hats, hair and sparkles, which are drawn past its edges */
+      var w = {}, cur = FST.looks[e.a].wear, sl, vb = FVB[e.a]; for (sl in cur) w[sl] = cur[sl]; w[e.sl] = e.k;
+      return fAnimalSVG(e.a, w, fStage()).replace(/viewBox="[^"]+"/, 'viewBox="' + [-vb[0] * 0.12, -vb[1] * 0.42, vb[0] * 1.24, vb[1] * 1.5].map(function (n) { return n.toFixed(1); }).join(' ') + '"');
+    }
+    var s = '<svg viewBox="0 0 200 140" ' + INK + '>';
+    if (e.t === 'item') {
+      var who = FARM.itemOf[e.k].split(' ')[0];
+      s += '<rect x="0" y="0" width="200" height="60" fill="#bfe3f2" stroke="none"/><rect x="0" y="56" width="200" height="84" fill="#86c454" stroke="none"/>' + fNest(BARN, 64, 4, 72, 62) +
+        '<path d="M0 70 H62 M138 70 H200 M0 60 H62 M138 60 H200" stroke="#fff8e6" stroke-width="4"/>' + [8, 34, 150, 176].map(function (x) { return '<rect x="' + x + '" y="54" width="5" height="20" rx="2" fill="#fff8e6" stroke-width="2"/>'; }).join('') +
+        '<ellipse cx="80" cy="128" rx="62" ry="9" fill="#ffd640" opacity=".55" stroke="none"/>' + fNest(fItemSVG(e.k), 18, 72, 124, 60) + fNest(fAnimalSVG(who, fLook(who), fGrown()), 146, 88, 50, 46);
+    } else if (e.t === 'veh') {
+      s += '<rect x="0" y="0" width="200" height="140" fill="#d4f0fb" stroke="none"/><rect x="0" y="96" width="200" height="44" fill="#c9a66b" stroke="none"/><path d="M30 104 V48 L100 18 L170 48 V104 Z" fill="#7aa6c9"/>' +
+        '<path d="M22 52 L100 14 L178 52" fill="none" stroke="#3a5f80" stroke-width="8"/><rect x="58" y="58" width="84" height="46" fill="#3a3330"/>' +
+        '<ellipse cx="100" cy="130" rx="70" ry="8" fill="#ffd640" opacity=".55" stroke="none"/>' + fNest(fVehicleSVG(e.k, fVLook(e.k)), 40, 70, 120, 64);
+    } else {
+      var H = FST.house, on = {}; on[e.k] = true;
+      s += '<rect x="0" y="0" width="200" height="140" fill="#d4f0fb" stroke="none"/><rect x="0" y="108" width="200" height="32" fill="#86c454" stroke="none"/>' +
+        fNest(fHouseSVG({ wall: H.wall, door: H.door, roof: H.roof, own: [e.k], on: on }), 6, 4, 188, 132);
+    }
+    return s + '</svg>';
+  }
+  function fTabLocked(t) { return fIsAnimal(t) ? !fOwns(t) : !fHasArea(t); }
+  function fTabPic(t) { return fIsAnimal(t) ? fAnimalSVG(t, fLook(t), fGrown()) : fAreaOf(t).pic(); }
+  function fTabName(t) { return fIsAnimal(t) ? fAnimalN(t) : fAreaOf(t).name; }
+  function fShopTile(e) {
+    var on = e.t === 'look' && e.own && FST.looks[e.a].wear[e.sl] === e.k, tag, cls = 'ft fstile', lab = fEntName(e);
+    if (e.own) { tag = '<span class="ft-ok">' + (on || e.t !== 'look' ? CHECK : CIRCLE) + '</span>'; cls += ' own' + (on ? ' on' : ''); lab += ', yours'; }
+    else if (e.locked) { tag = '<span class="fst-need">' + fNeedPic(e.need[0]) + '</span><span class="fst-lock">' + PADLOCK + '</span>'; cls += ' locked'; lab += ', ' + fNeedText(e); }
+    else { tag = '<span class="ft-price"><b class="s">&#9733;</b>' + e.price + '</span>'; if (e.short) cls += ' short'; lab += ', ' + e.price + ' stars'; }
+    return '<button class="' + cls + '" type="button" data-e="' + fEntKey(e) + '" aria-label="' + pEsc(lab) + '"><span class="ft-pic">' + fEntIcon(e) + '</span>' + tag + '</button>';
+  }
+  function fShopRow(ic, word, tiles, dim) { return '<div class="fsrow"><span class="fsrow-ic' + (dim ? ' dim' : '') + '" aria-hidden="true">' + ic + '<small>' + word + '</small></span><div class="fsrow-t">' + tiles + '</div></div>'; }
+  function fShopLockNote(need) {
+    return '<p class="fsh-lock"><span class="fsh-lk">' + PADLOCK + '</span><span class="fsh-need">' + fNeedPic(need) + '</span><span>Unlock ' + fNeedN(need) + ' first</span></p>';
+  }
+  function fShopDraw() {
+    var t = fShopTab, h = '', tabs = '';
+    FIDS.concat(['|'], FSHOPPL).forEach(function (x) {
+      if (x === '|') { tabs += '<span class="fsh-div" aria-hidden="true"></span>'; return; }
+      var lk = fTabLocked(x);
+      tabs += '<button class="fstab' + (lk ? ' locked' : '') + (x === t ? ' on' : '') + '" type="button" data-tab="' + x + '" aria-pressed="' + (x === t) + '" aria-label="' + pEsc(fTabName(x) + (lk ? ', locked' : '')) + '">' +
+        '<span class="fstab-pic">' + fTabPic(x) + '</span>' + (lk ? '<span class="fstab-lock">' + PADLOCK + '</span>' : '') + '</button>';
+    });
+    $('#fShopTabs').innerHTML = tabs;
+    h += '<h3 class="fsh-name">' + pEsc(fTabName(t)) + '</h3>';
+    if (fTabLocked(t)) h += fShopLockNote(t);
+    if (fIsAnimal(t)) {
+      Object.keys(FLOOKS[t]).forEach(function (sl) {
+        h += fShopRow(fDecorIcon(t, FSLOTPIC[sl]), FSLOTN[sl], Object.keys(FLOOKS[t][sl]).map(function (k) { return fShopTile(fEnt('look', k, t)); }).join(''));
+      });
+    } else if (t === 'barnyard') {
+      FIDS.forEach(function (a) {   /* a row for each animal: the things it uses (the pond is the duck's, the horse's and the pig's: in the duck's row) */
+        var ks = Object.keys(FARM.items).filter(function (k) { return FARM.itemOf[k].split(' ')[0] === a; });
+        if (ks.length) h += fShopRow(fAnimalSVG(a, fLook(a), fGrown()), fAnimalN(a), ks.map(function (k) { return fShopTile(fEnt('item', k)); }).join(''), !fOwns(a));
+      });
+    } else if (t === 'shed') {
+      h += '<div class="fsrow-t solo">' + Object.keys(SHED.vehicles).filter(function (v) { return SHED.vehicles[v] > 0; }).map(function (v) { return fShopTile(fEnt('veh', v)); }).join('') + '</div>';
+    } else {
+      h += '<div class="fsrow-t solo">' + Object.keys(HOUSE.extras).map(function (x) { return fShopTile(fEnt('extra', x)); }).join('') + '</div>';
+    }
+    $('#fShopBody').innerHTML = h;
+  }
+  /* open the shop at a tab: an animal, a place, or (from the map) the first animal on the farm */
+  function fShopOpen(tab) {
+    fShopTab = tab || fShopTab || FST.animals[0] || 'barnyard';
+    fShopDraw(); $('#fShop').hidden = false; $('#fShopBody').scrollTop = 0;
+  }
+  function fShopClose() { $('#fPv').hidden = true; fPvE = null; if ($('#fShop').hidden) return; $('#fShop').hidden = true; if (fView === 'barnyard' && fOn) fBuild(); }
+  function fShopYay(e) { var b = $('#fShopBody').querySelector('[data-e="' + fEntKey(e) + '"]'); if (b) b.classList.add('yay'); }
+  /* a tile: an outfit he owns is switched on or off for free (as before); in the Barnyard, an item he owns is brought back or visited; anything else opens the preview */
+  function fShopTap(e) {
+    if (e.t === 'look' && e.own && !e.locked) {
+      var L = FST.looks[e.a]; if (L.wear[e.sl] === e.k) delete L.wear[e.sl]; else L.wear[e.sl] = e.k;
+      fSave(); sfx.pop(); fAmbient([fSayName(e)]); if (fView === 'barnyard') fRedress(e.a); fShopDraw(); fShopYay(e); return;
+    }
+    if (e.t === 'item' && e.own && fView === 'barnyard' && fOn) {
+      $('#fShop').hidden = true;
+      if (FST.away.indexOf(e.k) >= 0) fBringBack(e.k); else { fBuild(); fAmbient([fSayName(e)]); fSendFan(e.k); }
+      return;
+    }
+    fPvOpen(e);
+  }
+  /* the preview: a big picture, what it is, and Buy (only when it can be bought) next to Back */
+  function fPvOpen(e) {
+    fPvE = e; sfx.pop();
+    var look = e.t === 'look';
+    $('#fPvT').textContent = look ? fEntName(e) + ' for ' + fAnimalN(e.a) : fEntName(e);
+    $('#fPvS').textContent = look ? '' : 'Goes in the ' + fAreaOf(e.pl).name; $('#fPvS').hidden = look;
+    $('#fPvPic').innerHTML = fEntScene(e); $('#fPvPic').classList.toggle('look', look);
+    var n = $('#fPvNote'), ic = '', txt;
+    n.className = 'fpv-note';
+    if (e.own) { ic = CHECK; txt = e.locked ? 'Yours! It will show when ' + fNeedN(e.need[0]) + ' comes to the farm.' : 'Yours!'; n.className += ' own'; }
+    else if (e.locked) { ic = '<span class="fsh-lk">' + PADLOCK + '</span><span class="fsh-need">' + fNeedPic(e.need[0]) + '</span>'; txt = fNeedText(e); n.className += ' locked'; }
+    else if (e.short) { ic = '<b class="s">&#9733;</b>'; txt = 'Need ' + e.short + ' more ' + (e.short === 1 ? 'star' : 'stars'); n.className += ' short'; }
+    n.innerHTML = ic ? '<span class="fpv-ic">' + ic + '</span>' : '';
+    if (txt) { var sp = document.createElement('span'); sp.textContent = txt; n.appendChild(sp); }
+    n.hidden = !txt;
+    var b = $('#fPvBuy'); $('#fPvN').textContent = String(e.price);
+    b.hidden = e.own; b.disabled = e.locked || e.short > 0 || e.own;
+    b.setAttribute('aria-label', 'Buy for ' + e.price + ' stars');
+    $('#fPv').hidden = false; fAmbient([fSayName(e)]);
+  }
+  function fPvClose() { $('#fPv').hidden = true; fPvE = null; }
+  /* Buy: checked again here, so nothing locked, owned or too dear is ever bought */
+  function fPvBuy() {
+    var e = fPvE && fEnt(fPvE.t, fPvE.k, fPvE.a), S = FST.shed, H = FST.house; if (!e || e.own || e.locked || e.short) return;
+    if (!fPay(e.price)) return;
+    if (e.t === 'look') { var L = FST.looks[e.a]; L.own.push(e.k); L.wear[e.sl] = e.k; }
+    else if (e.t === 'item') FST.items.push(e.k);
+    else if (e.t === 'veh') { S.own.push(e.k); S.sel = e.k; }
+    else { H.own.push(e.k); H.on[e.k] = true; }
+    fSave(); renderStars(); fBump(); sfx.good();
+    fRespond([fSayName(e), (e.t === 'look' && FSAY.thanks[e.a]) || FSAY.got].concat(fEarnLine()));
+    fPvClose();
+    if (e.t === 'look' && fView === 'barnyard') fRedress(e.a);
+    if (e.t === 'veh' && fView === 'shed') fShedDraw();
+    if (e.t === 'extra' && fView === 'house') fHouseDraw();
+    if (e.t === 'item') {
+      if (fView === 'barnyard' && fOn) { $('#fShop').hidden = true; fItemArrive(e.k); return; }
+      fPend.push(e.k);
+    }
+    if (!$('#fShop').hidden) { fShopDraw(); fShopYay(e); }
   }
   /* --- dragging: animals any time, items only in build mode; a quick tap stays a tap --- */
   var fBuildOn = false, fDrag = null, fNoClick = 0;
@@ -4539,6 +4750,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     roofs: ['#c4402f', '#2f74d0', '#3f7a2a', '#7a4e32', '#8b5cf6', '#6a6560'],
     extras: { flag: 3, mailbox: 3, swing: 5 }, names: { flag: 'Flag', mailbox: 'Mailbox', swing: 'Porch swing' }
   };
+  var HOUSEPIC = { flag: '<svg viewBox="0 0 40 40" ' + INK + '><path d="M8 38 V4" stroke-width="3"/><path d="M9 6 L34 12 L9 20 Z" fill="#e8413a"/></svg>', mailbox: '<svg viewBox="0 0 40 40" ' + INK + '><path d="M20 38 V24" stroke="#7a4e32" stroke-width="5"/><path d="M6 24 V14 C6 6 34 6 34 14 V24 Z" fill="#2f74d0"/><path d="M30 14 V4 H37 V9 H30" fill="#e8413a" stroke-width="2"/></svg>', swing: '<svg viewBox="0 0 40 40" ' + INK + '><path d="M4 6 H36" stroke="#7a4e32" stroke-width="4"/><path d="M10 6 V28 M30 6 V28" stroke-width="2"/><rect x="6" y="26" width="28" height="7" rx="2" fill="#a86b3d"/></svg>' };   /* the extras' tiles */
   var GARDEN = { plots: ['carrot', 'tomato', 'pumpkin', 'corn'], stageMs: 60000 };
 
   /* --- pictures --- */
@@ -4634,6 +4846,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       h += '<button class="fmarea' + (open ? '' : ' locked') + (a.id === appear ? ' fappear' : '') + '" type="button" data-area="' + a.id + '" aria-label="' + a.name + '" style="left:' + a.at[0] + '%;top:' + a.at[1] + '%"><span class="fmpic">' + a.pic() + '</span>' +
         (open ? (a.id === 'barnyard' && fGifts() > 0 ? '<span class="fmgift">' + fGiftSVG() + '</span>' : '') : '<span class="fmlock">' + PADLOCK + '</span><span class="fmprice"><b class="s">&#9733;</b>' + a.price + '</span>') + '</button>';
     });
+    h += '<button id="fShopMap" class="btn ficon fshopbtn" type="button" aria-label="Shop">' + SHOPPIC + '</button>';
     M.innerHTML = h; fMapLayout();
   }
   function fMapLayout() {
@@ -4643,6 +4856,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   }
   /* tapping an area: open it (a short zoom), or offer to unlock it, or a gentle "not yet" */
   $('#fMap').addEventListener('click', function (e) {
+    if (e.target.closest && e.target.closest('#fShopMap') && current === farm && fView === 'map') { audio(); sfx.pop(); fShopOpen(); return; }
     var b = e.target.closest ? e.target.closest('.fmarea') : null; if (!b || current !== farm || fView !== 'map') return;
     audio(); var a = fAreaOf(b.getAttribute('data-area'));
     if (fHasArea(a.id)) { sfx.pop(); fZoomTo(a); return; }
@@ -4669,6 +4883,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   }
   /* back from an area: stop what it was doing, then the map zooms back out */
   function fLeaveArea() {
+    fShopClose();
     if (fView === 'barnyard') fBarnyardStop();
     clearInterval(fGardenI); fGardenI = 0; fDriving = false; $('#fArea').innerHTML = '';
   }
@@ -4681,6 +4896,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function fBarnyardOpen() {
     fSetView('barnyard');
     fMeasure(); fSel = ''; fBuild(); fZFit(false); fOn = true; dClipWarm();
+    fPend.forEach(function (k) { if (FST.items.indexOf(k) >= 0) fSettle(k); }); fPend = [];
     FST.animals.forEach(function (id) { FA[id].next = fRand(FARM.actFirst); });
     fLast = performance.now(); cancelAnimationFrame(fRaf); if (!document.hidden) fRaf = requestAnimationFrame(fLoop);
     if (fGrowFrom >= 0) { fGrowFx(FARM.growthStages[fGrowFrom]); fGrowFrom = -1; }   /* they grew since last time */
@@ -4744,8 +4960,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     rows += fRow('wall', HOUSE.walls.map(function (c, i) { return fSwatch('data-wall', i, c, H.wall === i); }).join(''));
     rows += fRow('door', HOUSE.doors.map(function (c, i) { return fSwatch('data-door', i, c, H.door === i); }).join(''));
     rows += fRow('roof', HOUSE.roofs.map(function (c, i) { return fSwatch('data-roof', i, c, H.roof === i); }).join(''));
-    var x = '', pics = { flag: '<svg viewBox="0 0 40 40" ' + INK + '><path d="M8 38 V4" stroke-width="3"/><path d="M9 6 L34 12 L9 20 Z" fill="#e8413a"/></svg>', mailbox: '<svg viewBox="0 0 40 40" ' + INK + '><path d="M20 38 V24" stroke="#7a4e32" stroke-width="5"/><path d="M6 24 V14 C6 6 34 6 34 14 V24 Z" fill="#2f74d0"/><path d="M30 14 V4 H37 V9 H30" fill="#e8413a" stroke-width="2"/></svg>', swing: '<svg viewBox="0 0 40 40" ' + INK + '><path d="M4 6 H36" stroke="#7a4e32" stroke-width="4"/><path d="M10 6 V28 M30 6 V28" stroke-width="2"/><rect x="6" y="26" width="28" height="7" rx="2" fill="#a86b3d"/></svg>' };
-    Object.keys(HOUSE.extras).forEach(function (k) { var own = H.own.indexOf(k) >= 0; x += fTileA('data-x', k, pics[k], own ? 0 : HOUSE.extras[k], own && !!H.on[k]); });
+    var x = '';
+    Object.keys(HOUSE.extras).forEach(function (k) { var own = H.own.indexOf(k) >= 0; x += fTileA('data-x', k, HOUSEPIC[k], own ? 0 : HOUSE.extras[k], own && !!H.on[k]); });
     rows += fRow('extras', x);
     $('#fTools').innerHTML = rows;
   }
@@ -4769,11 +4985,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     var bk = document.querySelector('.fbasket'); if (bk) { bk.classList.remove('bump'); void bk.offsetWidth; bk.classList.add('bump'); }
     setTimeout(function () { if (el.isConnected) { el.classList.remove('pop'); fGardenDraw(true); } }, 380);
   }
-  /* taps in the Shed and the House */
-  function fAreaBuy(b, price, nm, done) {
-    if (!fPay(price)) { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); fBump(); var l = fNoLine(); if (l) fRespond([nm, l]); else fAmbient([nm]); return; }
-    done(); fSave(); renderStars(); fBump(); sfx.good(); fRespond([nm, FSAY.got]);
-  }
+  /* taps in the Shed and the House: a thing not bought yet opens its preview in the shop */
   $('#fArea').addEventListener('click', function (e) {
     var t = e.target.closest ? e.target : null; if (!t || current !== farm) return;
     audio();
@@ -4782,7 +4994,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if ((b = t.closest('[data-v]'))) {
       var v = b.getAttribute('data-v');
       if (S.own.indexOf(v) >= 0) { S.sel = v; fSave(); sfx.pop(); fAmbient([SHED.names[v]]); fShedDraw(); }
-      else fAreaBuy(b, SHED.vehicles[v], SHED.names[v], function () { S.own.push(v); S.sel = v; fShedDraw(); });
+      else fPvOpen(fEnt('veh', v));
       return;
     }
     if ((b = t.closest('[data-c]'))) { fShedSet('c', +b.getAttribute('data-c')); return; }
@@ -4795,7 +5007,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if ((b = t.closest('[data-x]'))) {
       var x = b.getAttribute('data-x');
       if (H.own.indexOf(x) >= 0) { H.on[x] = !H.on[x]; fSave(); sfx.pop(); fAmbient([HOUSE.names[x]]); fHouseDraw(); }
-      else fAreaBuy(b, HOUSE.extras[x], HOUSE.names[x], function () { H.own.push(x); H.on[x] = true; fHouseDraw(); });
+      else fPvOpen(fEnt('extra', x));
       return;
     }
     if ((b = t.closest('.fplot'))) fPick(+b.getAttribute('data-p'), b);
@@ -4829,13 +5041,27 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (e.target === this || e.target.closest('.fx-close')) { fCloseSheet(); return; }
     var b = e.target.closest('.ft'); if (!b) return;
     var k = b.getAttribute('data-k');
-    if (fSheetKind === 'pick') fAdopt(k); else if (fSheetKind === 'decor') fDecor(b, k); else if (fSheetKind === 'build') fBuyItem(b, k); else if (fSheetKind === 'home') fBringBack(k);
+    if (fSheetKind === 'pick') fAdopt(k); else if (fSheetKind === 'home') fBringBack(k);
   });
-  $('#fHammer').addEventListener('click', function () {   /* first tap: build mode and the shop; tap again to stop building */
+  $('#fHammer').addEventListener('click', function () {   /* first tap: build mode and the shop's Barnyard tab; tap again to stop building */
     if (current !== farm) return; audio(); sfx.pop();
-    if (fBuildOn) fBuildMode(false); else { fBuildMode(true); fSheet('build'); fAmbient([FSAY.build]); }
+    if (fBuildOn) fBuildMode(false); else { fBuildMode(true); fShopOpen('barnyard'); fAmbient([FSAY.build]); }
   });
-  $('#fPaint').addEventListener('click', function () { if (current !== farm || !fSel) return; audio(); sfx.pop(); fSheet('decor'); fAmbient([FSAY.decorate]); });
+  $('#fPaint').addEventListener('click', function () { if (current !== farm || !fSel) return; audio(); sfx.pop(); fShopOpen(fSel); fAmbient([FSAY.decorate]); });
+  $('#fShop').addEventListener('click', function (e) {
+    if (current !== farm || !e.target.closest) return;
+    audio();
+    if (e.target === this || e.target.closest('.fx-close')) { sfx.pop(); fShopClose(); return; }
+    var b = e.target.closest('[data-tab]');
+    if (b) { fShopTab = b.getAttribute('data-tab'); sfx.pop(); fShopDraw(); $('#fShopBody').scrollTop = 0; fAmbient([fIsAnimal(fShopTab) ? FSAY.names[fShopTab] : fAreaOf(fShopTab).name]); return; }
+    if ((b = e.target.closest('[data-e]'))) { var en = fEntOf(b.getAttribute('data-e')); if (en) fShopTap(en); }
+  });
+  $('#fPv').addEventListener('click', function (e) {
+    if (current !== farm || !e.target.closest) return;
+    audio();
+    if (e.target.closest('#fPvBuy')) { fPvBuy(); return; }
+    if (e.target === this || e.target.closest('#fPvBack')) { sfx.pop(); fPvClose(); }
+  });
   window.addEventListener('resize', function () { if (current === farm && fView === 'barnyard') { fMeasure(); fLayout(); fZApply(false); } });
   FST = fLoad(); renderStars();
 

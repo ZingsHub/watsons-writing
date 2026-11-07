@@ -1,6 +1,6 @@
 // Playwright tests for Watson's Writing. Run one file at a time, for example:
 //   npx playwright test -c tests/playwright.config.js tests/first-run.spec.js
-// (Playwright is not part of the app; install it wherever you run the tests.)
+// (Playwright is not part of the app; install a recent version wherever you run the tests: an old one can lose touch with a newer Edge.)
 const path = require('path');
 
 module.exports = {

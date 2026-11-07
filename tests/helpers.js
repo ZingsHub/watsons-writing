@@ -59,4 +59,30 @@ const WATSON = {
   ww_backup_premigrate: JSON.stringify({ at: '2026-10-01T00:00:00.000Z', data: { ty_stars: '30' } }),
 };
 
-module.exports = { storage, openWith, tapStart, firstRun, grownUps, addChild, WATSON };
+// one child (Watson) with this many lifetime stars and this saved farm (an object, or a string saved exactly as given)
+function withFarm(stars, farm) {
+  const s = Object.assign({}, WATSON, { ww_p_p1_ty_stars: String(stars) });
+  delete s.ww_p_p1_ww_farm;
+  if (farm !== undefined) s.ww_p_p1_ww_farm = typeof farm === 'string' ? farm : JSON.stringify(farm);
+  return s;
+}
+// Watson's saved farm right now
+async function farmNow(page) { return JSON.parse((await storage(page)).ww_p_p1_ww_farm || 'null'); }
+
+async function openFarm(page) {
+  await tapStart(page);
+  await page.locator('#wMenu [data-m="farm"]').click();
+  await expect(page.locator('#fMap .fmarea').first()).toBeVisible();
+}
+async function openShop(page, tab) {
+  await page.locator('#fShopMap').click();
+  await expect(page.locator('#fShop')).toBeVisible();
+  if (tab) await page.locator('#fShopTabs [data-tab="' + tab + '"]').click();
+}
+// the Barnyard from the map (waits for the short zoom)
+async function openBarnyard(page) {
+  await page.locator('#fMap [data-area="barnyard"]').click();
+  await expect(page.locator('#fScene')).toBeVisible();
+}
+
+module.exports = { storage, openWith, tapStart, firstRun, grownUps, addChild, WATSON, withFarm, farmNow, openFarm, openShop, openBarnyard };
