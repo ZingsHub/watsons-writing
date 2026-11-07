@@ -854,6 +854,9 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 .gcopen b { flex: 1; min-width: 0; font-size: 20px; overflow-wrap: anywhere; }
 .gcopen b small { display: block; font-size: 14px; font-weight: 600; color: #4f6b3a; }
 .gnote { margin: 0; font-size: 15px; color: #4f6b3a; }
+.gpriv { width: min(100%, 640px); text-align: left; }
+.gpriv h3 { margin: 4px 0 6px; font-family: var(--display); font-size: 24px; }
+.gpriv ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; line-height: 1.4; }
 .gver { margin: auto 0 0; padding-top: 4px; font-size: 14px; font-weight: 600; color: #fff; }   /* same as VERSION in sw.js: bump both together */
 .gname { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; }
 .gname input { width: 13ch; min-width: 0; font: inherit; font-size: 24px; padding: 8px 12px; border: 3px solid var(--ink); border-radius: 12px; background: #fff; }
@@ -1156,8 +1159,22 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           <div id="gKids" class="gkids"></div>
           <div class="grow2"><button id="gRepBtn" class="btn gadd" type="button">Progress report</button><button id="gShareBtn" class="btn gadd" type="button">Share progress file</button><button id="gClassBtn" class="btn gadd" type="button">Class view (for teachers)</button><button id="gAdd" class="btn gadd" type="button">+ Add a child</button></div>
           <p id="gFull" class="gnote" hidden>8 children is the most on one device.</p>
-          <div class="grow2 gfoot"><button id="gReset" class="btn greset" type="button">Reset progress for <span id="gResetN"></span></button><a id="gSuggest" class="btn gadd gsug" href="https://forms.gle/wcdwUucaTzTa3EdS9" target="_blank" rel="noopener noreferrer">Send a suggestion or report a problem</a></div>
-          <p id="gVer" class="gver">App version ww-v31</p>
+          <div class="grow2 gfoot"><button id="gReset" class="btn greset" type="button">Reset progress for <span id="gResetN"></span></button><a id="gSuggest" class="btn gadd gsug" href="https://forms.gle/wcdwUucaTzTa3EdS9" target="_blank" rel="noopener noreferrer">Send a suggestion or report a problem</a><button id="gPrivBtn" class="btn gadd" type="button">Privacy</button></div>
+          <p id="gVer" class="gver">App version ww-v32</p>
+        </div>
+        <div id="gPriv" class="nscreen gscreen" hidden>
+          <div class="gp gpriv">
+            <h3>Privacy</h3>
+            <ul>
+              <li><b>No accounts.</b> There is no sign-in. Children are added on this device by first name only.</li>
+              <li><b>No ads, no analytics, no trackers.</b> The app loads nothing from other websites and sends nothing anywhere.</li>
+              <li><b>Progress stays on this device.</b> Letters, stars, names and the farm are saved only in this browser. Nobody else can see them.</li>
+              <li><b>Progress files</b> leave the device only when a grown-up chooses "Share progress file" and sends the file themselves.</li>
+              <li><b>The suggestion form is an outside service.</b> "Send a suggestion or report a problem" opens a Google Form in a new tab. What you type there goes to Google Forms, under Google's privacy policy.</li>
+              <li><b>Removing data:</b> "Reset progress" or deleting a child in Grown-ups, or clearing this site's data in the browser, removes it from this device.</li>
+              <li><b>Questions:</b> <span id="gPrivContact">CONTACT EMAIL (to be filled in)</span></li>
+            </ul>
+          </div>
         </div>
         <div id="gRepList" class="nscreen gscreen" hidden>
           <p class="gp">Pick a child to see their progress report.</p>
@@ -2185,7 +2202,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function wBest() { var o = {}; try { o = JSON.parse(localStorage.getItem(pkey('ty_write')) || '{}') || {}; } catch (e) {} return o; }
   function wSaveBest(ch, st) { var o = wBest(); if (!o[ch] || o[ch] < st) { o[ch] = st; try { localStorage.setItem(pkey('ty_write'), JSON.stringify(o)); } catch (e) {} } }
   function wShow(id) {
-    ['wMenu', 'wPick', 'wPlay', 'nEntry', 'nLevel', 'nDone', 'gHome', 'gGate', 'gConfirm', 'gDone', 'gEdit', 'gDel', 'gRepList', 'gRep', 'gShare', 'gClass', 'gAsk', 'dPlay'].forEach(function (x) { $('#' + x).hidden = x !== id; }); $('#wOver').hidden = true;
+    ['wMenu', 'wPick', 'wPlay', 'nEntry', 'nLevel', 'nDone', 'gHome', 'gGate', 'gConfirm', 'gDone', 'gEdit', 'gDel', 'gRepList', 'gRep', 'gShare', 'gClass', 'gAsk', 'gPriv', 'dPlay'].forEach(function (x) { $('#' + x).hidden = x !== id; }); $('#wOver').hidden = true;
     $('#nCardBox').hidden = !nm.on; $('#nCheck').hidden = $('#nErase').hidden = !nm.on; $('#wPlay').classList.toggle('nlv3', nm.on && nm.level === 3); $('#app').classList.toggle('drawing', id === 'dPlay');
     syncBack();
   }
@@ -2552,7 +2569,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     } else if (!$('#wPick').hidden) wMenu();
     else if (!$('#gRep').hidden) { if (gRepFrom === 'class') gClass(); else gRepList(); }   /* a report: back to where it was opened */
     else if (!$('#gAsk').hidden) gClass();
-    else if (!$('#gEdit').hidden || !$('#gDel').hidden || !$('#gConfirm').hidden || !$('#gRepList').hidden || !$('#gShare').hidden || !$('#gClass').hidden) gHome();   /* still inside Grown-ups */
+    else if (!$('#gEdit').hidden || !$('#gDel').hidden || !$('#gConfirm').hidden || !$('#gRepList').hidden || !$('#gShare').hidden || !$('#gClass').hidden || !$('#gPriv').hidden) gHome();   /* still inside Grown-ups */
     else { wReset(); closeGame(); }
   }
   function wFillGrid(which) {
@@ -2571,7 +2588,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (current !== write || vSpeaking || wr.ink || wr.demo || wr.locked || wr.qBusy || wr.mode === 'result') return;
     if (!$('#wOver').hidden || !$('#dPlay').hidden) return;   /* drawing never talks */
     if (!$('#nEntry').hidden || !$('#nLevel').hidden || !$('#nDone').hidden) return;   /* a grown-up is typing, or he is done */
-    if (!$('#gHome').hidden || !$('#gGate').hidden || !$('#gConfirm').hidden || !$('#gDone').hidden) return;
+    if (!$('#gHome').hidden || !$('#gGate').hidden || !$('#gConfirm').hidden || !$('#gDone').hidden || !$('#gPriv').hidden) return;
     if (Date.now() - wLastAct < wr.idleMs) return;
     var inPlay = !$('#wPlay').hidden, items = null, m = wr.mode;
     if (wr.idleN >= 2) {
@@ -3255,6 +3272,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   $('#gSuggest').addEventListener('click', function (e) {
     if (navigator.onLine === false) { e.preventDefault(); toast('You need internet to send a suggestion'); }
   });
+  $('#gPrivBtn').addEventListener('click', function () { if (current === write) { audio(); sfx.pop(); wShow('gPriv'); $('#prompt').textContent = 'Privacy'; } });
   $('#gShareBtn').addEventListener('click', function () { if (current === write) { audio(); sfx.pop(); gShare(); } });
   $('#gShareKids').addEventListener('click', function (e) { var b = e.target.closest ? e.target.closest('.pkid') : null; if (b && current === write) { audio(); shExport([b.getAttribute('data-id')]); } });
   $('#gShareAll').addEventListener('click', function () { if (current === write) { audio(); shExport(PIDX.list.map(function (p) { return p.id; })); } });
