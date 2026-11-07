@@ -665,6 +665,9 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 .fsend { display: none; position: absolute; right: -4%; top: -12%; width: 46px; height: 46px; z-index: 2; transform: scale(var(--iz, 1)); transform-origin: 100% 0; cursor: pointer; }
 .fscene.build .fsend { display: block; }
 .fsend svg { display: block; width: 100%; height: 100%; }
+.fsendbtn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; padding: 2px 4px; }
+#fSendPic svg { width: 34px; height: 34px; }
+.fsend-w { font-size: 14px; font-weight: 700; line-height: 1; }
 .fbye .fa-act, .fbye .fi-in { animation: fbye 0.35s ease-in forwards !important; }
 @keyframes fbye { to { transform: translateY(-30%) scale(0.2); opacity: 0; } }
 .fask { align-items: center; }
@@ -1138,7 +1141,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           <div class="grow2"><button id="gRepBtn" class="btn gadd" type="button">Progress report</button><button id="gShareBtn" class="btn gadd" type="button">Share progress file</button><button id="gClassBtn" class="btn gadd" type="button">Class view (for teachers)</button><button id="gAdd" class="btn gadd" type="button">+ Add a child</button></div>
           <p id="gFull" class="gnote" hidden>8 children is the most on one device.</p>
           <div class="grow2 gfoot"><button id="gReset" class="btn greset" type="button">Reset progress for <span id="gResetN"></span></button><a id="gSuggest" class="btn gadd gsug" href="https://forms.gle/wcdwUucaTzTa3EdS9" target="_blank" rel="noopener noreferrer">Send a suggestion or report a problem</a></div>
-          <p id="gVer" class="gver">App version ww-v28</p>
+          <p id="gVer" class="gver">App version ww-v29</p>
         </div>
         <div id="gRepList" class="nscreen gscreen" hidden>
           <p class="gp">Pick a child to see their progress report.</p>
@@ -1258,6 +1261,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
         <div class="fbar2">
           <span class="grow"></span>
           <button id="fHomeBtn" class="btn ficon" type="button" aria-label="At home" hidden></button>
+          <button id="fSend" class="btn ficon fsendbtn" type="button" aria-label="Send home" hidden><span id="fSendPic" aria-hidden="true"></span><span class="fsend-w">Home</span></button>
           <button id="fPaint" class="btn ficon" type="button" aria-label="Decorate" hidden><svg viewBox="0 0 48 48" stroke="#2a2118" stroke-width="3" stroke-linejoin="round"><g transform="rotate(35 24 24)"><rect x="20" y="22" width="8" height="24" rx="3" fill="#c98a52"/><rect x="18.5" y="15" width="11" height="8" fill="#b9bec6"/><path d="M18.5 15 C18.5 7 24 1 24 1 C24 1 29.5 7 29.5 15 Z" fill="#e8417a"/></g></svg></button>
           <button id="fHammer" class="btn ficon" type="button" aria-label="Build"><svg viewBox="0 0 48 48" stroke="#2a2118" stroke-width="3" stroke-linejoin="round"><g transform="rotate(-40 24 24)"><rect x="21" y="16" width="6" height="30" rx="2" fill="#c98a52"/><rect x="9" y="5" width="30" height="13" rx="3" fill="#8a8f98"/></g></svg></button>
         </div>
@@ -3860,7 +3864,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     var st = fStage(), L = $('#fLayer'), h = '';
     $('#fScene').setAttribute('data-stage', st.id);
     FST.items.forEach(function (k) { h += '<div class="fi" data-i="' + k + '"><div class="fi-in">' + fItemSVG(k) + '</div>' + FSEND + '</div>' + (fLipSVG(k) ? '<div class="fi-lip" data-lip="' + k + '">' + fLipSVG(k) + '</div>' : ''); });
-    FST.animals.forEach(function (id) { var m = FA[id] && FA[id].mud > 0; h += '<button class="fa' + (fSel === id ? ' sel' : '') + (m ? ' muddy' : '') + '" type="button" data-a="' + id + '" aria-label="' + id + '"><div class="fa-flip"><div class="fa-act"><div class="fa-hop">' + fAnimalSVG(id, fLook(id), st) + '</div></div></div>' + FSEND + '</button>'; });
+    FST.animals.forEach(function (id) { var m = FA[id] && FA[id].mud > 0; h += '<button class="fa' + (fSel === id ? ' sel' : '') + (m ? ' muddy' : '') + '" type="button" data-a="' + id + '" aria-label="' + id + '"><div class="fa-flip"><div class="fa-act"><div class="fa-hop">' + fAnimalSVG(id, fLook(id), st) + '</div></div></div></button>'; });
     if (FST.animals.indexOf('duck') >= 0 && fStageI() >= 2) { var dk = fAnimalSVG('duck', { color: fLook('duck').color }, FARM.growthStages[0]);   /* her color, not her clothes */ h += new Array(4).join('<div class="fdk"><div>' + dk + '</div></div>'); }
     if (fGifts() > 0) h += '<button class="fgift" type="button" aria-label="gift">' + fGiftSVG() + '</button>';
     L.innerHTML = h; fFxN = 0;
@@ -3869,7 +3873,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
         item: '', walk: 0, act: null, pose: [0, 0, 0, 1, 1], head: 0, mud: 0, lip: '', z: 0 });
       a.el = L.querySelector('[data-a="' + id + '"]'); a.faceSet = 0; a.actEl = a.el.querySelector('.fa-act'); a.hdEl = a.el.querySelector('.fhd'); a.poseK = a.headK = null;
     });
-    fItemsShow(); fLayout(); fDucklings(); fProg(); $('#fPaint').hidden = !fSel; $('#fHomeBtn').hidden = !FST.away.length;
+    fItemsShow(); fLayout(); fDucklings(); fProg(); $('#fPaint').hidden = !fSel; $('#fSend').hidden = !fSel; $('#fHomeBtn').hidden = !FST.away.length;
     FST.animals.forEach(function (id) { if (FA[id].lip) fLip(FA[id], FA[id].lip); });
   }
   function fLayout() {
@@ -4311,7 +4315,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function fSelect(id) {
     fSel = id;
     Array.prototype.forEach.call($('#fLayer').querySelectorAll('.fa'), function (el) { el.classList.toggle('sel', el.getAttribute('data-a') === id); });
-    var p = $('#fPaint'); p.hidden = !id;
+    var p = $('#fPaint'); p.hidden = !id; $('#fSend').hidden = !id;   /* the selected animal's buttons: decorate and send home */
     if (id) { p.classList.remove('nudge'); void p.offsetWidth; p.classList.add('nudge'); }
   }
   function fTapAnimal(id) {
@@ -4319,7 +4323,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     var hop = a.el.querySelector('.fa-hop'); hop.classList.remove('hop', 'fnew'); void hop.offsetWidth; hop.classList.add('hop');
     fAnimalSound(id);   /* one of her two clips for this animal, or the made-up sound */
     fFx(Math.random() < 0.5 ? 'heart' : 'spark', a.x, a.y + a.w * FVB[id][1] / FVB[id][0] * 90 / fH, 2);
-    fSelect(id);
+    fSelect(fSel === id ? '' : id);   /* tapping the selected animal again lets it go */
   }
   function fOpenGift(el) {
     if (el.classList.contains('open')) return;
@@ -4676,7 +4680,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   /* --- sending an animal or an item home (from build mode): it leaves the field but stays his, with its clothes and size.
      The barn button lists what is at home; tapping one brings it back for free. Nothing is refunded, nothing is lost. --- */
   var HOMEPIC = '<svg viewBox="0 0 40 40" ' + INK + '><circle cx="20" cy="20" r="18" fill="#fff8e6"/><path d="M12 19 V30 H28 V19" fill="#ffd640"/><rect x="17.5" y="23" width="5" height="7" fill="#c4402f" stroke-width="2"/><path d="M8.5 20 L20 10 L31.5 20" fill="none" stroke-width="3.5"/></svg>';
-  var FSEND = '<span class="fsend" aria-label="send home">' + HOMEPIC + '</span>';
+  var FSEND = '<span class="fsend" aria-label="send home">' + HOMEPIC + '</span>';   /* on items in build mode; an animal is sent home with the Home button below the farm */
+  $('#fSendPic').innerHTML = HOMEPIC;
   var FARROW = '<svg viewBox="0 0 40 24"><path d="M3 12 H31 M23 4 L33 12 L23 20" fill="none" stroke="#2a2118" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   var fAskK = '', fByeT = 0;
   function fIsAnimal(k) { return FARM.animals.hasOwnProperty(k); }
@@ -5047,6 +5052,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (current !== farm) return; audio(); sfx.pop();
     if (fBuildOn) fBuildMode(false); else { fBuildMode(true); fShopOpen('barnyard'); fAmbient([FSAY.build]); }
   });
+  $('#fSend').addEventListener('click', function () { if (current !== farm || !fSel) return; audio(); fAsk(fSel); });   /* the same "send it home?" as before */
   $('#fPaint').addEventListener('click', function () { if (current !== farm || !fSel) return; audio(); sfx.pop(); fShopOpen(fSel); fAmbient([FSAY.decorate]); });
   $('#fShop').addEventListener('click', function (e) {
     if (current !== farm || !e.target.closest) return;
