@@ -519,6 +519,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 @keyframes fbounce { 50% { transform: translateY(-10%) rotate(-4deg); } }
 .fi { position: absolute; pointer-events: none; }
 .fi::after { content: ""; position: absolute; left: 10%; right: 10%; bottom: -8%; height: 14%; border-radius: 50%; z-index: -1; }
+.fi.sel::after { background: #ffd640; box-shadow: 0 0 0 3px var(--ink); }   /* a selected item (build mode): the same ring as an animal */
 .fi.slide { transition: left 0.3s ease, bottom 0.3s ease; }
 .fscene.build .fi { pointer-events: auto; touch-action: none; cursor: grab; transform-origin: 50% 100%; animation: fjig 1.4s ease-in-out infinite; }
 .fa.held, .fscene.build .fi.held { cursor: grabbing; animation: none; }
@@ -662,9 +663,6 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 .fzoom .btn { width: 56px; min-height: 56px; padding: 0; display: grid; place-items: center; }
 .fzoom svg { width: 38px; height: 38px; display: block; }
 /* send home: a little house on each animal and item while building; it keeps its size on screen at any zoom */
-.fsend { display: none; position: absolute; right: -4%; top: -12%; width: 46px; height: 46px; z-index: 2; transform: scale(var(--iz, 1)); transform-origin: 100% 0; cursor: pointer; }
-.fscene.build .fsend { display: block; }
-.fsend svg { display: block; width: 100%; height: 100%; }
 .fsendbtn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; padding: 2px 4px; }
 #fSendPic svg { width: 34px; height: 34px; }
 .fsend-w { font-size: 14px; font-weight: 700; line-height: 1; }
@@ -1160,7 +1158,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           <div class="grow2"><button id="gRepBtn" class="btn gadd" type="button">Progress report</button><button id="gShareBtn" class="btn gadd" type="button">Share progress file</button><button id="gClassBtn" class="btn gadd" type="button">Class view (for teachers)</button><button id="gAdd" class="btn gadd" type="button">+ Add a child</button></div>
           <p id="gFull" class="gnote" hidden>8 children is the most on one device.</p>
           <div class="grow2 gfoot"><button id="gReset" class="btn greset" type="button">Reset progress for <span id="gResetN"></span></button><a id="gSuggest" class="btn gadd gsug" href="https://forms.gle/wcdwUucaTzTa3EdS9" target="_blank" rel="noopener noreferrer">Send a suggestion or report a problem</a><button id="gPrivBtn" class="btn gadd" type="button">Privacy</button></div>
-          <p id="gVer" class="gver">App version ww-v33</p>
+          <p id="gVer" class="gver">App version ww-v34</p>
         </div>
         <div id="gPriv" class="nscreen gscreen" hidden>
           <div class="gp gpriv">
@@ -3900,7 +3898,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function fBuild() {
     var st = fStage(), L = $('#fLayer'), h = '';
     $('#fScene').setAttribute('data-stage', st.id);
-    FST.items.forEach(function (k) { h += '<div class="fi" data-i="' + k + '"><div class="fi-in">' + fItemSVG(k) + '</div>' + FSEND + '</div>' + (fLipSVG(k) ? '<div class="fi-lip" data-lip="' + k + '">' + fLipSVG(k) + '</div>' : ''); });
+    FST.items.forEach(function (k) { h += '<div class="fi' + (fSel === k ? ' sel' : '') + '" data-i="' + k + '"><div class="fi-in">' + fItemSVG(k) + '</div></div>' + (fLipSVG(k) ? '<div class="fi-lip" data-lip="' + k + '">' + fLipSVG(k) + '</div>' : ''); });
     FST.animals.forEach(function (id) { var m = FA[id] && FA[id].mud > 0; h += '<button class="fa' + (fSel === id ? ' sel' : '') + (m ? ' muddy' : '') + '" type="button" data-a="' + id + '" aria-label="' + id + '"><div class="fa-flip"><div class="fa-act"><div class="fa-hop">' + fAnimalSVG(id, fLook(id), st) + '</div></div></div></button>'; });
     if (FST.animals.indexOf('duck') >= 0 && fStageI() >= 2) { var dk = fAnimalSVG('duck', { color: fLook('duck').color }, FARM.growthStages[0]);   /* her color, not her clothes */ h += new Array(4).join('<div class="fdk"><div>' + dk + '</div></div>'); }
     if (fGifts() > 0) h += '<button class="fgift" type="button" aria-label="gift">' + fGiftSVG() + '</button>';
@@ -3910,7 +3908,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
         item: '', walk: 0, act: null, pose: [0, 0, 0, 1, 1], head: 0, mud: 0, lip: '', z: 0 });
       a.el = L.querySelector('[data-a="' + id + '"]'); a.faceSet = 0; a.actEl = a.el.querySelector('.fa-act'); a.hdEl = a.el.querySelector('.fhd'); a.poseK = a.headK = null;
     });
-    fItemsShow(); fLayout(); fDucklings(); fProg(); $('#fPaint').hidden = !fSel; $('#fSend').hidden = !fSel; $('#fFeed').hidden = !fSel; $('#fHomeBtn').hidden = !FST.away.length; fFeedDraw();
+    fItemsShow(); fLayout(); fDucklings(); fProg(); fSelBar(); $('#fHomeBtn').hidden = !FST.away.length; fFeedDraw();
     FST.animals.forEach(function (id) { if (FA[id].lip) fLip(FA[id], FA[id].lip); });
   }
   function fLayout() {
@@ -4352,11 +4350,15 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   }
 
   /* --- taps, gifts, decorating and building --- */
-  function fSelect(id) {
+  function fSelect(id) {   /* one thing at a time: an animal, or an item in build mode ('' = nothing) */
     fSel = id;
-    Array.prototype.forEach.call($('#fLayer').querySelectorAll('.fa'), function (el) { el.classList.toggle('sel', el.getAttribute('data-a') === id); });
-    var p = $('#fPaint'); p.hidden = !id; $('#fSend').hidden = !id; $('#fFeed').hidden = !id;   /* the selected animal's buttons: send home, feed, decorate */
-    if (id) { p.classList.remove('nudge'); void p.offsetWidth; p.classList.add('nudge'); }
+    Array.prototype.forEach.call($('#fLayer').querySelectorAll('.fa, .fi'), function (el) { el.classList.toggle('sel', (el.getAttribute('data-a') || el.getAttribute('data-i')) === id); });
+    fSelBar();
+    if (id && fIsAnimal(id)) { var p = $('#fPaint'); p.classList.remove('nudge'); void p.offsetWidth; p.classList.add('nudge'); }
+  }
+  function fSelBar() {   /* the bar under the farm: Home for anything selected; Feed and the paintbrush for an animal only */
+    var an = !!fSel && fIsAnimal(fSel);
+    $('#fSend').hidden = !fSel; $('#fFeed').hidden = !an; $('#fPaint').hidden = !an;
   }
   /* an animal's happy trick: a hop, its sound, a heart or sparkle (tapping it, and after eating) */
   function fCheer(id) {
@@ -4604,7 +4606,9 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   }
   /* --- dragging: animals any time, items only in build mode; a quick tap stays a tap --- */
   var fBuildOn = false, fDrag = null, fNoClick = 0;
-  function fBuildMode(on) { fBuildOn = on; $('#fScene').classList.toggle('build', on); $('#fHammer').classList.toggle('on', on); }
+  function fBuildMode(on) {
+    if (!on && fSel && !fIsAnimal(fSel)) fSelect('');   /* items are only selected while building */
+    fBuildOn = on; $('#fScene').classList.toggle('build', on); $('#fHammer').classList.toggle('on', on); }
   function fPlop() { fSound(function (a, t) { fTone(a, t, 'sine', [[0, 560], [0.1, 230]], 0.13, 0.2, 1600); }); }
   function fLand(el) { el.classList.remove('fland', 'fnew', 'hop'); void el.offsetWidth; el.classList.add('fland'); }
   function fRect(k, x, y) { var s = fSize(k), l = x * fW / 100 - s[0] / 2, b = y * fH / 100; return [l, b, l + s[0], b + s[1]]; }
@@ -4656,7 +4660,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     fSave(); fPlop();
   }
   $('#fLayer').addEventListener('pointerdown', function (e) {
-    if (current !== farm || fDrag || !e.target.closest || e.button > 0 || e.target.closest('.fsend')) return;
+    if (current !== farm || fDrag || !e.target.closest || e.button > 0) return;
     var el = e.target.closest('.fa'), kind = 'a', k, p;
     if (el) k = el.getAttribute('data-a');
     else if (fBuildOn && (el = e.target.closest('.fi'))) { kind = 'i'; k = el.getAttribute('data-i'); }
@@ -4715,7 +4719,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       if (fDrag) return;   /* carrying an animal or item: keep carrying */
       ids.forEach(function (k) { try { sc.setPointerCapture(+k); } catch (x) {} });
       q = fTwo(); fPan = { pinch: true, d: q.d, z: fZm.z, w: [(q.m[0] - fZm.x) / fZm.z, (q.m[1] - fZm.y) / fZm.z] };
-    } else if (ids.length === 1 && !fDrag && !e.target.closest('.fa, .fgift, .fsend') && !(fBuildOn && e.target.closest('.fi'))) {
+    } else if (ids.length === 1 && !fDrag && !e.target.closest('.fa, .fgift') && !(fBuildOn && e.target.closest('.fi'))) {
       fPan = { id: e.pointerId, s: fPtr[e.pointerId], x: fZm.x, y: fZm.y, on: false };
     }
   });
@@ -4757,7 +4761,6 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   /* --- sending an animal or an item home (from build mode): it leaves the field but stays his, with its clothes and size.
      The barn button lists what is at home; tapping one brings it back for free. Nothing is refunded, nothing is lost. --- */
   var HOMEPIC = '<svg viewBox="0 0 40 40" ' + INK + '><circle cx="20" cy="20" r="18" fill="#fff8e6"/><path d="M12 19 V30 H28 V19" fill="#ffd640"/><rect x="17.5" y="23" width="5" height="7" fill="#c4402f" stroke-width="2"/><path d="M8.5 20 L20 10 L31.5 20" fill="none" stroke-width="3.5"/></svg>';
-  var FSEND = '<span class="fsend" aria-label="send home">' + HOMEPIC + '</span>';   /* on items in build mode; an animal is sent home with the Home button below the farm */
   $('#fSendPic').innerHTML = HOMEPIC; $('#fFeedPic').innerHTML = FVEG.carrot; $('#fBasketPic').innerHTML = fBasketSVG();
   var FARROW = '<svg viewBox="0 0 40 24"><path d="M3 12 H31 M23 4 L33 12 L23 20" fill="none" stroke="#2a2118" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   var fAskK = '', fByeT = 0;
@@ -4775,7 +4778,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (L.indexOf(k) < 0) return;
     if (fDrag && fDrag.k === k) fEndDrag();
     p = an ? [FA[k].x, FA[k].y] : fItemAt(k);
-    if (an) { fActStop(k); FA[k].mud = 0; if (fSel === k) fSelect(''); }
+    if (fSel === k) fSelect('');
+    if (an) { fActStop(k); FA[k].mud = 0; }
     else FST.animals.forEach(function (id) { if (FA[id] && FA[id].item === k) fActStop(id); });   /* anyone on its way to it or using it stops */
     L.splice(L.indexOf(k), 1); FST.away.push(k); fSave();
     if (el) el.classList.add('fbye');
@@ -5112,10 +5116,11 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   }
   $('#fLayer').addEventListener('click', function (e) {
     if (current !== farm || !e.target.closest || performance.now() < fNoClick) return;   /* no tap right after a drag */
-    var a = e.target.closest('.fa'), g = e.target.closest('.fgift'), sh = e.target.closest('.fsend');
+    var a = e.target.closest('.fa'), g = e.target.closest('.fgift'), i = fBuildOn && e.target.closest('.fi'), k;
     audio();
-    if (sh) { if (fBuildOn) fAsk(sh.parentNode.getAttribute('data-a') || sh.parentNode.getAttribute('data-i')); return; }
-    if (a) fTapAnimal(a.getAttribute('data-a')); else if (g) fOpenGift(g); else if (fSel) fSelect('');
+    if (a) fTapAnimal(a.getAttribute('data-a'));
+    else if (i) { k = i.getAttribute('data-i'); fSelect(fSel === k ? '' : k); }   /* an item, while building: tap to select it, again to let it go */
+    else if (g) fOpenGift(g); else if (fSel) fSelect('');
   });
   $('#fSheet').addEventListener('click', function (e) {
     if (current !== farm || !e.target.closest) return;
@@ -5129,9 +5134,9 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (current !== farm) return; audio(); sfx.pop();
     if (fBuildOn) fBuildMode(false); else { fBuildMode(true); fShopOpen('barnyard'); fAmbient([FSAY.build]); }
   });
-  $('#fFeed').addEventListener('click', function () { if (current !== farm || !fSel) return; audio(); fFeed(fSel); });
-  $('#fSend').addEventListener('click', function () { if (current !== farm || !fSel) return; audio(); fAsk(fSel); });   /* the same "send it home?" as before */
-  $('#fPaint').addEventListener('click', function () { if (current !== farm || !fSel) return; audio(); sfx.pop(); fShopOpen(fSel); fAmbient([FSAY.decorate]); });
+  $('#fFeed').addEventListener('click', function () { if (current !== farm || !fSel || !fIsAnimal(fSel)) return; audio(); fFeed(fSel); });
+  $('#fSend').addEventListener('click', function () { if (current !== farm || !fSel) return; audio(); fAsk(fSel); });   /* animal or item: the same "send it home?" as before */
+  $('#fPaint').addEventListener('click', function () { if (current !== farm || !fSel || !fIsAnimal(fSel)) return; audio(); sfx.pop(); fShopOpen(fSel); fAmbient([FSAY.decorate]); });
   $('#fShop').addEventListener('click', function (e) {
     if (current !== farm || !e.target.closest) return;
     audio();

@@ -85,4 +85,17 @@ async function openBarnyard(page) {
   await expect(page.locator('#fScene')).toBeVisible();
 }
 
-module.exports = { storage, openWith, tapStart, firstRun, grownUps, addChild, WATSON, withFarm, farmNow, openFarm, openShop, openBarnyard };
+// build mode: a real tap on a bit of the item that nothing else covers (animals walk about, and may stand on it)
+async function tapItem(page, k) {
+  const pt = await page.locator('#fLayer [data-i="' + k + '"] .fi-in').evaluate((el, k) => {
+    const r = el.getBoundingClientRect();
+    for (const fy of [0.6, 0.5, 0.7, 0.8, 0.4, 0.3]) for (const fx of [0.5, 0.35, 0.65, 0.2, 0.8]) {
+      const x = r.left + r.width * fx, y = r.top + r.height * fy, hit = document.elementFromPoint(x, y), fi = hit && hit.closest('.fi');
+      if (fi && fi.getAttribute('data-i') === k) return [x, y];
+    }
+    return [r.left + r.width / 2, r.top + r.height * 0.7];
+  }, k);
+  await page.mouse.click(pt[0], pt[1]);
+}
+
+module.exports = { storage, openWith, tapStart, firstRun, grownUps, addChild, WATSON, withFarm, farmNow, openFarm, openShop, openBarnyard, tapItem };

@@ -33,11 +33,11 @@ test('tapping an animal shows Home and the paintbrush in the bar, with nothing o
   // same size as the paintbrush (its layout size: the paintbrush glows bigger for a moment when it appears)
   const size = (sel) => page.locator(sel).evaluate((e) => [e.offsetWidth, e.offsetHeight]);
   expect(await size('#fSend')).toEqual(await size('#fPaint'));
-  // in build mode too: no house on the animals (items keep theirs)
+  // in build mode too: nothing drawn on the animals or the items (items use the same Home button: item-home.spec.js)
   await page.locator('#fHammer').click();
   await page.locator('#fShop .fx-close').click();
-  await expect(page.locator('#fLayer [data-a] .fsend')).toHaveCount(0);
-  await expect(page.locator('#fLayer [data-i="mud"] .fsend')).toBeVisible();
+  await expect(page.locator('#fLayer .fsend')).toHaveCount(0);
+  await expect(page.locator('#fLayer [data-i="mud"] button')).toHaveCount(0);
 });
 
 test('tapping empty ground deselects and hides the animal\'s buttons', async ({ page }) => {

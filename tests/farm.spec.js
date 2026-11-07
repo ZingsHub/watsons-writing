@@ -1,7 +1,7 @@
 // My Farm as it was before the shop change: the map and its areas, the Barnyard (animals, build mode, send home),
 // the Tractor Shed and Farmhouse screens, and sounds (only in My Farm, none when muted).
 const { test, expect } = require('@playwright/test');
-const { openWith, withFarm, farmNow, openFarm, openBarnyard } = require('./helpers');
+const { openWith, withFarm, farmNow, openFarm, openBarnyard, tapItem } = require('./helpers');
 
 const SAVE = { v: 4, spent: 0, animals: ['pig', 'horse'], looks: { pig: { own: ['crown'], wear: { head: 'crown' } } }, items: ['mud', 'hay'], away: [], pos: {}, areas: ['barnyard'] };
 
@@ -68,7 +68,8 @@ test('build mode: send an item home and bring it back, free', async ({ page }) =
   await expect(page.locator('#fScene')).toHaveClass(/build/);
   await page.locator('#fShop .fx-close').click();   // the hammer opens the shop on its Barnyard tab
   await expect(page.locator('#fScene')).toHaveClass(/build/);
-  await page.locator('#fLayer [data-i="hay"] .fsend').click({ force: true });   // items wiggle in build mode
+  await tapItem(page, 'hay');   // in build mode a tap selects it
+  await page.locator('#fSend').click();
   await page.locator('#fAskYes').click();
   await expect(page.locator('#fLayer [data-i="hay"]')).toHaveCount(0);
   let f = await farmNow(page);
