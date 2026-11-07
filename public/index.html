@@ -727,6 +727,21 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   .ppick { gap: 8px; padding: 8px; } .ppick h2 { font-size: 26px; }
   .pfaces { gap: 10px 16px; max-width: 840px; } .pkid { width: 112px; font-size: 19px; gap: 4px; } .pkid .pface { width: 100px; height: 100px; }
 }
+/* first run on a new device: the first child's name and face */
+.pfirst { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; max-height: 100%; overflow-y: auto; padding: 16px; }
+.pfirst[hidden] { display: none; }
+.pfirst h2 { margin: 0; font-family: var(--display); font-size: 34px; color: var(--ink); text-align: center; }
+.pflab { font-size: 20px; font-weight: 700; color: var(--ink); }
+.pfrow { display: flex; align-items: stretch; gap: 10px; width: min(100%, 460px); }
+.pfrow input { flex: 1; min-width: 0; font: inherit; font-size: 24px; padding: 8px 12px; border: 3px solid var(--ink); border-radius: 12px; background: #fff; }
+.gate .pfstart { flex: none; min-height: 64px; padding: 6px 26px; font-size: 28px; font-weight: 700; background: #9fd46a; }
+.pfnote { margin: 0; font-size: 16px; color: var(--ink); text-align: center; }
+.pfmsg { margin: 0; min-height: 22px; font-size: 18px; font-weight: 700; color: #8a3a1a; text-align: center; }
+@media (orientation: landscape) and (max-height: 560px) {
+  .pfirst { gap: 6px; padding: 8px; } .pfirst h2 { font-size: 26px; }
+  .pfirst .gfaces { grid-template-columns: repeat(6, 52px); gap: 8px; padding: 2px; } .pfirst .gface, .pfirst .gface .pface { width: 52px; height: 52px; }
+  .gate .pfstart { min-height: 56px; }
+}
 .gkids { width: min(100%, 560px); display: flex; flex-direction: column; gap: 8px; }
 .gkid { display: flex; align-items: center; gap: 10px; padding: 6px 10px; background: #fff; border: 3px solid var(--ink); border-radius: 16px; }
 .gkid .pface { flex: none; width: 56px; height: 56px; border-width: 3px; box-shadow: none; }
@@ -1062,7 +1077,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           <div class="grow2"><button id="gRepBtn" class="btn gadd" type="button">Progress report</button><button id="gShareBtn" class="btn gadd" type="button">Share progress file</button><button id="gClassBtn" class="btn gadd" type="button">Class view (for teachers)</button><button id="gAdd" class="btn gadd" type="button">+ Add a child</button></div>
           <p id="gFull" class="gnote" hidden>8 children is the most on one device.</p>
           <div class="grow2 gfoot"><button id="gReset" class="btn greset" type="button">Reset progress for <span id="gResetN"></span></button><a id="gSuggest" class="btn gadd gsug" href="https://forms.gle/wcdwUucaTzTa3EdS9" target="_blank" rel="noopener noreferrer">Send a suggestion or report a problem</a></div>
-          <p id="gVer" class="gver">App version ww-v26</p>
+          <p id="gVer" class="gver">App version ww-v27</p>
         </div>
         <div id="gRepList" class="nscreen gscreen" hidden>
           <p class="gp">Pick a child to see their progress report.</p>
@@ -1090,7 +1105,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           <div class="gyn"><button id="gAskNo" class="btn gno" type="button" aria-label="No"><svg viewBox="0 0 24 24"><path d="M5 5 L19 19 M19 5 L5 19" stroke="#fff" stroke-width="4.5" stroke-linecap="round"/></svg></button><button id="gAskYes" class="btn gyes" type="button" aria-label="Yes"><svg viewBox="0 0 24 24"><path d="M4 12.5 L10 18 L20 6" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
         </div>
         <div id="gEdit" class="nscreen gscreen" hidden>
-          <label class="gname">Name <input id="gEName" type="text" maxlength="12" autocomplete="off" autocapitalize="words" spellcheck="false"></label>
+          <label class="gname">Name <input id="gEName" type="text" maxlength="20" autocomplete="off" autocapitalize="words" spellcheck="false"></label>
           <div id="gFaces" class="gfaces"></div>
           <p id="gEMsg" class="gmsg"></p>
           <div class="gbtns"><button id="gECancel" class="btn" type="button">Cancel</button><button id="gESave" class="btn" type="button">Save</button></div>
@@ -1215,7 +1230,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   </section>
 </main>
 <div id="printRep"></div>
-<div id="gate" class="gate"><button id="startBtn" class="btn" type="button"><span class="gl">&#9999;&#65039;</span> Tap to start writing</button><div id="pPick" class="ppick" hidden><h2>Who's playing?</h2><div id="pFaces" class="pfaces"></div></div></div>
+<div id="gate" class="gate"><button id="startBtn" class="btn" type="button"><span class="gl">&#9999;&#65039;</span> Tap to start writing</button><div id="pPick" class="ppick" hidden><h2>Who's playing?</h2><div id="pFaces" class="pfaces"></div></div><div id="pFirst" class="pfirst" hidden><h2>Who is learning today?</h2><div id="pFFaces" class="gfaces" role="group" aria-label="Pick a face"></div><label class="pflab" for="pFName">Student's first name</label><div class="pfrow"><input id="pFName" type="text" maxlength="20" autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="go"><button id="pFStart" class="btn pfstart" type="button">Start</button></div><p class="pfnote">First name only. Nothing leaves this device.</p><p id="pFMsg" class="pfmsg" role="status"></p></div></div>
 <select id="voiceSel" hidden></select>
 
 <script>
@@ -1229,8 +1244,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 
   /* ---------- child profiles: each child has their own saved progress. Shared by everyone: the voice clips, mute, the device voice (ty_voice), the service worker.
      Saved: ww_profiles { v, cur, list: [{ id, name, face }] } (up to 8), and each child's keys as ww_p_<id>_<key>, with a name tag ww_p_<id>_meta.
-     The first time, everything saved before profiles is copied to ww_backup_premigrate (kept forever) and becomes Watson's. Nothing leaves the device. ---------- */
-  var PKEY = 'ww_profiles', PBACKUP = 'ww_backup_premigrate', PMAX = 8, PNAME = 12;
+     The first time, everything saved before profiles is copied to ww_backup_premigrate (kept forever) and becomes Watson's; a brand-new device (nothing saved) asks for the first child instead (pFresh, pFirstShow). Nothing leaves the device. ---------- */
+  var PKEY = 'ww_profiles', PBACKUP = 'ww_backup_premigrate', PMAX = 8, PNAME = 20;
   var PDATA = ['ty_stars', 'ty_name', 'ty_write', 'ww_farm', 'ww_farm_bad', 'ww_reward', 'ww_farm_said', 'ww_names', 'ww_stats'];   /* one child's progress */
   var PREWARD0 = JSON.stringify({ quiz: {}, names: {}, day: '', bonus: {} });   /* a new child: nothing paid yet */
   var PFACES = [
@@ -1307,9 +1322,20 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     PIDX = pValid({ list: list });
     if (PIDX) pSaveIdx(); else pMigrate();
   }
+  /* a brand-new device: no list, no name tags, no backup and no progress from before profiles */
+  function pFresh() {
+    if (lsGet(PKEY) !== null || lsGet(PBACKUP) !== null) return false;
+    if (PDATA.some(function (k) { return lsGet(k) !== null; })) return false;
+    return !lsKeys().some(function (k) { return /^ww_p_[a-z0-9]{1,16}_meta$/.test(k || ''); });
+  }
+  var PFIRST = false;   /* true until the first child is made on the first-run screen; nothing is saved to the list before then */
   (function pBoot() {
-    var raw = lsGet(PKEY), d = null;
-    if (raw === null) pMigrate();
+    var raw = lsGet(PKEY), d = null, id;
+    if (raw === null && pFresh()) {
+      id = 'p' + Date.now().toString(36) + Math.floor(Math.random() * 36).toString(36);
+      PFIRST = true; PIDX = { v: 1, cur: id, list: [{ id: id, name: '', face: 0 }] };
+    }
+    else if (raw === null) pMigrate();
     else { try { d = JSON.parse(raw); } catch (e) {} PIDX = pValid(d); if (!PIDX) pRecover(raw); }
     PID = PIDX.cur;
   })();
@@ -2867,6 +2893,33 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     audio(); pUse(b.getAttribute('data-id')); $('#gate').hidden = true; write.start();
   });
   $('#pMe').addEventListener('click', function () { if (current !== write || $('#wMenu').hidden) return; audio(); sfx.pop(); pPickShow(true); });
+
+  /* --- first run on a new device: "Who is learning today?" makes the first child (no Watson). Quiet: no spoken lines. --- */
+  var pFFace = 0;
+  function pFFacesDraw() { var h = ''; PFACES.forEach(function (f, i) { h += '<button class="gface' + (i === pFFace ? ' on' : '') + '" type="button" data-f="' + i + '" aria-label="' + f.k + '" aria-pressed="' + (i === pFFace) + '">' + pFaceEl(i) + '</button>'; }); $('#pFFaces').innerHTML = h; }
+  function pFirstShow() { $('#startBtn').hidden = true; $('#pPick').hidden = true; $('#pFirst').hidden = false; $('#gate').hidden = false; pFFacesDraw(); }
+  function pFirstStart() {
+    var raw = $('#pFName').value.trim(), n = pCleanName(raw), p = PIDX.list[0];
+    if (!n) { $('#pFMsg').textContent = 'Please type a first name.'; $('#pFName').focus(); return; }
+    if (raw.length > PNAME) { $('#pFMsg').textContent = 'Please use 20 letters or fewer.'; $('#pFName').focus(); return; }
+    p.name = n; p.face = pFFace;
+    if (lsGet(pKey(p.id, 'ww_reward')) === null) lsSet(pKey(p.id, 'ww_reward'), PREWARD0);   /* a fresh start: nothing paid yet */
+    pSaveIdx(); PFIRST = false; pMeDraw();
+    $('#pFName').blur(); $('#pFirst').hidden = true; $('#startBtn').hidden = false; $('#gate').hidden = true; $('#gate').removeAttribute('style');
+    audio(); sfx.good(); write.start();
+  }
+  $('#pFFaces').addEventListener('click', function (e) { var b = e.target.closest ? e.target.closest('.gface') : null; if (!b) return; audio(); sfx.pop(); pFFace = +b.getAttribute('data-f'); pFFacesDraw(); });
+  $('#pFStart').addEventListener('click', pFirstStart);
+  $('#pFName').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); pFirstStart(); } });
+  $('#pFName').addEventListener('input', function () { $('#pFMsg').textContent = ''; });
+  /* the on-screen keyboard: keep the screen inside what is still visible, with the name and Start in view */
+  function pFirstFit() {
+    var vv = window.visualViewport, g = $('#gate'); if ($('#pFirst').hidden) return;
+    if (vv) { g.style.top = vv.offsetTop + 'px'; g.style.height = vv.height + 'px'; g.style.bottom = 'auto'; }
+    if (document.activeElement === $('#pFName')) $('#pFStart').scrollIntoView({ block: 'nearest' });
+  }
+  if (window.visualViewport) { window.visualViewport.addEventListener('resize', pFirstFit); window.visualViewport.addEventListener('scroll', pFirstFit); }
+  $('#pFName').addEventListener('focus', function () { setTimeout(pFirstFit, 300); });
 
   /* --- grown-ups: add, edit (name and face), delete (asked twice), and reset the child who is playing --- */
   var gEditId = '', gEditFace = 0, gDelId = '', gDelStep = 0;
@@ -5125,7 +5178,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   $('#startBtn').addEventListener('click', function () {
     audio(); $('#gate').hidden = true; write.start();
   });
-  pMeDraw(); if (PIDX.list.length >= 2) pPickShow(false);
+  pMeDraw(); if (PFIRST) pFirstShow(); else if (PIDX.list.length >= 2) pPickShow(false);
   if ('serviceWorker' in navigator) window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js').catch(function () {}); });
 })();
 </script>
