@@ -1,19 +1,72 @@
 NEEDED NOW (already used in the app)
-You wrote your name!
-Rainbow tail   (the chicken's rainbow tail in My Farm's decorate list; silent until recorded)
+One exact line per row, written exactly as the app looks it up (capitals and punctuation matter). All are heard by the child.
+(device voice) = said by the device voice until recorded; (silent) = says nothing until recorded.
 
-My Farm names, said when he taps a choice (each silent until recorded):
-  Customizations: Top hat, Glasses, Sunglasses, Bow tie, Scarf, Tutu, Cape, Saddle blanket, Spots, Stripes, Sparkles, Ponytail, Curls, Mohawk
-  Colors: Gold, Mint, White, Black, Brown, Gray, Pink, Blue, Green
-  World items: Trough, Big trough, Clover meadow, Rock hill, Puddle, Mud slide, Jump, Apples, Nest, Chicken coop, Bell, Yarn, Sheep shed, Boat, Duck house, Tire, Seesaw
-  Farm map (each silent until recorded):
-    Area names, said when he taps an area: Barnyard, Tractor Shed, Farmhouse and Garden
-    A new place to explore!   (after unlocking an area, following "You got it!")
-    Honk honk!                (tapping a vehicle in the Tractor Shed)
-    Time to pick!             (a vegetable in the garden is ready)
-    Vehicles, said when he picks or buys one: Tractor, Little car, Pickup truck, Combine
-    House extras: Flag, Mailbox, Porch swing
-    Later areas (when they are added): Pond and Meadow, Big Barn, Orchard, Playground, Windmill, Beehive
-  (Already recorded and used: Bow, Hat, Crown, Glitter, Flower, Braid, Rainbow mane, pond, cow, sheep, duck, goat, and every animal sound.)
+Write my name: finished:
+You wrote your name!   (device voice; after the name is spelled with her letter clips (once recorded, it moves to between the cheers))
+
+My Farm: shop, outfits:
+Top hat   (silent; pig)
+Glasses   (silent; pig)
+Sunglasses   (silent; pig)
+Bow tie   (silent; pig)
+Scarf   (silent; pig)
+Tutu   (silent; pig)
+Cape   (silent; pig)
+Gold   (silent; pig)
+Mint   (silent; pig)
+Spots   (silent; pig)
+Stripes   (silent; pig)
+Sparkles   (silent; pig)
+Saddle blanket   (silent; horse)
+White   (silent; horse)
+Ponytail   (silent; horse)
+Curls   (silent; horse)
+Mohawk   (silent; horse)
+Rainbow tail   (silent; chicken)
+
+My Farm: shop, Barnyard items:
+Puddle   (silent; preview, buying, tapping one he owns)
+Mud slide   (silent; preview, buying, tapping one he owns)
+Jump   (silent; preview, buying, tapping one he owns)
+Apples   (silent; preview, buying, tapping one he owns)
+Nest   (silent; preview, buying, tapping one he owns)
+Trough   (silent; preview, buying, tapping one he owns)
+Bell   (silent; preview, buying, tapping one he owns)
+Big trough   (silent; preview, buying, tapping one he owns)
+Clover meadow   (silent; preview, buying, tapping one he owns)
+Yarn   (silent; preview, buying, tapping one he owns)
+Sheep shed   (silent; preview, buying, tapping one he owns)
+Boat   (silent; preview, buying, tapping one he owns)
+Duck house   (silent; preview, buying, tapping one he owns)
+Rock hill   (silent; preview, buying, tapping one he owns)
+Tire   (silent; preview, buying, tapping one he owns)
+Seesaw   (silent; preview, buying, tapping one he owns)
+
+My Farm: shop and Tractor Shed:
+Little car   (silent; preview, buying, choosing it in the shed)
+Pickup truck   (silent; preview, buying, choosing it in the shed)
+Combine   (silent; preview, buying, choosing it in the shed)
+Tractor   (silent; choosing the tractor in the shed)
+Honk honk!   (silent; tapping the vehicle)
+
+My Farm: shop and Farmhouse:
+Flag   (silent; preview, buying, switching it on or off)
+Mailbox   (silent; preview, buying, switching it on or off)
+Porch swing   (silent; preview, buying, switching it on or off)
+
+My Farm: map and shop tabs:
+Barnyard   (silent; tapping the area on the map)
+Tractor Shed   (silent; tapping the area on the map)
+Farmhouse and Garden   (silent; tapping the area on the map)
+
+My Farm: map:
+A new place to explore!   (silent; after unlocking an area (after "You got it!"))
+
+My Farm: Farmhouse and Garden:
+Time to pick!   (silent; a vegetable is ready to pick)
+
+Grown-ups only: none (grown-up screens never speak).
 
 IDEAS (not used yet, place later)
+Later areas (when they are added): Pond and Meadow, Big Barn, Orchard, Playground, Windmill, Beehive

@@ -1,0 +1,518 @@
+Watson's Writing: voice audit (2026-11-07, app version ww-v30)
+Every line the app can speak, from public/index.html, checked against public/audio/manifest.json.
+
+COUNTS (distinct lines)
+  recorded:     360
+  device voice: 1
+  silent:       47
+  missing file: 0
+  total:        408
+
+MANIFEST: 258 entries, 0 pointing to a missing file.
+Recorded clips the code never plays: 80 (listed at the end).
+
+HOW THE APP DECIDES (so the statuses make sense)
+  Writing screens (vsay): a line is a list of pieces, e.g. "Let's write a capital" + "A". If EVERY piece has a clip, her clips play.
+    If even one piece is missing, the WHOLE line is said by the device voice instead (so one missing word un-records the line).
+  My Farm (fRespond / fAmbient): only pieces with a clip play; a piece without a clip is skipped, silently. Never the device voice.
+    My Farm matches clips ignoring capitals and extra spaces (exact text first); the writing screens need the exact text.
+  Animal sounds and stamps (dClip): her clip, or nothing. In the Barnyard an unrecorded animal sound becomes a made-up beep sound.
+  "You wrote your name!" is the only line that goes straight to the device voice (speak), after her clips.
+  Punctuation always has to match.
+  If a writing-screen clip cannot be loaded (e.g. offline before it was cached), that line falls back to the device voice.
+
+WHO HEARS IT: every spoken line below is heard by the child in normal play. Grown-ups, the first-run screen ("Who is learning
+today?"), Who's playing?, progress reports, progress files and Class view never speak.
+
+Format: STATUS | exact text (pieces joined with "+", each looked up as written) | when
+
+== Main menu ==
+RECORDED     | Welcome, writer! Are you ready to write? What would you like to do? | app start, back to the menu; idle reminder on the menu
+
+== Learn to write: pick a letter ==
+RECORDED     | Pick a letter to write! | opening the letter grid; idle reminder
+
+== Writing Quiz: pick a set ==
+RECORDED     | Pick what to practice! | opening the quiz sets; idle reminder
+
+== Learn to write ==
+RECORDED     | Let's write the number  +  0  +  Start with the green line.  +  Hook Around Close | starting letter 0 (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write the number  +  0 | the "watch me" demo of 0 (Writing Quiz after two misses)
+RECORDED     | Let's write the number  +  1  +  Start with the green line.  +  Tall Down | starting letter 1 (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write the number  +  1 | the "watch me" demo of 1 (Writing Quiz after two misses)
+RECORDED     | Let's write the number  +  2  +  Start with the green line.  +  Roll Slant | starting letter 2 (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write the number  +  2 | the "watch me" demo of 2 (Writing Quiz after two misses)
+RECORDED     | Let's write the number  +  3  +  Start with the green line.  +  Roll Around | starting letter 3 (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write the number  +  3 | the "watch me" demo of 3 (Writing Quiz after two misses)
+RECORDED     | Let's write the number  +  4  +  Start with the green line.  +  Down | starting letter 4 (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write the number  +  4 | the "watch me" demo of 4 (Writing Quiz after two misses)
+RECORDED     | Let's write the number  +  5  +  Start with the green line.  +  Down | starting letter 5 (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write the number  +  5 | the "watch me" demo of 5 (Writing Quiz after two misses)
+RECORDED     | Let's write the number  +  6  +  Start with the green line.  +  Curve Down | starting letter 6 (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write the number  +  6 | the "watch me" demo of 6 (Writing Quiz after two misses)
+RECORDED     | Let's write the number  +  7  +  Start with the green line.  +  Slide | starting letter 7 (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write the number  +  7 | the "watch me" demo of 7 (Writing Quiz after two misses)
+RECORDED     | Let's write the number  +  8  +  Start with the green line.  +  Hook Snake | starting letter 8 (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write the number  +  8 | the "watch me" demo of 8 (Writing Quiz after two misses)
+RECORDED     | Let's write the number  +  9  +  Start with the green line.  +  Curve Around | starting letter 9 (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write the number  +  9 | the "watch me" demo of 9 (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  A  +  Start with the green line.  +  Slant Left | starting letter A (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  A | the "watch me" demo of A (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  B  +  Start with the green line.  +  Tall Down | starting letter B (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  B | the "watch me" demo of B (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  C  +  Start with the green line.  +  Hook Around | starting letter C (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  C | the "watch me" demo of C (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  D  +  Start with the green line.  +  Tall Down | starting letter D (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  D | the "watch me" demo of D (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  E  +  Start with the green line.  +  Tall Down | starting letter E (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  E | the "watch me" demo of E (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  F  +  Start with the green line.  +  Tall Down | starting letter F (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  F | the "watch me" demo of F (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  G  +  Start with the green line.  +  Hook Around | starting letter G (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  G | the "watch me" demo of G (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  H  +  Start with the green line.  +  Tall Down | starting letter H (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  H | the "watch me" demo of H (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  I  +  Start with the green line.  +  Tall Down | starting letter I (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  I | the "watch me" demo of I (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  J  +  Start with the green line.  +  Tall Hook | starting letter J (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  J | the "watch me" demo of J (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  K  +  Start with the green line.  +  Tall Down | starting letter K (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  K | the "watch me" demo of K (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  L  +  Start with the green line.  +  Tall Down | starting letter L (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  L | the "watch me" demo of L (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  M  +  Start with the green line.  +  Tall Down | starting letter M (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  M | the "watch me" demo of M (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  N  +  Start with the green line.  +  Tall Down | starting letter N (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  N | the "watch me" demo of N (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  O  +  Start with the green line.  +  Hook Around Close | starting letter O (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  O | the "watch me" demo of O (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  P  +  Start with the green line.  +  Tall Down | starting letter P (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  P | the "watch me" demo of P (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  Q  +  Start with the green line.  +  Hook Around Close | starting letter Q (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  Q | the "watch me" demo of Q (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  R  +  Start with the green line.  +  Tall Down | starting letter R (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  R | the "watch me" demo of R (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  S  +  Start with the green line.  +  Hook Around Snake | starting letter S (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  S | the "watch me" demo of S (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  T  +  Start with the green line.  +  Tall Down | starting letter T (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  T | the "watch me" demo of T (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  U  +  Start with the green line.  +  Tall Down  +  Curve Up | starting letter U (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  U | the "watch me" demo of U (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  V  +  Start with the green line.  +  Slant | starting letter V (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  V | the "watch me" demo of V (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  W  +  Start with the green line.  +  Slant | starting letter W (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  W | the "watch me" demo of W (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  X  +  Start with the green line.  +  Slant | starting letter X (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  X | the "watch me" demo of X (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  Y  +  Start with the green line.  +  Slant Right | starting letter Y (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  Y | the "watch me" demo of Y (Writing Quiz after two misses)
+RECORDED     | Let's write a capital  +  Z  +  Start with the green line.  +  Slide | starting letter Z (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a capital  +  Z | the "watch me" demo of Z (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  A  +  Start with the green line.  +  Hook Around | starting letter a (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  A | the "watch me" demo of a (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  B  +  Start with the green line.  +  Tall Down | starting letter b (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  B | the "watch me" demo of b (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  C  +  Start with the green line.  +  Hook Around | starting letter c (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  C | the "watch me" demo of c (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  D  +  Start with the green line.  +  Hook Around | starting letter d (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  D | the "watch me" demo of d (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  E  +  Start with the green line.  +  Hook Around | starting letter e (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  E | the "watch me" demo of e (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  F  +  Start with the green line.  +  Hook Down | starting letter f (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  F | the "watch me" demo of f (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  G  +  Start with the green line.  +  Hook Around | starting letter g (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  G | the "watch me" demo of g (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  H  +  Start with the green line.  +  Tall Down | starting letter h (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  H | the "watch me" demo of h (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  I  +  Start with the green line.  +  Small Down | starting letter i (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  I | the "watch me" demo of i (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  J  +  Start with the green line.  +  Down Tail | starting letter j (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  J | the "watch me" demo of j (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  K  +  Start with the green line.  +  Tall Down | starting letter k (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  K | the "watch me" demo of k (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  L  +  Start with the green line.  +  Tall Down | starting letter l (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  L | the "watch me" demo of l (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  M  +  Start with the green line.  +  Small Down | starting letter m (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  M | the "watch me" demo of m (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  N  +  Start with the green line.  +  Small Down | starting letter n (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  N | the "watch me" demo of n (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  O  +  Start with the green line.  +  Hook Around Close | starting letter o (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  O | the "watch me" demo of o (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  P  +  Start with the green line.  +  Down Tail | starting letter p (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  P | the "watch me" demo of p (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  Q  +  Start with the green line.  +  Hook Around | starting letter q (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  Q | the "watch me" demo of q (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  R  +  Start with the green line.  +  Small Down | starting letter r (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  R | the "watch me" demo of r (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  S  +  Start with the green line.  +  Hook Snake Around | starting letter s (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  S | the "watch me" demo of s (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  T  +  Start with the green line.  +  Tall Down | starting letter t (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  T | the "watch me" demo of t (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  U  +  Start with the green line.  +  Small Down  +  Curve Up | starting letter u (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  U | the "watch me" demo of u (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  V  +  Start with the green line.  +  Slant | starting letter v (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  V | the "watch me" demo of v (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  W  +  Start with the green line.  +  Slant | starting letter w (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  W | the "watch me" demo of w (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  X  +  Start with the green line.  +  Slant | starting letter x (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  X | the "watch me" demo of x (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  Y  +  Start with the green line.  +  Slant Right | starting letter y (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  Y | the "watch me" demo of y (Writing Quiz after two misses)
+RECORDED     | Let's write a lowercase  +  Z  +  Start with the green line.  +  Slide | starting letter z (intro + first stroke; also Write my name level 1)
+RECORDED     | Let's write a lowercase  +  Z | the "watch me" demo of z (Writing Quiz after two misses)
+RECORDED     | Start at the dot. | a stroke started in the wrong place
+RECORDED     | Follow the arrow. | a stroke drawn the wrong way
+RECORDED     | Stay inside the lines. | a stroke off the path
+RECORDED     | Here's a little hint. | 2nd and 4th miss on a stroke; Hint button; Writing Quiz after two misses
+RECORDED     | Let's do it together. You've got this! | 3rd miss on a stroke
+
+== Learn to write: each stroke (also hints, idle reminders, Write my name level 1) ==
+RECORDED     | Start with the green line.  +  Hook Around Close | 0; O; Q; o
+RECORDED     | Start with the green line.  +  Tall Down | 1; B; D; E; F; H; I; K; L; M; N; P; R; T; b; h; k; l; t
+RECORDED     | Start with the green line.  +  Roll Slant | 2
+RECORDED     | Now the brown line.  +  Slide | 2; 4; E; F; G; I; L; T; e
+RECORDED     | Start with the green line.  +  Roll Around | 3
+RECORDED     | Now the brown line.  +  Roll Around | 3; 5; b; p
+RECORDED     | Start with the green line.  +  Down | 4; 5
+RECORDED     | Now the red line.  +  Down | 4; Y
+RECORDED     | Now the red line.  +  Slide | 5; A; E; F; H; I; Z; z
+RECORDED     | Start with the green line.  +  Curve Down | 6
+RECORDED     | Now the brown line.  +  Loop | 6
+RECORDED     | Start with the green line.  +  Slide | 7; Z; z
+RECORDED     | Now the brown line.  +  Slant | 7; K; Q; V; W; Z; v; w; z
+RECORDED     | Start with the green line.  +  Hook Snake | 8
+RECORDED     | Now the brown line.  +  Roll Up | 8
+RECORDED     | Start with the green line.  +  Curve Around | 9
+RECORDED     | Now the brown line.  +  Tall Down | 9; H; M; N; d
+RECORDED     | Start with the green line.  +  Slant Left | A
+RECORDED     | Now the brown line.  +  Slant Right | A
+RECORDED     | Now the brown line.  +  Slide Around | B; D; P; R
+RECORDED     | Now the red line.  +  Slide Around | B
+RECORDED     | Start with the green line.  +  Hook Around | C; G; a; c; d; e; g; q
+RECORDED     | Now the pink line.  +  Slide | E
+RECORDED     | Start with the green line.  +  Tall Hook | J
+RECORDED     | Now the red line.  +  Slant | K; M; N; R; W; w
+RECORDED     | Now the pink line.  +  Slant | M; W; w
+RECORDED     | Start with the green line.  +  Hook Around Snake | S
+RECORDED     | Start with the green line.  +  Tall Down  +  Curve Up | U
+RECORDED     | Start with the green line.  +  Slant | V; W; X; v; w; x
+RECORDED     | Now the brown line.  +  Cross | X; f; t; x
+RECORDED     | Start with the green line.  +  Slant Right | Y; y
+RECORDED     | Now the brown line.  +  Slant Left | Y
+RECORDED     | Now the brown line.  +  Small Down | a; u
+RECORDED     | Start with the green line.  +  Hook Down | f
+RECORDED     | Now the brown line.  +  Down Tail | g
+RECORDED     | Now the brown line.  +  Roll Down | h; m; n
+RECORDED     | Start with the green line.  +  Small Down | i; m; n; r
+RECORDED     | Now the brown line.  +  Dot | i; j
+RECORDED     | Start with the green line.  +  Down Tail | j; p
+RECORDED     | Now the brown line.  +  Slant In | k
+RECORDED     | Now the red line.  +  Slant Out | k
+RECORDED     | Now the red line.  +  Roll Down | m
+RECORDED     | Now the brown line.  +  Down Hook | q
+RECORDED     | Now the brown line.  +  Roll | r
+RECORDED     | Start with the green line.  +  Hook Snake Around | s
+RECORDED     | Start with the green line.  +  Small Down  +  Curve Up | u
+RECORDED     | Now the brown line.  +  Slant Tail | y
+
+== Learn to write and Writing Quiz: cheers ==
+RECORDED     | Hooray! You did it! | letter finished (Learn to write); right answer (Writing Quiz)
+RECORDED     | Wow! That is perfect! | letter finished (Learn to write); right answer (Writing Quiz)
+RECORDED     | Yay! Great writing! | letter finished (Learn to write); right answer (Writing Quiz)
+RECORDED     | Awesome job! | letter finished (Learn to write); right answer (Writing Quiz)
+RECORDED     | You are a super writer! | letter finished (Learn to write); right answer (Writing Quiz)
+RECORDED     | Fantastic! | letter finished (Learn to write); right answer (Writing Quiz)
+RECORDED     | That looks great! | letter finished (Learn to write); right answer (Writing Quiz)
+RECORDED     | You nailed it! | letter finished (Learn to write); right answer (Writing Quiz)
+RECORDED     | High five! | letter finished (Learn to write); right answer (Writing Quiz)
+RECORDED     | You earned a star! | letter finished (Learn to write); right answer (Writing Quiz)
+RECORDED     | Look at you go! | letter finished (Learn to write); right answer (Writing Quiz)
+RECORDED     | Wow, that was your best one yet! | letter finished (Learn to write); right answer (Writing Quiz)
+
+== Learn to write, Writing Quiz, Write my name: try again ==
+RECORDED     | Nice try! Let's try again. | a miss (picked at random)
+RECORDED     | Almost! You can do it. | a miss (picked at random)
+RECORDED     | That's okay. Try one more time. | a miss (picked at random)
+RECORDED     | Good effort! Let's go again. | a miss (picked at random)
+RECORDED     | Keep going. You're doing great! | a miss (picked at random)
+RECORDED     | Mistakes help us learn. Try again! | a miss (picked at random)
+RECORDED     | You're getting closer! | a miss (picked at random)
+RECORDED     | Take your time. | a miss (picked at random)
+RECORDED     | Let's slow down and try together. | a miss (picked at random)
+RECORDED     | Don't give up! | a miss (picked at random)
+RECORDED     | I believe in you. | a miss (picked at random)
+RECORDED     | That was a brave try! | a miss (picked at random)
+
+== Writing Quiz and Write my name (levels 2-3) ==
+RECORDED     | Let's write the number  +  0  +  Your turn! | question / letter 0; idle reminder
+RECORDED     | Let's write the number  +  1  +  Your turn! | question / letter 1; idle reminder
+RECORDED     | Let's write the number  +  2  +  Your turn! | question / letter 2; idle reminder
+RECORDED     | Let's write the number  +  3  +  Your turn! | question / letter 3; idle reminder
+RECORDED     | Let's write the number  +  4  +  Your turn! | question / letter 4; idle reminder
+RECORDED     | Let's write the number  +  5  +  Your turn! | question / letter 5; idle reminder
+RECORDED     | Let's write the number  +  6  +  Your turn! | question / letter 6; idle reminder
+RECORDED     | Let's write the number  +  7  +  Your turn! | question / letter 7; idle reminder
+RECORDED     | Let's write the number  +  8  +  Your turn! | question / letter 8; idle reminder
+RECORDED     | Let's write the number  +  9  +  Your turn! | question / letter 9; idle reminder
+RECORDED     | Let's write a capital  +  A  +  Your turn! | question / letter A; idle reminder
+RECORDED     | Let's write a capital  +  B  +  Your turn! | question / letter B; idle reminder
+RECORDED     | Let's write a capital  +  C  +  Your turn! | question / letter C; idle reminder
+RECORDED     | Let's write a capital  +  D  +  Your turn! | question / letter D; idle reminder
+RECORDED     | Let's write a capital  +  E  +  Your turn! | question / letter E; idle reminder
+RECORDED     | Let's write a capital  +  F  +  Your turn! | question / letter F; idle reminder
+RECORDED     | Let's write a capital  +  G  +  Your turn! | question / letter G; idle reminder
+RECORDED     | Let's write a capital  +  H  +  Your turn! | question / letter H; idle reminder
+RECORDED     | Let's write a capital  +  I  +  Your turn! | question / letter I; idle reminder
+RECORDED     | Let's write a capital  +  J  +  Your turn! | question / letter J; idle reminder
+RECORDED     | Let's write a capital  +  K  +  Your turn! | question / letter K; idle reminder
+RECORDED     | Let's write a capital  +  L  +  Your turn! | question / letter L; idle reminder
+RECORDED     | Let's write a capital  +  M  +  Your turn! | question / letter M; idle reminder
+RECORDED     | Let's write a capital  +  N  +  Your turn! | question / letter N; idle reminder
+RECORDED     | Let's write a capital  +  O  +  Your turn! | question / letter O; idle reminder
+RECORDED     | Let's write a capital  +  P  +  Your turn! | question / letter P; idle reminder
+RECORDED     | Let's write a capital  +  Q  +  Your turn! | question / letter Q; idle reminder
+RECORDED     | Let's write a capital  +  R  +  Your turn! | question / letter R; idle reminder
+RECORDED     | Let's write a capital  +  S  +  Your turn! | question / letter S; idle reminder
+RECORDED     | Let's write a capital  +  T  +  Your turn! | question / letter T; idle reminder
+RECORDED     | Let's write a capital  +  U  +  Your turn! | question / letter U; idle reminder
+RECORDED     | Let's write a capital  +  V  +  Your turn! | question / letter V; idle reminder
+RECORDED     | Let's write a capital  +  W  +  Your turn! | question / letter W; idle reminder
+RECORDED     | Let's write a capital  +  X  +  Your turn! | question / letter X; idle reminder
+RECORDED     | Let's write a capital  +  Y  +  Your turn! | question / letter Y; idle reminder
+RECORDED     | Let's write a capital  +  Z  +  Your turn! | question / letter Z; idle reminder
+RECORDED     | Let's write a lowercase  +  A  +  Your turn! | question / letter a; idle reminder
+RECORDED     | Let's write a lowercase  +  B  +  Your turn! | question / letter b; idle reminder
+RECORDED     | Let's write a lowercase  +  C  +  Your turn! | question / letter c; idle reminder
+RECORDED     | Let's write a lowercase  +  D  +  Your turn! | question / letter d; idle reminder
+RECORDED     | Let's write a lowercase  +  E  +  Your turn! | question / letter e; idle reminder
+RECORDED     | Let's write a lowercase  +  F  +  Your turn! | question / letter f; idle reminder
+RECORDED     | Let's write a lowercase  +  G  +  Your turn! | question / letter g; idle reminder
+RECORDED     | Let's write a lowercase  +  H  +  Your turn! | question / letter h; idle reminder
+RECORDED     | Let's write a lowercase  +  I  +  Your turn! | question / letter i; idle reminder
+RECORDED     | Let's write a lowercase  +  J  +  Your turn! | question / letter j; idle reminder
+RECORDED     | Let's write a lowercase  +  K  +  Your turn! | question / letter k; idle reminder
+RECORDED     | Let's write a lowercase  +  L  +  Your turn! | question / letter l; idle reminder
+RECORDED     | Let's write a lowercase  +  M  +  Your turn! | question / letter m; idle reminder
+RECORDED     | Let's write a lowercase  +  N  +  Your turn! | question / letter n; idle reminder
+RECORDED     | Let's write a lowercase  +  O  +  Your turn! | question / letter o; idle reminder
+RECORDED     | Let's write a lowercase  +  P  +  Your turn! | question / letter p; idle reminder
+RECORDED     | Let's write a lowercase  +  Q  +  Your turn! | question / letter q; idle reminder
+RECORDED     | Let's write a lowercase  +  R  +  Your turn! | question / letter r; idle reminder
+RECORDED     | Let's write a lowercase  +  S  +  Your turn! | question / letter s; idle reminder
+RECORDED     | Let's write a lowercase  +  T  +  Your turn! | question / letter t; idle reminder
+RECORDED     | Let's write a lowercase  +  U  +  Your turn! | question / letter u; idle reminder
+RECORDED     | Let's write a lowercase  +  V  +  Your turn! | question / letter v; idle reminder
+RECORDED     | Let's write a lowercase  +  W  +  Your turn! | question / letter w; idle reminder
+RECORDED     | Let's write a lowercase  +  X  +  Your turn! | question / letter x; idle reminder
+RECORDED     | Let's write a lowercase  +  Y  +  Your turn! | question / letter y; idle reminder
+RECORDED     | Let's write a lowercase  +  Z  +  Your turn! | question / letter z; idle reminder
+
+== Writing Quiz ==
+RECORDED     | Your turn! | after the "watch me" demo
+RECORDED     | Write the letter first. | Done tapped with nothing written
+RECORDED     | All done! Great practice today. | end of a 5-question quiz
+
+== Writing (all modes) ==
+RECORDED     | Need a hint? Tap the hint button. | idle twice while writing
+
+== Write my name: finished ==
+RECORDED     | Hooray! You did it! | a cheer before and after the name is spelled (two picked at random)
+RECORDED     | Wow! That is perfect! | a cheer before and after the name is spelled (two picked at random)
+RECORDED     | Yay! Great writing! | a cheer before and after the name is spelled (two picked at random)
+RECORDED     | Awesome job! | a cheer before and after the name is spelled (two picked at random)
+RECORDED     | You are a super writer! | a cheer before and after the name is spelled (two picked at random)
+RECORDED     | Fantastic! | a cheer before and after the name is spelled (two picked at random)
+RECORDED     | You nailed it! | a cheer before and after the name is spelled (two picked at random)
+RECORDED     | High five! | a cheer before and after the name is spelled (two picked at random)
+RECORDED     | Look at you go! | a cheer before and after the name is spelled (two picked at random)
+DEVICE VOICE | You wrote your name! | after the name is spelled with her letter clips (once recorded, it moves to between the cheers)
+
+== Free writing: stamps ==
+RECORDED     | Oink! | pig stamp (one of two, at random)
+RECORDED     | Oink, oink! | pig stamp (one of two, at random)
+RECORDED     | Neigh! | horse stamp (one of two, at random)
+RECORDED     | Neeeigh! | horse stamp (one of two, at random)
+RECORDED     | Cluck! | chicken stamp (one of two, at random)
+RECORDED     | Cluck, cluck! | chicken stamp (one of two, at random)
+RECORDED     | Moo! | cow stamp (one of two, at random)
+RECORDED     | Moooo! | cow stamp (one of two, at random)
+RECORDED     | Baa! | sheep stamp (one of two, at random)
+RECORDED     | Baa, baa! | sheep stamp (one of two, at random)
+RECORDED     | Quack! | duck stamp (one of two, at random)
+RECORDED     | Quack, quack! | duck stamp (one of two, at random)
+RECORDED     | Maa-aa-aa! | goat stamp (one of two, at random)
+RECORDED     | Eh-eh-eh! | goat stamp (one of two, at random)
+RECORDED     | Woof! | dog stamp (one of two, at random)
+RECORDED     | Woof, woof! | dog stamp (one of two, at random)
+RECORDED     | Meow! | cat stamp (one of two, at random)
+RECORDED     | Meow, meow! | cat stamp (one of two, at random)
+
+== My Farm: animal sounds ==
+RECORDED     | Oink! | tapping the pig; its games; arriving or coming back (made-up sound if not recorded)
+RECORDED     | Oink, oink! | tapping the pig; its games; arriving or coming back (made-up sound if not recorded)
+RECORDED     | Neigh! | tapping the horse; its games; arriving or coming back (made-up sound if not recorded)
+RECORDED     | Neeeigh! | tapping the horse; its games; arriving or coming back (made-up sound if not recorded)
+RECORDED     | Cluck! | tapping the chicken; its games; arriving or coming back (made-up sound if not recorded)
+RECORDED     | Cluck, cluck! | tapping the chicken; its games; arriving or coming back (made-up sound if not recorded)
+RECORDED     | Moo! | tapping the cow; its games; arriving or coming back (made-up sound if not recorded)
+RECORDED     | Moooo! | tapping the cow; its games; arriving or coming back (made-up sound if not recorded)
+RECORDED     | Baa! | tapping the sheep; its games; arriving or coming back (made-up sound if not recorded)
+RECORDED     | Baa, baa! | tapping the sheep; its games; arriving or coming back (made-up sound if not recorded)
+RECORDED     | Quack! | tapping the duck; its games; arriving or coming back (made-up sound if not recorded)
+RECORDED     | Quack, quack! | tapping the duck; its games; arriving or coming back (made-up sound if not recorded)
+RECORDED     | Maa-aa-aa! | tapping the goat; its games; arriving or coming back (made-up sound if not recorded)
+RECORDED     | Eh-eh-eh! | tapping the goat; its games; arriving or coming back (made-up sound if not recorded)
+
+== My Farm: opening ==
+RECORDED     | Welcome to your farm! | opening My Farm
+RECORDED     | You earned a new animal! | opening My Farm with a gift waiting
+RECORDED     | Wow! Your friends are growing! | opening after the animals grew
+RECORDED     | Look how big they got! | opening after the animals grew
+RECORDED     | Your farm is so big! | opening after the last growth stage
+RECORDED     | You have a gift! Tap to open it! | opening with a new gift
+RECORDED     | Almost at your next gift! | opening when close to the next gift
+RECORDED     | Let's write to earn stars! | nothing to spend or buy (once per visit)
+
+== My Farm: leaving ==
+RECORDED     | Come back and write more to grow your farm! | leaving My Farm with no stars left
+
+== My Farm: gift ==
+RECORDED     | Pick a friend for your farm! | opening the gift box
+RECORDED     | pig | picking the pig from the gift; shop tab; "send it home?"
+RECORDED     | horse | picking the horse from the gift; shop tab; "send it home?"
+RECORDED     | chicken | picking the chicken from the gift; shop tab; "send it home?"
+RECORDED     | cow | picking the cow from the gift; shop tab; "send it home?"
+RECORDED     | sheep | picking the sheep from the gift; shop tab; "send it home?"
+RECORDED     | duck | picking the duck from the gift; shop tab; "send it home?"
+RECORDED     | goat | picking the goat from the gift; shop tab; "send it home?"
+RECORDED     | A new friend! | after a new animal arrives
+
+== My Farm: Barnyard ==
+RECORDED     | Let's build something! | hammer (build mode)
+RECORDED     | Let's decorate! | paintbrush
+RECORDED     | Time to feed the animals! | an animal uses the hay (at most once a minute)
+RECORDED     | The pig is playing in the mud! | an animal uses the mud (at most once a minute)
+RECORDED     | The horse is drinking at the pond! | an animal uses the pond (at most once a minute)
+RECORDED     | The chicken is pecking in the flowers! | an animal uses the flowers (at most once a minute)
+
+== My Farm: shop, outfits ==
+RECORDED     | Bow | pig; horse; chicken; cow; sheep; duck; goat
+RECORDED     | Hat | pig; horse; chicken; cow; sheep; duck; goat
+SILENT       | Top hat | pig; horse; chicken; cow; sheep; duck; goat
+RECORDED     | Crown | pig; horse; chicken; cow; sheep; duck; goat
+SILENT       | Glasses | pig; horse; chicken; cow; sheep; duck; goat
+SILENT       | Sunglasses | pig; horse; chicken; cow; sheep; duck; goat
+SILENT       | Bow tie | pig; horse; chicken; cow; sheep; duck; goat
+SILENT       | Scarf | pig; horse; chicken; cow; sheep; duck; goat
+SILENT       | Tutu | pig; horse; chicken; cow; sheep; duck; goat
+SILENT       | Cape | pig; horse; chicken; cow; sheep; duck; goat
+SILENT       | Gold | pig; cow
+SILENT       | Mint | pig
+SILENT       | Spots | pig; horse; chicken; cow; sheep; duck; goat
+SILENT       | Stripes | pig; horse; chicken; cow; sheep; duck; goat
+RECORDED     | Flower | pig; horse; chicken; cow; sheep; duck; goat
+RECORDED     | Glitter | pig; horse; chicken; cow; sheep; duck; goat
+SILENT       | Sparkles | pig; horse; chicken; cow; sheep; duck; goat
+SILENT       | Saddle blanket | horse; cow
+SILENT       | White | horse; duck
+RECORDED     | Black | horse
+RECORDED     | Braid | horse
+SILENT       | Ponytail | horse
+SILENT       | Curls | horse
+SILENT       | Mohawk | horse
+RECORDED     | Rainbow mane | horse
+RECORDED     | Brown | chicken; cow; goat
+RECORDED     | Gray | chicken; goat
+SILENT       | Rainbow tail | chicken
+RECORDED     | Pink | sheep
+RECORDED     | Blue | sheep
+RECORDED     | Green | duck
+
+== My Farm: shop, buying ==
+RECORDED     | Oink! Thank you! | buying an outfit for the pig
+RECORDED     | Neigh! Thank you! | buying an outfit for the horse
+RECORDED     | Cluck! Thank you! | buying an outfit for the chicken
+RECORDED     | You got it! | buying anything else; unlocking an area
+
+== My Farm: shop, Barnyard items ==
+RECORDED     | Mud pit | preview, buying, tapping one he owns; "send it home?"
+SILENT       | Puddle | preview, buying, tapping one he owns; "send it home?"
+SILENT       | Mud slide | preview, buying, tapping one he owns; "send it home?"
+RECORDED     | Haystack | preview, buying, tapping one he owns; "send it home?"
+SILENT       | Jump | preview, buying, tapping one he owns; "send it home?"
+SILENT       | Apples | preview, buying, tapping one he owns; "send it home?"
+RECORDED     | Flower patch | preview, buying, tapping one he owns; "send it home?"
+SILENT       | Nest | preview, buying, tapping one he owns; "send it home?"
+RECORDED     | Chicken coop | preview, buying, tapping one he owns; "send it home?"   [plays the clip saved as "chicken coop"]
+SILENT       | Trough | preview, buying, tapping one he owns; "send it home?"
+SILENT       | Bell | preview, buying, tapping one he owns; "send it home?"
+SILENT       | Big trough | preview, buying, tapping one he owns; "send it home?"
+SILENT       | Clover meadow | preview, buying, tapping one he owns; "send it home?"
+SILENT       | Yarn | preview, buying, tapping one he owns; "send it home?"
+SILENT       | Sheep shed | preview, buying, tapping one he owns; "send it home?"
+RECORDED     | pond | preview, buying, tapping one he owns; "send it home?"
+SILENT       | Boat | preview, buying, tapping one he owns; "send it home?"
+SILENT       | Duck house | preview, buying, tapping one he owns; "send it home?"
+SILENT       | Rock hill | preview, buying, tapping one he owns; "send it home?"
+SILENT       | Tire | preview, buying, tapping one he owns; "send it home?"
+SILENT       | Seesaw | preview, buying, tapping one he owns; "send it home?"
+
+== My Farm: shop and Tractor Shed ==
+SILENT       | Little car | preview, buying, choosing it in the shed
+SILENT       | Pickup truck | preview, buying, choosing it in the shed
+SILENT       | Combine | preview, buying, choosing it in the shed
+
+== My Farm: Tractor Shed ==
+SILENT       | Tractor | choosing the tractor in the shed
+SILENT       | Honk honk! | tapping the vehicle
+
+== My Farm: shop and Farmhouse ==
+SILENT       | Flag | preview, buying, switching it on or off
+SILENT       | Mailbox | preview, buying, switching it on or off
+SILENT       | Porch swing | preview, buying, switching it on or off
+
+== My Farm: map and shop tabs ==
+SILENT       | Barnyard | tapping the area on the map; its shop tab
+SILENT       | Tractor Shed | tapping the area on the map; its shop tab
+SILENT       | Farmhouse and Garden | tapping the area on the map; its shop tab
+
+== My Farm: map ==
+SILENT       | A new place to explore! | after unlocking an area (after "You got it!")
+RECORDED     | Almost! Keep writing to earn more stars! | tapping an area he cannot afford yet (one at random)
+RECORDED     | You need a few more stars. Let's write some letters! | tapping an area he cannot afford yet (one at random)
+RECORDED     | Not yet! Write a letter and earn more stars. | tapping an area he cannot afford yet (one at random)
+RECORDED     | Ooh, that one needs more stars! | tapping an area he cannot afford yet (one at random)
+
+== My Farm: Farmhouse and Garden ==
+SILENT       | Time to pick! | a vegetable is ready to pick
+
+== DYNAMIC: student names (cannot be recorded) ==
+  Write my name: the typed word (letters A-Z only; anything else is removed as it is typed) is never said as a word. It is
+  SPELLED with her recorded letter clips (A, B, C ...) between two cheers, so it is fully recorded. Then "You wrote your name!" (device voice).
+  Profile names (first-run, Grown-ups, Who's playing?) are never spoken anywhere.
+
+== SILENT ON PURPOSE (ignore) ==
+  Sound effects, not voice: pop, chime, win fanfare, "bonk" on a miss, the farm's plop, the tractor honk beep (sfx / fTone).
+  Made-up animal sounds in the Barnyard when no clip exists (all 7 farm animals have clips, so these do not play today).
+  Free writing never speaks; stamps without an animal sound (sun, cloud, flower, tree, house, barn, tractor) just pop.
+  Text shown but never spoken: toasts and banners (e.g. "Let's watch how it goes.", "Keep going to the end.", "Hooray!", "Super!",
+    "Nice one!", "Added Maya", "Saved"), the first-run screen, Grown-ups, reports, and every shop and preview label
+    ("Hat for Pig", "Goes in the Barnyard", "Need 3 more stars", "Unlock the Pig first").
+  Muted (Sound: off): nothing speaks at all.
+
+== RECORDED CLIPS THE CODE NEVER PLAYS (80) ==
+  Most are from earlier games that are no longer in the app (bales, spelling, coloring, color tubes, tic-tac-toe, "where does it live").
+  "Close", "Capital", "Lowercase", "First,", "Then,", "Next,"
+  "Last,", "Now you try!", "Can you write the letter", "Write any letter you like!", "Watch me first.", "Ready?"
+  "Let's pick another letter.", "Want to play again?", "hen", "hay", "dog", "cat"
+  "fox", "egg", "bee", "sun", "farm", "corn"
+  "seed", "milk", "fish", "chick", "piglet", "ten"
+  "barn", "pigpen", "Red", "Yellow", "Orange", "Light blue"
+  "Purple", "Teal", "red tractor", "green tractor", "combine harvester", "excavator"
+  "Load", "bales.", "Spell", "Where does the", "live?", "Pick a picture to color"
+  "Color the", "any way you like.", "Yes!", "Now the", "one.", "Try number"
+  "The", "one!", "You colored the", "What a beautiful", "Put one color in each tube.", "All sorted!"
+  "Great job!", "Let us play.", "Who do you want to play with?", "Player 1: pick your piece", "Player 2: pick your piece", "Pick the computer's piece"
+  "It's a tie! Good game!", "Player 1 wins!", "Player 2 wins!", "You win!", "The computer wins. Good try!", "Good game!"
+  "Good try! Let's start over.", "lives in the", "Gobble!", "Gobble, gobble!", "Hee-haw!", "Hee-haw, hee-haw!"
+  "Cock-a-doodle-doo!", "Cock-a-doodle-doooo!"

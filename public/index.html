@@ -1141,7 +1141,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           <div class="grow2"><button id="gRepBtn" class="btn gadd" type="button">Progress report</button><button id="gShareBtn" class="btn gadd" type="button">Share progress file</button><button id="gClassBtn" class="btn gadd" type="button">Class view (for teachers)</button><button id="gAdd" class="btn gadd" type="button">+ Add a child</button></div>
           <p id="gFull" class="gnote" hidden>8 children is the most on one device.</p>
           <div class="grow2 gfoot"><button id="gReset" class="btn greset" type="button">Reset progress for <span id="gResetN"></span></button><a id="gSuggest" class="btn gadd gsug" href="https://forms.gle/wcdwUucaTzTa3EdS9" target="_blank" rel="noopener noreferrer">Send a suggestion or report a problem</a></div>
-          <p id="gVer" class="gver">App version ww-v29</p>
+          <p id="gVer" class="gver">App version ww-v30</p>
         </div>
         <div id="gRepList" class="nscreen gscreen" hidden>
           <p class="gp">Pick a child to see their progress report.</p>
@@ -4270,7 +4270,10 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   var fNoLast = '', fNoT = -1e9, fPlayT = {}, fEarnSaid = false, FSKEY = 'ww_farm_said', FSD = null;
   /* an option's spoken name: the color names belong to each animal (the chicken's "rainbow" is its tail) */
   function fName(id, k) { var p = id && FPAL[id] && FPAL[id][k]; return p && p.name || FSAY.names[k]; }
-  function fRec(keys) { return keys.filter(function (k) { return k && VOICE[k]; }); }
+  /* My Farm's clip for a line: the exact text first, else the same words with other capitals ("Chicken coop" plays "chicken coop").
+     Only here: the writing screens keep exact matches, where a missing piece moves the whole sentence to the device voice. */
+  function fKey(k) { var s = String(k || '').replace(/\s+/g, ' ').trim(); return !s ? '' : VOICE[s] ? s : vk(s) || ''; }
+  function fRec(keys) { return keys.map(fKey).filter(function (k) { return k; }); }
   function fRespond(keys) { keys = fRec(keys); if (!keys.length || muted) return; vsay(keys.map(Pc)); }
   function fAmbient(keys) { keys = fRec(keys); if (!keys.length || muted || vSpeaking) return false; vsay(keys.map(Pc)); return true; }
   /* a "not yet" line: random, never the same twice in a row, none within 3 s of the last */
