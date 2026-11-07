@@ -500,7 +500,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 .fmeter i { display: block; height: 100%; width: 0; background: var(--sun); transition: width 0.6s ease; }
 .fscene { position: relative; z-index: 0; flex: 1; min-height: 0; overflow: hidden; border: 3px solid var(--ink); border-radius: 14px; background: linear-gradient(#93d0ee, #d4f0fb 48%, #86c454 48%, #6aa83f); user-select: none; -webkit-user-select: none; }
 .fsky { position: absolute; display: block; pointer-events: none; overflow: visible; }
-.fsun { right: 5%; top: 5%; }
+.fsun { right: calc(5% + 96px); top: 5%; }   /* left of the basket */
 .fcloud { left: 0; will-change: transform; }
 .fbarn { left: 2%; bottom: 47%; height: auto; }
 .ffence { left: 0; width: 100%; height: 40px; bottom: 44%; }
@@ -668,6 +668,18 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 .fsendbtn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; padding: 2px 4px; }
 #fSendPic svg { width: 34px; height: 34px; }
 .fsend-w { font-size: 14px; font-weight: 700; line-height: 1; }
+.fbar2 .ficon { width: auto; flex: 0 1 68px; min-width: 52px; }   /* five buttons still fit on a phone */
+.ffeedbtn { position: relative; }
+#fFeedPic svg { width: 34px; height: 34px; }
+.ffeed-n { position: absolute; top: -8px; right: -6px; min-width: 24px; padding: 0 5px; font-size: 15px; line-height: 20px; color: var(--ink); background: #fff; border: 2px solid var(--ink); border-radius: 999px; }
+.ffeedbtn.empty { background: #e3ddd2; }
+.ffeedbtn.empty #fFeedPic, .ffeedbtn.empty .fsend-w { opacity: 0.5; filter: grayscale(1); }
+/* a vegetable popping up to an animal's mouth, then eaten in two bites */
+.ffood { position: absolute; z-index: 1600; pointer-events: none; transform-origin: 50% 100%; animation: ffood 1s ease-out forwards; }
+.ffood svg { display: block; width: 100%; height: auto; overflow: visible; }
+@keyframes ffood { 0% { transform: translate(-50%, 60%) scale(0.2); opacity: 0; } 30% { transform: translate(-50%, -20%) scale(1.15); opacity: 1; } 45% { transform: translate(-50%, 0) scale(1); }
+  60% { transform: translate(-50%, 0) scale(0.75, 0.6); } 75% { transform: translate(-50%, 0) scale(0.5, 0.35); } 100% { transform: translate(-50%, 0) scale(0); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .ffood { animation-duration: 0.4s; } }
 .fbye .fa-act, .fbye .fi-in { animation: fbye 0.35s ease-in forwards !important; }
 @keyframes fbye { to { transform: translateY(-30%) scale(0.2); opacity: 0; } }
 .fask { align-items: center; }
@@ -755,6 +767,10 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
 .fbasket { position: absolute; right: 3%; top: 4%; display: flex; align-items: center; gap: 4px; padding: 2px 10px; background: var(--paper); border: 3px solid var(--ink); border-radius: 14px; font-family: var(--display); font-size: 24px; }
 .fbk svg { display: block; width: 40px; height: auto; }
 .fbasket.bump { animation: bump 0.5s ease; }
+/* the Barnyard's basket (picked vegetables, for feeding): top right of the field, above the zoom */
+.fbasketby { right: 8px; top: 8px; left: auto; z-index: 2; font-size: 22px; font-weight: 700; pointer-events: none; }
+.fbasketby.shake { animation: shake 0.35s; }
+.fbasketby.empty { opacity: 0.75; }
 @media (orientation: landscape) {
   .fsh, .fho { flex-direction: row; }
   .ftools { width: min(44%, 340px); max-height: none; }
@@ -1141,7 +1157,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           <div class="grow2"><button id="gRepBtn" class="btn gadd" type="button">Progress report</button><button id="gShareBtn" class="btn gadd" type="button">Share progress file</button><button id="gClassBtn" class="btn gadd" type="button">Class view (for teachers)</button><button id="gAdd" class="btn gadd" type="button">+ Add a child</button></div>
           <p id="gFull" class="gnote" hidden>8 children is the most on one device.</p>
           <div class="grow2 gfoot"><button id="gReset" class="btn greset" type="button">Reset progress for <span id="gResetN"></span></button><a id="gSuggest" class="btn gadd gsug" href="https://forms.gle/wcdwUucaTzTa3EdS9" target="_blank" rel="noopener noreferrer">Send a suggestion or report a problem</a></div>
-          <p id="gVer" class="gver">App version ww-v30</p>
+          <p id="gVer" class="gver">App version ww-v31</p>
         </div>
         <div id="gRepList" class="nscreen gscreen" hidden>
           <p class="gp">Pick a child to see their progress report.</p>
@@ -1253,6 +1269,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
         <div id="fArea" class="farea"></div>
         <div class="fprog"><span class="fnum"><b class="s">&#9733;</b><span id="fLife">0</span></span><div class="fmeter"><i id="fFill"></i></div><span id="fGoal" class="fnum"><span id="fGoalIcon" class="fgi"></span><b class="s">&#9733;</b><span id="fNext">3</span></span></div>
         <div id="fScene" class="fscene" data-stage="baby"><div id="fWorld" class="fworld"><div id="fLayer" class="flayer"></div></div>
+          <div id="fBasketBy" class="fbasket fbasketby" role="img" aria-label="Vegetables in the basket: 0"><span id="fBasketPic" class="fbk"></span><b id="fBasketN">0</b></div>
           <div class="fzoom">
             <button id="fZIn" class="btn" type="button" aria-label="Zoom in"><svg viewBox="0 0 40 40" stroke="#2a2118" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><circle cx="17" cy="17" r="11" fill="#fff"/><path d="M25 25 L35 35" stroke-width="6"/><path d="M12 17 H22 M17 12 V22"/></svg></button>
             <button id="fZOut" class="btn" type="button" aria-label="Zoom out"><svg viewBox="0 0 40 40" stroke="#2a2118" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><circle cx="17" cy="17" r="11" fill="#fff"/><path d="M25 25 L35 35" stroke-width="6"/><path d="M12 17 H22"/></svg></button>
@@ -1262,6 +1279,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           <span class="grow"></span>
           <button id="fHomeBtn" class="btn ficon" type="button" aria-label="At home" hidden></button>
           <button id="fSend" class="btn ficon fsendbtn" type="button" aria-label="Send home" hidden><span id="fSendPic" aria-hidden="true"></span><span class="fsend-w">Home</span></button>
+          <button id="fFeed" class="btn ficon fsendbtn ffeedbtn" type="button" aria-label="Feed" hidden><span id="fFeedPic" aria-hidden="true"></span><span class="fsend-w">Feed</span><b id="fFeedN" class="ffeed-n">0</b></button>
           <button id="fPaint" class="btn ficon" type="button" aria-label="Decorate" hidden><svg viewBox="0 0 48 48" stroke="#2a2118" stroke-width="3" stroke-linejoin="round"><g transform="rotate(35 24 24)"><rect x="20" y="22" width="8" height="24" rx="3" fill="#c98a52"/><rect x="18.5" y="15" width="11" height="8" fill="#b9bec6"/><path d="M18.5 15 C18.5 7 24 1 24 1 C24 1 29.5 7 29.5 15 Z" fill="#e8417a"/></g></svg></button>
           <button id="fHammer" class="btn ficon" type="button" aria-label="Build"><svg viewBox="0 0 48 48" stroke="#2a2118" stroke-width="3" stroke-linejoin="round"><g transform="rotate(-40 24 24)"><rect x="21" y="16" width="6" height="30" rx="2" fill="#c98a52"/><rect x="9" y="5" width="30" height="13" rx="3" fill="#8a8f98"/></g></svg></button>
         </div>
@@ -3873,7 +3891,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
         item: '', walk: 0, act: null, pose: [0, 0, 0, 1, 1], head: 0, mud: 0, lip: '', z: 0 });
       a.el = L.querySelector('[data-a="' + id + '"]'); a.faceSet = 0; a.actEl = a.el.querySelector('.fa-act'); a.hdEl = a.el.querySelector('.fhd'); a.poseK = a.headK = null;
     });
-    fItemsShow(); fLayout(); fDucklings(); fProg(); $('#fPaint').hidden = !fSel; $('#fSend').hidden = !fSel; $('#fHomeBtn').hidden = !FST.away.length;
+    fItemsShow(); fLayout(); fDucklings(); fProg(); $('#fPaint').hidden = !fSel; $('#fSend').hidden = !fSel; $('#fFeed').hidden = !fSel; $('#fHomeBtn').hidden = !FST.away.length; fFeedDraw();
     FST.animals.forEach(function (id) { if (FA[id].lip) fLip(FA[id], FA[id].lip); });
   }
   function fLayout() {
@@ -4318,15 +4336,52 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function fSelect(id) {
     fSel = id;
     Array.prototype.forEach.call($('#fLayer').querySelectorAll('.fa'), function (el) { el.classList.toggle('sel', el.getAttribute('data-a') === id); });
-    var p = $('#fPaint'); p.hidden = !id; $('#fSend').hidden = !id;   /* the selected animal's buttons: decorate and send home */
+    var p = $('#fPaint'); p.hidden = !id; $('#fSend').hidden = !id; $('#fFeed').hidden = !id;   /* the selected animal's buttons: send home, feed, decorate */
     if (id) { p.classList.remove('nudge'); void p.offsetWidth; p.classList.add('nudge'); }
   }
-  function fTapAnimal(id) {
+  /* an animal's happy trick: a hop, its sound, a heart or sparkle (tapping it, and after eating) */
+  function fCheer(id) {
     var a = FA[id]; if (!a || !a.el) return;
     var hop = a.el.querySelector('.fa-hop'); hop.classList.remove('hop', 'fnew'); void hop.offsetWidth; hop.classList.add('hop');
     fAnimalSound(id);   /* one of her two clips for this animal, or the made-up sound */
     fFx(Math.random() < 0.5 ? 'heart' : 'spark', a.x, a.y + a.w * FVB[id][1] / FVB[id][0] * 90 / fH, 2);
+  }
+  function fTapAnimal(id) {
+    if (!FA[id] || !FA[id].el) return;
+    fCheer(id);
     fSelect(fSel === id ? '' : id);   /* tapping the selected animal again lets it go */
+  }
+  /* --- feeding: the vegetables he picked in the garden (garden.picked) feed any animal, one at a time. No stars, no prices. --- */
+  var FVEG = {   /* a vegetable on its own, 40 x 40 */
+    carrot: '<svg viewBox="0 0 40 40" ' + INK + '><path d="M20 12 L14 2 M20 12 L20 1 M20 12 L26 2" stroke="#3fb04a" stroke-width="3.5"/><path d="M12 13 C12 10 28 10 28 13 L21 38 C20.5 39.5 19.5 39.5 19 38 Z" fill="#ff8a3d"/><path d="M15 20 H19 M17 27 H21" fill="none" stroke-width="2"/></svg>',
+    tomato: '<svg viewBox="0 0 40 40" ' + INK + '><circle cx="20" cy="23" r="14" fill="#e8413a"/><path d="M20 11 L16 6 M20 11 L24 6 M20 11 L13 12 M20 11 L27 12" stroke="#3fb04a" stroke-width="3"/><ellipse cx="14" cy="19" rx="3" ry="2" fill="#fff" stroke="none" opacity=".7"/></svg>',
+    pumpkin: '<svg viewBox="0 0 40 40" ' + INK + '><path d="M20 12 C20 7 23 5 26 4" fill="none" stroke="#3f7a2a" stroke-width="3.5"/><ellipse cx="20" cy="25" rx="17" ry="12" fill="#ff8a3d"/><path d="M14 14 C9 20 9 30 14 36 M26 14 C31 20 31 30 26 36 M20 13 V37" fill="none" stroke-width="2"/></svg>',
+    corn: '<svg viewBox="0 0 40 40" ' + INK + '><ellipse cx="20" cy="17" rx="8" ry="15" fill="#ffd23f"/><path d="M15 10 H25 M14 17 H26 M15 24 H25" fill="none" stroke="#e0a000" stroke-width="2"/><path d="M20 38 C12 34 8 26 9 16 C13 22 16 28 20 38 Z M20 38 C28 34 32 26 31 16 C27 22 24 28 20 38 Z" fill="#5fae42"/></svg>'
+  };
+  function fPicked() { return FST ? Math.max(0, Math.floor(FST.garden.picked) || 0) : 0; }
+  function fFeedDraw() {
+    var n = fPicked(), b = $('#fBasketBy');
+    $('#fBasketN').textContent = String(n); $('#fFeedN').textContent = String(n);
+    b.setAttribute('aria-label', 'Vegetables in the basket: ' + n); b.classList.toggle('empty', !n);
+    $('#fFeed').classList.toggle('empty', !n); $('#fFeed').setAttribute('aria-label', 'Feed (' + n + ' in the basket)');
+  }
+  function fFeed(id) {
+    var a = FA[id], b = $('#fBasketBy'); if (!a || !a.el) return;
+    if (fPicked() < 1) { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); sfx.pop(); return; }   /* empty: a wiggle, nothing else */
+    FST.garden.picked = fPicked() - 1; fSave(); fFeedDraw();
+    b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump'); sfx.pop();
+    var kinds = Object.keys(FVEG), v = kinds[Math.floor(Math.random() * kinds.length)], w = Math.max(28, a.w * 0.34);
+    var el = document.createElement('div'); el.className = 'ffood'; el.innerHTML = FVEG[v]; el.setAttribute('data-veg', v);
+    el.style.width = w.toFixed(0) + 'px';
+    /* at its mouth: a little in front of and below the eye (FANC), with a baby's bigger head and shorter legs.
+       It rides on the animal (turning with it), so it stays at the mouth if the animal moves. */
+    var A = FANC[id], vb = FVB[id], st = fStage(), hs = st.head || 1, mx = A.hp[0] + (A.eye[0] + 10 - A.hp[0]) * hs, my = A.hp[1] + (A.eye[1] + 12 - A.hp[1]) * hs + (1 - (st.legs || 1)) * A.legs[1];
+    el.style.left = (mx / vb[0] * 100).toFixed(1) + '%';
+    el.style.bottom = (100 - my / vb[1] * 100).toFixed(1) + '%'; el.style.marginBottom = (-w / 2).toFixed(0) + 'px';
+    a.el.querySelector('.fa-flip').appendChild(el);
+    var gone = false, rm = function () { if (gone) return; gone = true; if (el.parentNode) el.parentNode.removeChild(el); };
+    el.addEventListener('animationend', rm); setTimeout(rm, 1400);
+    setTimeout(function () { if (fOn && FA[id] && FST.animals.indexOf(id) >= 0) fCheer(id); }, 650);   /* eaten: the happy trick */
   }
   function fOpenGift(el) {
     if (el.classList.contains('open')) return;
@@ -4684,7 +4739,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
      The barn button lists what is at home; tapping one brings it back for free. Nothing is refunded, nothing is lost. --- */
   var HOMEPIC = '<svg viewBox="0 0 40 40" ' + INK + '><circle cx="20" cy="20" r="18" fill="#fff8e6"/><path d="M12 19 V30 H28 V19" fill="#ffd640"/><rect x="17.5" y="23" width="5" height="7" fill="#c4402f" stroke-width="2"/><path d="M8.5 20 L20 10 L31.5 20" fill="none" stroke-width="3.5"/></svg>';
   var FSEND = '<span class="fsend" aria-label="send home">' + HOMEPIC + '</span>';   /* on items in build mode; an animal is sent home with the Home button below the farm */
-  $('#fSendPic').innerHTML = HOMEPIC;
+  $('#fSendPic').innerHTML = HOMEPIC; $('#fFeedPic').innerHTML = FVEG.carrot; $('#fBasketPic').innerHTML = fBasketSVG();
   var FARROW = '<svg viewBox="0 0 40 24"><path d="M3 12 H31 M23 4 L33 12 L23 20" fill="none" stroke="#2a2118" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   var fAskK = '', fByeT = 0;
   function fIsAnimal(k) { return FARM.animals.hasOwnProperty(k); }
@@ -4990,7 +5045,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (fPlotStage(p) < 3) { el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); sfx.pop(); return; }   /* not ready yet: a wiggle */
     FST.garden.picked++; p.t = Date.now(); fSave(); sfx.good();   /* ripe: it pops into the basket (just for fun: stars come only from writing) */
     el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
-    var bk = document.querySelector('.fbasket'); if (bk) { bk.classList.remove('bump'); void bk.offsetWidth; bk.classList.add('bump'); }
+    var bk = document.querySelector('#fArea .fbasket'); if (bk) { bk.classList.remove('bump'); void bk.offsetWidth; bk.classList.add('bump'); }
     setTimeout(function () { if (el.isConnected) { el.classList.remove('pop'); fGardenDraw(true); } }, 380);
   }
   /* taps in the Shed and the House: a thing not bought yet opens its preview in the shop */
@@ -5055,6 +5110,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (current !== farm) return; audio(); sfx.pop();
     if (fBuildOn) fBuildMode(false); else { fBuildMode(true); fShopOpen('barnyard'); fAmbient([FSAY.build]); }
   });
+  $('#fFeed').addEventListener('click', function () { if (current !== farm || !fSel) return; audio(); fFeed(fSel); });
   $('#fSend').addEventListener('click', function () { if (current !== farm || !fSel) return; audio(); fAsk(fSel); });   /* the same "send it home?" as before */
   $('#fPaint').addEventListener('click', function () { if (current !== farm || !fSel) return; audio(); sfx.pop(); fShopOpen(fSel); fAmbient([FSAY.decorate]); });
   $('#fShop').addEventListener('click', function (e) {

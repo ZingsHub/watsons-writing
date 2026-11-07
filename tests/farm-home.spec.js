@@ -113,7 +113,7 @@ for (const [w, h] of SIZES) {
     const bar = await page.locator('.fbar2').boundingBox(), scene = await page.locator('#fScene').boundingBox();
     expect(overlap(bar, scene), 'bar over the farm').toBe(false);
     const btns = await page.locator('.fbar2 button:visible').evaluateAll((els) => els.map((e) => { const r = e.getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height, id: e.id }; }));
-    expect(btns.map((b) => b.id)).toEqual(['fHomeBtn', 'fSend', 'fPaint', 'fHammer']);
+    expect(btns.map((b) => b.id)).toEqual(['fHomeBtn', 'fSend', 'fFeed', 'fPaint', 'fHammer']);
     btns.forEach((b) => {
       expect(b.x, b.id).toBeGreaterThanOrEqual(0); expect(b.x + b.width, b.id).toBeLessThanOrEqual(w);
       expect(b.y + b.height, b.id).toBeLessThanOrEqual(h); expect(b.height, b.id).toBeGreaterThanOrEqual(48); expect(b.width, b.id).toBeGreaterThanOrEqual(48);
