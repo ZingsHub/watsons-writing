@@ -1158,7 +1158,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           <div class="grow2"><button id="gRepBtn" class="btn gadd" type="button">Progress report</button><button id="gShareBtn" class="btn gadd" type="button">Share progress file</button><button id="gClassBtn" class="btn gadd" type="button">Class view (for teachers)</button><button id="gAdd" class="btn gadd" type="button">+ Add a child</button></div>
           <p id="gFull" class="gnote" hidden>8 children is the most on one device.</p>
           <div class="grow2 gfoot"><button id="gReset" class="btn greset" type="button">Reset progress for <span id="gResetN"></span></button><a id="gSuggest" class="btn gadd gsug" href="https://forms.gle/wcdwUucaTzTa3EdS9" target="_blank" rel="noopener noreferrer">Send a suggestion or report a problem</a><button id="gPrivBtn" class="btn gadd" type="button">Privacy</button></div>
-          <p id="gVer" class="gver">App version ww-v35</p>
+          <p id="gVer" class="gver">App version ww-v36</p>
         </div>
         <div id="gPriv" class="nscreen gscreen" hidden>
           <div class="gp gpriv">
@@ -3566,12 +3566,12 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   };
   function fPal(id, c) { var P = FPAL[id], o = {}, k; for (k in P.base) o[k] = P.base[k]; if (c && P[c]) for (k in P[c]) if (k !== 'name') o[k] = P[c][k]; return o; }
   /* where things attach on each animal (picture units): hp head pivot for baby heads, pivot where the head bends down,
-     top of the head, eye, ear, neck [x, y, size]; back [middle x, top y, width]; body ellipse [cx, cy, rx, ry]; legs [top y, length] */
+     top of the head, eye, ear, neck [x, y, size]; eyes: both eyes of a head that faces the viewer (glasses then sit on both); back [middle x, top y, width]; body ellipse [cx, cy, rx, ry]; legs [top y, length] */
   var FANC = {
     pig: { hp: [96, 54], pivot: [96, 54], top: [100, 27, 1], eye: [104, 43, 1], ear: [88, 26, 0.8], neck: [88, 72, 1], back: [62, 31, 88], body: [62, 58, 44, 27], legs: [66, 29] },
     horse: { hp: [112, 38], pivot: [110, 32], top: [117, 19, 1], eye: [119, 30, 1], ear: [106, 15, 0.8], neck: [108, 64, 1.1], back: [72, 48, 88], body: [72, 72, 44, 24], legs: [80, 43] },
     chicken: { hp: [64, 46], pivot: [64, 46], top: [70, 17, 0.8], eye: [74, 32, 0.85], ear: [62, 25, 0.7], neck: [66, 52, 0.8], back: [48, 40, 52], body: [50, 60, 28, 21], legs: [76, 19] },
-    cow: { hp: [120, 44], pivot: [108, 42], top: [122, 24, 1], eye: [127, 40, 1], ear: [104, 35, 0.8], neck: [108, 70, 1.1], back: [72, 40, 90], body: [72, 66, 46, 26], legs: [80, 38] },
+    cow: { hp: [120, 44], pivot: [108, 42], top: [124, 24, 1], eye: [127, 40, 1], eyes: [[117, 40], [131, 40]], ear: [104, 35, 0.8], neck: [108, 70, 1.1], back: [72, 40, 90], body: [72, 66, 46, 26], legs: [80, 38] },
     sheep: { hp: [116, 48], pivot: [108, 46], top: [117, 30, 0.9], eye: [124, 50, 0.9], ear: [104, 41, 0.8], neck: [108, 66, 0.9], back: [70, 22, 88], body: [70, 52, 44, 24], legs: [66, 32] },
     duck: { hp: [78, 34], pivot: [70, 46], top: [78, 15, 0.75], eye: [82, 27, 0.8], ear: [70, 19, 0.6], neck: [72, 50, 0.8], back: [52, 40, 70], body: [54, 62, 38, 22], legs: [80, 12] },
     goat: { hp: [118, 38], pivot: [104, 36], top: [118, 23, 1], eye: [118, 29, 1], ear: [100, 29, 0.8], neck: [106, 64, 1], back: [72, 44, 88], body: [72, 66, 44, 22], legs: [78, 40] }
@@ -3579,6 +3579,13 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function fG(x, y, s, inner) { return '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')">' + inner + '</g>'; }
   function fMud(inner) { return '<g class="fmud" opacity="0" stroke="none">' + inner + '</g>'; }
   function fLegRects(xs, y, h, c, hoof) { return xs.map(function (x) { return '<rect x="' + x + '" y="' + y + '" width="11" height="' + h + '" rx="4" fill="' + c + '"/>' + (hoof ? '<rect x="' + x + '" y="' + (y + h - 7) + '" width="11" height="8" rx="2" fill="' + hoof + '"/>' : ''); }).join(''); }
+  /* the cow's head faces the viewer: two horns, two ears, two eyes and a wide muzzle, all centered on x = 124 (farm and stamp) */
+  function fCowHead(main, nose, eyes) {
+    return '<path d="M114 29 L109 13 L121 25 Z" fill="#efe2c6"/><path d="M134 29 L139 13 L127 25 Z" fill="#efe2c6"/>' +
+      '<ellipse cx="106" cy="38" rx="10" ry="5" transform="rotate(-20 106 38)" fill="' + main + '"/><ellipse cx="142" cy="38" rx="10" ry="5" transform="rotate(20 142 38)" fill="' + main + '"/>' +
+      '<ellipse cx="124" cy="44" rx="16" ry="20" fill="' + main + '"/><ellipse cx="124" cy="61" rx="16" ry="10.5" fill="' + nose + '"/>' +
+      '<ellipse cx="118.5" cy="61" rx="2" ry="2.6" fill="#2a2118" stroke="none"/><ellipse cx="129.5" cy="61" rx="2" ry="2.6" fill="#2a2118" stroke="none"/>' + eyes;
+  }
   /* each animal's own picture, in parts: back (behind the legs), legs, body, head */
   var FDRAW = {
     pig: function (P, look, eye) {
@@ -3638,8 +3645,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
         legs: fLegRects([38, 52, 94, 108], 80, 38, P.main, P.hoof),
         body: '<ellipse cx="80" cy="92" rx="12" ry="8" fill="' + P.nose + '"/><ellipse cx="72" cy="66" rx="46" ry="26" fill="' + P.main + '"/>' +
           '<ellipse cx="52" cy="58" rx="13" ry="9" transform="rotate(-20 52 58)" fill="' + P.spot + '" stroke="none"/><ellipse cx="86" cy="74" rx="10" ry="7" fill="' + P.spot + '" stroke="none"/><ellipse cx="94" cy="54" rx="7" ry="5" fill="' + P.spot + '" stroke="none"/>',
-        head: '<path d="M112 30 L106 14 L120 25 Z" fill="#efe2c6"/><path d="M128 25 L138 12 L136 30 Z" fill="#efe2c6"/><ellipse cx="106" cy="38" rx="10" ry="5" transform="rotate(-20 106 38)" fill="' + P.main + '"/>' +
-          '<ellipse cx="124" cy="44" rx="16" ry="20" fill="' + P.main + '"/><ellipse cx="128" cy="62" rx="15" ry="10" fill="' + P.nose + '"/><circle cx="123" cy="62" r="1.8" fill="#2a2118" stroke="none"/><circle cx="133" cy="62" r="1.8" fill="#2a2118" stroke="none"/>' + eye(127, 40, 3.4)
+        head: fCowHead(P.main, P.nose, eye(117, 40, 3.4) + eye(131, 40, 3.4))
       };
     },
     sheep: function (P, look, eye, ey) {
@@ -3677,13 +3683,19 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     hat: function (x, y, s) { return fG(x, y, s, '<path d="M-10 2 L0 -24 L10 2 Z" fill="#2f74d0"/><circle cx="-3" cy="-7" r="1.8" fill="#ffc533" stroke="none"/><circle cx="3" cy="-14" r="1.8" fill="#ffc533" stroke="none"/><circle cy="-24" r="4" fill="#ffc533"/>'); },
     tophat: function (x, y, s) { return fG(x, y, s, '<rect x="-9" y="-22" width="18" height="21" rx="2" fill="#3a3330"/><rect x="-9" y="-9" width="18" height="4" fill="#e8417a" stroke="none"/><rect x="-15" y="-2" width="30" height="5" rx="2.5" fill="#3a3330"/>'); },
     crown: function (x, y, s) { return fG(x, y, s, dCrown(0, -6, 1.1)); },
-    glasses: function (x, y, s) { return fG(x, y, s, '<circle r="7" fill="#dff3ff" fill-opacity=".45" stroke-width="2.5"/><path d="M-7 -1 L-18 -4" fill="none" stroke-width="2.5"/>'); },
-    sunglasses: function (x, y, s) { return fG(x, y, s, '<rect x="-8" y="-6" width="16" height="11" rx="5" fill="#2a2118"/><path d="M-3 -3 L2 -3" stroke="#fff" stroke-width="1.6" opacity=".7"/><path d="M-8 -2 L-18 -4" fill="none" stroke-width="2.5"/>'); },
+    glasses: function (x, y, s) { return fG(x, y, s, FLENS.glasses + '<path d="M-7 -1 L-18 -4" fill="none" stroke-width="2.5"/>'); },
+    sunglasses: function (x, y, s) { return fG(x, y, s, FLENS.sunglasses + '<path d="M-8 -2 L-18 -4" fill="none" stroke-width="2.5"/>'); },
     bowtie: function (x, y, s) { return fG(x, y, s, '<path d="M0 0 L-10 -7 L-10 7 Z M0 0 L10 -7 L10 7 Z" fill="#2f74d0"/><circle r="3.2" fill="#2f74d0"/>'); },
     scarf: function (x, y, s) { return fG(x, y, s, '<path d="M-14 -7 C-5 -3 6 -3 14 -7 L14 2 C6 6 -5 6 -14 2 Z" fill="#e8413a"/><path d="M-5 3 L-9 18 L0 17 L2 4 Z" fill="#e8413a"/><path d="M-9 -4 V0 M-3 -2 V2 M4 -2 V2 M10 -4 V0" stroke="#fff" stroke-width="1.6"/>'); },
     flower: function (x, y, s) { return dFlower(x, y, s, '#e8417a'); },
     sparkles: function (x, y, s) { return '<g class="glit">' + dSpark(x - 18 * s, y - 4 * s, 1.3 * s) + dSpark(x + 12 * s, y - 14 * s, 1.1 * s) + dSpark(x + 22 * s, y + 6 * s, 1.2 * s) + '</g>'; }
   };
+  /* one lens, centered on an eye; a head seen from the side wears one (with its arm), a head facing the viewer two, joined by a bridge */
+  var FLENS = { glasses: '<circle r="7" fill="#dff3ff" fill-opacity=".45" stroke-width="2.5"/>', sunglasses: '<rect x="-8" y="-6" width="16" height="11" rx="5" fill="#2a2118"/><path d="M-3 -3 L2 -3" stroke="#fff" stroke-width="1.6" opacity=".7"/>' };
+  function fSpecs(k, E, s) {
+    var a = E[0], b = E[1], hw = (k === 'glasses' ? 7 : 8) * s;
+    return fG(a[0], a[1], s, FLENS[k]) + fG(b[0], b[1], s, FLENS[k]) + '<path d="M' + (a[0] + hw).toFixed(1) + ' ' + a[1] + ' L' + (b[0] - hw).toFixed(1) + ' ' + b[1] + '" fill="none" stroke-width="2"/>';
+  }
   var FREL = [[-0.5, -0.37], [0.05, -0.67], [0.41, 0.22], [-0.27, 0.44], [-0.77, 0.15], [0.62, -0.3]];   /* spread over a body ellipse */
   function fBodyAcc(k, B, bk) {
     var cx = B[0], cy = B[1], rx = B[2], ry = B[3], s = '', i, x;
@@ -3715,7 +3727,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (look.body === 'blanket' || look.body === 'tutu' || look.body === 'cape') o.body += fBodyAcc(look.body, A.body, A.back);
     if (look.fx === 'glitter') o.body += fBodyAcc('glitter', A.body, A.back);
     if (look.head && FACC[look.head]) o.head += FACC[look.head](t[0], t[1], t[2]);
-    if (look.face === 'glasses' || look.face === 'sunglasses') o.head += FACC[look.face](e[0], e[1], e[2]);
+    if (look.face === 'glasses' || look.face === 'sunglasses') o.head += A.eyes ? fSpecs(look.face, A.eyes, e[2] * 0.8) : FACC[look.face](e[0], e[1], e[2]);
     if (look.fx === 'flower') o.head += FACC.flower(A.ear[0], A.ear[1], A.ear[2] * 1.1);
     if (look.fx === 'sparkles') o.head += FACC.sparkles(t[0], t[1] - 4, t[2]);
     if (look.face === 'bowtie') o.neck += FACC.bowtie(n[0], n[1], n[2]);
@@ -5217,8 +5229,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       return [150, 124, '<path d="M28 60 C16 64 14 84 18 96" fill="none"/><ellipse cx="18" cy="100" rx="5" ry="7" fill="#2a2118"/>' + dLegs([38, 52, 94, 108], 80, 38, '#fff', '#4a4540') +
         '<ellipse cx="80" cy="92" rx="12" ry="8" fill="#f7b6c6"/><ellipse cx="72" cy="66" rx="46" ry="26" fill="#fff"/>' +
         '<ellipse cx="52" cy="58" rx="13" ry="9" transform="rotate(-20 52 58)" fill="#2a2118" stroke="none"/><ellipse cx="86" cy="74" rx="10" ry="7" fill="#2a2118" stroke="none"/><ellipse cx="94" cy="54" rx="7" ry="5" fill="#2a2118" stroke="none"/>' +
-        '<path d="M112 30 L106 14 L120 25 Z" fill="#efe2c6"/><path d="M128 25 L138 12 L136 30 Z" fill="#efe2c6"/><ellipse cx="106" cy="38" rx="10" ry="5" transform="rotate(-20 106 38)" fill="#fff"/>' +
-        '<ellipse cx="124" cy="44" rx="16" ry="20" fill="#fff"/><ellipse cx="128" cy="62" rx="15" ry="10" fill="#f7b6c6"/><circle cx="123" cy="62" r="1.8" fill="#2a2118" stroke="none"/><circle cx="133" cy="62" r="1.8" fill="#2a2118" stroke="none"/>' + dEye(127, 40)];
+        fCowHead('#fff', '#f7b6c6', dEye(117, 40) + dEye(131, 40))];
     },
     sheep: function () {
       return [140, 104, dLegs([40, 54, 86, 100], 66, 32, '#4a4540') + dBlob(['circle cx="40" cy="52" r="18"', 'circle cx="60" cy="40" r="20"', 'circle cx="82" cy="40" r="20"', 'circle cx="100" cy="52" r="17"', 'circle cx="70" cy="62" r="22"', 'circle cx="46" cy="66" r="15"', 'circle cx="94" cy="66" r="15"'], '#fffaf0') +
