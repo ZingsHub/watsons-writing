@@ -1,6 +1,6 @@
 # Watson's Writing: summary for school IT
 
-**What it is.** A letter and number handwriting practice app for young children (ages about 3 to 6), made by a parent. It runs in the browser and can be installed to the home screen as a Progressive Web App. Address: https://watsons-writing-production.up.railway.app. Source: GitHub `ZingsHub/watsons-writing`.
+**What it is.** A letter and number handwriting practice app for young children (ages about 3 to 6), made by a parent. It runs in the browser and can be installed to the home screen as a Progressive Web App. Address: https://watsonswriting.com (use this address). The old address, https://watsons-writing-production.up.railway.app, stays active during the transition (same app; it does not redirect, because saved progress belongs to the address it was made on). Source: GitHub `ZingsHub/watsons-writing`.
 
 **Accounts and data.** No accounts, no sign-in, no ads, no analytics, no trackers, no cookies.
 - Everything is saved only in the browser's local storage on that device: each child's first name (a grown-up types it; up to 20 letters), an animal face, letters practiced, quiz scores, stars, practice dates and the child's game farm.

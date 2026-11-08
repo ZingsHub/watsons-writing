@@ -1,6 +1,6 @@
 ﻿# Watson's Writing
 
-Letter and number writing PWA for a 4-year-old (Print Rhythm Leader method). Deployed on Railway from GitHub `ZingsHub/watsons-writing` (branch `main`); every push to main redeploys. Live: https://watsons-writing-production.up.railway.app
+Letter and number writing PWA for a 4-year-old (Print Rhythm Leader method). Deployed on Railway from GitHub `ZingsHub/watsons-writing` (branch `main`); every push to main redeploys. Live: https://watsonswriting.com (www.watsonswriting.com redirects there). The old address https://watsons-writing-production.up.railway.app stays live with no redirect: saved progress is per address, so a redirect would hide existing progress
 
 ## Layout
 - `public/index.html`: the entire app (HTML, CSS, JS in one file, about 2,700 lines). Read and edit small sections; don't print the whole file.

@@ -48,6 +48,9 @@ function secure(h) {
 }
 
 http.createServer((req, res) => {
+  /* www.watsonswriting.com goes to the bare address. Nothing else redirects: saved progress belongs to the address it was made on,
+     so the old Railway address keeps serving the app as it is. */
+  if (req.headers.host === 'www.watsonswriting.com') { res.writeHead(301, secure({ 'Location': 'https://watsonswriting.com' + req.url, 'Content-Type': 'text/plain' })); return res.end('Moved'); }
   /* read-only: nothing but GET and HEAD */
   if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(405, secure({ 'Allow': 'GET, HEAD', 'Content-Type': 'text/plain' })); return res.end('Method not allowed'); }
   let pathname;

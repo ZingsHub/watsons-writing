@@ -50,6 +50,34 @@ test('security headers on the page, files, errors and security.txt', async ({ re
   expect(st.headers()['content-type']).toContain('text/plain');
   expect(await st.text()).toMatch(/^Contact: mailto:watsonswriting@gmail\.com$/m);
   expect(await st.text()).toMatch(/^Expires: /m);
+  expect(Date.parse(/^Expires: (.+)$/m.exec(await st.text())[1])).toBeGreaterThan(Date.now());
+  expect(await st.text()).toMatch(/^Canonical: https:\/\/watsonswriting\.com\/\.well-known\/security\.txt$/m);
+});
+
+// a request with this Host header, straight to the test server (the browser can't set Host itself)
+function asHost(host, url) {
+  return new Promise((ok, fail) => require('http').get({ host: 'localhost', port: 3077, path: url, headers: { host } }, (r) => { r.resume(); r.on('end', () => ok(r)); }).on('error', fail));
+}
+
+test('both addresses serve the app the same way; only www.watsonswriting.com redirects', async () => {
+  const hosts = ['watsonswriting.com', 'watsons-writing-production.up.railway.app', 'localhost:3077'];
+  const got = [];
+  for (const h of hosts) {
+    const r = await asHost(h, '/');
+    expect(r.statusCode, h).toBe(200);
+    expect(r.headers.location, h).toBeUndefined();
+    got.push(HEADERS.concat('cross-origin-resource-policy').map((k) => r.headers[k]));
+  }
+  got.forEach((g, i) => { expect(g, hosts[i]).toEqual(got[0]); g.forEach((v) => expect(v).toBeTruthy()); });
+  for (const [url, to] of [['/', 'https://watsonswriting.com/'], ['/sw.js?x=1', 'https://watsonswriting.com/sw.js?x=1'], ['/.well-known/security.txt', 'https://watsonswriting.com/.well-known/security.txt']]) {
+    const r = await asHost('www.watsonswriting.com', url);
+    expect(r.statusCode).toBe(301);
+    expect(r.headers.location).toBe(to);
+    expect(r.headers['content-security-policy']).toBeTruthy();
+  }
+  for (const h of ['www.watsonswriting.com.evil.example', 'xwww.watsonswriting.com', 'www.watsons-writing-production.up.railway.app']) {
+    expect((await asHost(h, '/')).statusCode, h).toBe(200);   // only that exact name redirects
+  }
 });
 
 test('the server is read-only: no other methods, no files outside public/', async ({ request }) => {

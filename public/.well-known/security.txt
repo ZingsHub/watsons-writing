@@ -1,6 +1,5 @@
 # Security contact for Watson's Writing (RFC 9116).
-# Replace the Contact line with a real address before relying on this file.
 Contact: mailto:watsonswriting@gmail.com
 Expires: 2027-11-07T00:00:00.000Z
 Preferred-Languages: en
-Canonical: https://watsons-writing-production.up.railway.app/.well-known/security.txt
+Canonical: https://watsonswriting.com/.well-known/security.txt
