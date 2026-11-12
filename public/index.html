@@ -1158,7 +1158,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
           <div class="grow2"><button id="gRepBtn" class="btn gadd" type="button">Progress report</button><button id="gShareBtn" class="btn gadd" type="button">Share progress file</button><button id="gClassBtn" class="btn gadd" type="button">Class view (for teachers)</button><button id="gAdd" class="btn gadd" type="button">+ Add a child</button></div>
           <p id="gFull" class="gnote" hidden>8 children is the most on one device.</p>
           <div class="grow2 gfoot"><button id="gReset" class="btn greset" type="button">Reset progress for <span id="gResetN"></span></button><a id="gSuggest" class="btn gadd gsug" href="https://forms.gle/wcdwUucaTzTa3EdS9" target="_blank" rel="noopener noreferrer">Send a suggestion or report a problem</a><button id="gPrivBtn" class="btn gadd" type="button">Privacy</button></div>
-          <p id="gVer" class="gver">App version ww-v36</p>
+          <p id="gVer" class="gver">App version ww-v37</p>
         </div>
         <div id="gPriv" class="nscreen gscreen" hidden>
           <div class="gp gpriv">
@@ -1166,6 +1166,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
             <ul>
               <li><b>No accounts.</b> There is no sign-in. Children are added on this device by first name only.</li>
               <li><b>No ads, no analytics, no trackers.</b> The app loads nothing from other websites and sends nothing anywhere.</li>
+              <li><b>Voice.</b> The app speaks with recorded voice clips. Where a recording is missing, it uses only the device's own built-in voice. Nothing is sent to any outside service to be spoken.</li>
               <li><b>Progress stays on this device.</b> Letters, stars, names and the farm are saved only in this browser. Nobody else can see them.</li>
               <li><b>Progress files</b> leave the device only when a grown-up chooses "Share progress file" and sends the file themselves.</li>
               <li><b>The suggestion form is an outside service.</b> "Send a suggestion or report a problem" opens a Google Form in a new tab. What you type there goes to Google Forms, under Google's privacy policy.</li>
@@ -1592,9 +1593,15 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   };
   var voiceName = '', voices = [];
   try { voiceName = localStorage.getItem('ty_voice') || ''; } catch (e) {}
+  /* Only the device's own built-in voices, so no spoken line is ever sent to an outside service (Chrome's "Google" voices and Edge's
+     "Online (Natural)" voices send the text to Google or Microsoft). localService must be exactly true, and online-sounding names are
+     turned away too. No such voice: lines without a recording stay silent (never the browser's default voice, which can be online). */
+  function localVoice(v) {
+    var n = (v && v.name || '') + ' ' + (v && v.voiceURI || '');
+    return !!v && v.localService === true && !/online|natural|google/i.test(n);
+  }
   function scoreVoice(v) {
     var n = v.name + ' ' + (v.voiceURI || ''), sc = 0;
-    if (/natural|neural|online/i.test(n)) sc += 60;
     if (/premium|enhanced|siri/i.test(n)) sc += 45;
     if (/samantha|\bava\b|allison|susan|karen|moira|serena|zoe|aria|jenny|emma|joanna|salli|kendra|ivy|nicole|libby|sonia|hazel|google us english|google uk english female/i.test(n)) sc += 30;
     if (/en[-_]US/i.test(v.lang)) sc += 8;
@@ -1603,10 +1610,10 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   }
   function bestVoice() {
     var i;
-    if (voiceName) { for (i = 0; i < voices.length; i++) if (voices[i].name === voiceName) return voices[i]; }
+    if (voiceName) { for (i = 0; i < voices.length; i++) if (voices[i].name === voiceName && localVoice(voices[i])) return voices[i]; }
     var b = null, bs = -1e9;
-    for (i = 0; i < voices.length; i++) { var sc = scoreVoice(voices[i]); if (sc > bs) { bs = sc; b = voices[i]; } }
-    return b;
+    for (i = 0; i < voices.length; i++) { if (!localVoice(voices[i])) continue; var sc = scoreVoice(voices[i]); if (sc > bs) { bs = sc; b = voices[i]; } }
+    return b;   /* null: no on-device voice, so stay silent */
   }
   function fillVoiceSelect() {
     var sel = $('#voiceSel'); if (!sel) return;
@@ -1617,7 +1624,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     if (sel.value !== voiceName) sel.value = '';
   }
   function loadVoices() {
-    try { voices = (window.speechSynthesis ? window.speechSynthesis.getVoices() : []).filter(function (v) { return /^en/i.test(v.lang); }); } catch (e) { voices = []; }
+    try { voices = (window.speechSynthesis ? window.speechSynthesis.getVoices() : []).filter(function (v) { return /^en/i.test(v.lang) && localVoice(v); }); } catch (e) { voices = []; }
     fillVoiceSelect();
   }
   function speakTTS(t) {
@@ -1625,8 +1632,8 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     try {
       if (!window.speechSynthesis) return;
       window.speechSynthesis.cancel();
-      var u = new SpeechSynthesisUtterance(t), v = bestVoice();
-      if (v) { u.voice = v; u.lang = v.lang; } else u.lang = 'en-US';
+      var v = bestVoice(); if (!v) return;   /* no on-device voice: silent */
+      var u = new SpeechSynthesisUtterance(t); u.voice = v; u.lang = v.lang;
       u.rate = 0.93; u.pitch = 1.12; u.volume = 1;
       window.speechSynthesis.speak(u);
     } catch (e) {}
@@ -2064,17 +2071,20 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
       }, lost);
     } catch (e) { lost(); }
   }
-  function vsay(items, done) {
+  /* clipsOnly (the finished name): only her recorded clips, never the device voice. Lines with no clip are left out, and if a clip
+     fails to play the rest is skipped, so a child's name is never spelled out by the device voice. */
+  function vsay(items, done, clipsOnly) {
     var flat = [], i;
     for (i = 0; i < items.length; i++) { if (items[i].length) flat = flat.concat(items[i]); else flat.push(items[i]); }
     vstop(); var tok = vTok; vSpeaking = true;
     var done0 = done; done = function () { if (tok === vTok) { vSpeaking = false; wLastAct = Date.now(); } if (done0) done0(); };
     if (muted) { vSpeaking = false; if (done) setTimeout(done, 300); return; }
-    if (!VREADY && !VGIVE) { vReady(function () { if (tok === vTok) vsay(items, done0); }); return; } /* clip list still loading */
-    var all =flat.every(function (it) { return VOICE[it.k]; });
+    if (!VREADY && !VGIVE) { vReady(function () { if (tok === vTok) vsay(items, done0, clipsOnly); }); return; } /* clip list still loading */
+    if (clipsOnly) flat = flat.filter(function (it) { return VOICE[it.k]; });
+    var all = flat.every(function (it) { return VOICE[it.k]; });
     if (all) {
       var idx = 0, ctx = audio();
-      var toText = function () { if (tok === vTok) vsayText(flat.slice(idx), tok, done); };
+      var toText = function () { if (tok !== vTok) return; if (clipsOnly) { if (done) done(); } else vsayText(flat.slice(idx), tok, done); };
       var viaEl = function (it) { /* one shared audio element, unlocked by the first tap */
         var el = vEl, moved = false, wd;
         var go = function () { if (moved) return; moved = true; clearTimeout(wd); el.onended = null; el.onerror = null; setTimeout(next, 70); };
@@ -2107,9 +2117,9 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
   function vsayText(flat, tok, done) {
     var text = flat.map(function (it) { return it.t; }).join(', ').replace(/,\s*(?=[A-Z])/g, ' ');
     try {
-      if (!window.speechSynthesis) { if (done) setTimeout(done, 1200); return; }
-      var u = new SpeechSynthesisUtterance(text), v = bestVoice();
-      if (v) { u.voice = v; u.lang = v.lang; } else u.lang = 'en-US';
+      var v = window.speechSynthesis ? bestVoice() : null;
+      if (!v) { if (done) setTimeout(done, 1200); return; }   /* no on-device voice: silent */
+      var u = new SpeechSynthesisUtterance(text); u.voice = v; u.lang = v.lang;
       u.rate = 0.9; u.pitch = 1.12; u.volume = 1;
       var fin = false, fire = function () { if (fin) return; fin = true; clearTimeout(wd); if (tok === vTok && done) done(); };
       var wd = setTimeout(fire, Math.max(2500, text.length * 110 + 1500));
@@ -2909,7 +2919,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid #1c6fd1; outline-
     /* her voice only: a cheer, the name spelled with her letter clips, another cheer */
     var items = [Pc(c1)].concat(w.replace(/ /g, '').split('').map(Lc), [Pc(c2)]);
     if (VOICE[NWROTE]) items.splice(1, 0, Pc(NWROTE));
-    vsay(items, function () { if (tok === nm.tok && !VOICE[NWROTE]) speak(NWROTE); });   /* not recorded yet: device voice, said after hers */
+    vsay(items, function () { if (tok === nm.tok && !VOICE[NWROTE]) speak(NWROTE); }, true);   /* clips only; "You wrote your name!" not recorded yet: device voice, said after hers */
   }
   function nPng(cb) {
     var lay = nLayout(nm.word), S = 4, cv = document.createElement('canvas');

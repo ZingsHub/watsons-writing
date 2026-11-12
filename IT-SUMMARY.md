@@ -10,6 +10,7 @@
 
 **Domains contacted.** Only the app's own address. Fonts, sounds, icons and code are all served by the app itself. There are no third-party scripts, fonts or services.
 - The only outside link is **"Send a suggestion or report a problem"**, a Google Form (`forms.gle`) behind a grown-up math gate. It opens in a new tab only when tapped, with no referrer sent. Google's privacy policy applies to anything typed there.
+- **Voice.** The app speaks with recorded voice clips served by the app itself. Where a recording is missing, it uses only the device's own built-in voice (on-device voices only; online voices such as Chrome's "Google" voices or Edge's "Online (Natural)" voices are never used). Nothing is sent to any outside service to be spoken.
 - The service worker only stores this app's own files for offline use. It never contacts other sites.
 
 **Security headers** (on every response, set in `server.js`):
